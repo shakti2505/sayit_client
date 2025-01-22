@@ -37,7 +37,7 @@ const GroupChats: React.FC<GroupChatProps> = ({
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Array<messageType>>(groupChats.data);
-  const [messageReceived, setMessagereceived] = useState(false);
+  // const [messageReceived, setMessagereceived] = useState(false);
   const [chatUser, setChatUser] = useState<groupChatUserType>();
   const { group_id } = useParams();
   const scrollToBottom = () => {
@@ -79,7 +79,7 @@ const GroupChats: React.FC<GroupChatProps> = ({
 
   const handleChange = (msg: string) => {
     setMessage(msg);
-    setMessagereceived(false);
+    // setMessagereceived(false);
   };
 
   let groupedMessages;
@@ -97,10 +97,8 @@ const GroupChats: React.FC<GroupChatProps> = ({
       name: chatUser?.name ?? "Unknown",
       group_id: group_id ?? "",
     };
-    socket.emit("message", payload, (response: { status: string }) => {
-      if (response.status === "Message Received") {
-        setMessagereceived(true);
-      }
+    socket.emit("message", payload, () => {
+        
     });
     setMessage("");
     setMessages([...messages, payload]);
