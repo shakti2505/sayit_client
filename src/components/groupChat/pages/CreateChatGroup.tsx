@@ -18,7 +18,6 @@ import { createChatGroup } from "../services/groupChatServices";
 import type { AppDispatch, RootState } from "../../../store/store"; // Import AppDispatch type
 import { useUser } from "../../../utils/criticalState";
 import Loader from "../../common/Loader";
-import { addNewUserToGroup } from "../../chats/services/chatGroupServices";
 
 const CreateChatGroup: React.FC = () => {
   const { token } = useUser();
