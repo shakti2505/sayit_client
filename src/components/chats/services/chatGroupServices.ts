@@ -68,7 +68,7 @@ type payload = {
 };
 
 export const addNewUserToGroup =
-   (payload: payload) => async (dispatch: AppDispatch) => {
+  (payload: payload) => async (dispatch: AppDispatch) => {
     dispatch(addNewUserToGroup_start());
     try {
       const { data } = await axios.post(ADD_NEW_USER_TO_GROUP, { ...payload });
@@ -85,8 +85,12 @@ export const addNewUserToGroup =
 export const generateGroupLink = async (groupID: string) => {
   try {
     const res = await axios.post(GENERATE_GROUP_LINK(groupID));
-    if (res.status !== 200) {
+    if (res.status !== 201) {
       toast.error("unable to generate Link");
+    } else {
+      // copying link to clipboard
+      await window.navigator.clipboard.writeText(res.data.link);
+      toast.success("Link Copied to clipboard");
     }
     return res.data;
   } catch (error) {
