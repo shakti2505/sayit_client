@@ -59,6 +59,9 @@ export const getGroups = () => async (dispatch: AppDispatch) => {
   try {
     const { data } = await axios.get(GET_GROUP_CHAT_URL, {
       withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     dispatch(getGroupsSuccess(data.groups));
     toast.success(data?.message);
