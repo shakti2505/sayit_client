@@ -1,7 +1,8 @@
 import axios from "axios";
 import { genrateAndStoreKeyPair } from "../../crypto/key_manager";
+import { GOOGLE_AUTH_URL } from "../../utilities/apiEndPoints";
 
-const BASE_URL = "http://localhost:8080";
+// const BASE_URL = "http://localhost:8080";
 
 interface GoogleAuthResponse {
   user: {
@@ -9,7 +10,7 @@ interface GoogleAuthResponse {
     email: string;
     image: string;
     _id: string;
-    public_key:string;
+    public_key: string;
   };
   token: string;
 }
@@ -20,12 +21,9 @@ export const googleAuth = async (
   try {
     // genrating and storing public key and private keys
     const key = await genrateAndStoreKeyPair();
-    const response = await axios.get(
-      `${BASE_URL}/auth/google?code=${authCode}&key=${key}`,
-      {
-        withCredentials: true,
-      }
-    );
+    const response = await axios.get(GOOGLE_AUTH_URL(authCode, key), {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error: any) {
     console.error(

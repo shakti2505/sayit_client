@@ -18,10 +18,12 @@ export const GET_GROUP_USERS_BY_ID_URL = (group_id: string) => {
 
 export const ADD_NEW_USER_TO_GROUP = API_URL + "/create-chat-group-user";
 
-export const GET_GROUP_CHATS_URL = (group_id:string) => {
+export const GET_GROUP_CHATS_URL = (group_id: string) => {
   return API_URL + `/get-group-chats/${group_id}`;
 };
-export const GENERATE_GROUP_LINK = (group_id:string) => {
+export const GENERATE_GROUP_LINK = (group_id: string) => {
   return API_URL + `/generate-group-link/${group_id}`;
 };
-
+export const GOOGLE_AUTH_URL = (authCode: string, key: string) => {
+  return `${BASE_URL}/auth/google?code=${authCode}&key=${key}`;
+};

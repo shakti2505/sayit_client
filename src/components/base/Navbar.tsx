@@ -16,7 +16,7 @@ const Navbar: React.FC = () => {
   const GoogleAuthWrapper = () => {
     // Access the Google Client ID from the environment variable
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-
+    
     return (
       <GoogleOAuthProvider clientId={clientId}>
         <GoogleLogin></GoogleLogin>

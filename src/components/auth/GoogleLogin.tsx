@@ -43,8 +43,6 @@ const GoogleLogin: React.FC = () => {
           })
         );
 
-        // genrate RSA key
-
         // Redirect to the home page
         if (groupid) {
           navigate(`/chats/${groupid}`);
