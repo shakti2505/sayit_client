@@ -64,12 +64,11 @@ export const getAllGroupUsers =
 type payload = {
   name: string;
   group_id: string;
-  chatgroup: string;
   user_id: string;
 };
 
 export const addNewUserToGroup =
-  (payload: payload) => async (dispatch: AppDispatch) => {
+   (payload: payload) => async (dispatch: AppDispatch) => {
     dispatch(addNewUserToGroup_start());
     try {
       const { data } = await axios.post(ADD_NEW_USER_TO_GROUP, { ...payload });

@@ -5,7 +5,7 @@ import conversationImage from "../../assets/images/conversation.jpg";
 
 const HeroSection: React.FC = () => {
   return (
-    <section className="flex-1 flex flex-col items-center justify-center text-center p-12 bg-gradient-to-b from-gray-50 to-white">
+    <section className="flex-1 flex flex-col items-center justify-center text-center p-12 ">
       <h1 className="text-5xl font-extrabold text-gray-900 mb-4">
         Seamless Chat Links for Instant Communication
       </h1>

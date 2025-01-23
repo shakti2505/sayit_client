@@ -23,6 +23,7 @@ import {
   updateGroupSuccess,
   updateGroupFailure,
 } from "../slices/updateChatGroupSlice";
+import { addNewUserToGroup } from "../../chats/services/chatGroupServices";
 
 // fetching public_key from localstorage
 const userData = localStorage.getItem("user");
@@ -43,7 +44,15 @@ export const createChatGroup =
           },
         }
       );
+      console.log("create chat group data", data);
       dispatch(createGroupChatSuccess(data));
+      const groupUserPayload = {
+        name: logged_in_user_data.name,
+        group_id: data.data._id,
+        user_id: data.data.group_admin,
+      };
+      // adding group admin to the group memeber's
+      await dispatch(addNewUserToGroup(groupUserPayload));
       toast.success(data?.message);
       return data;
     } catch (error) {
