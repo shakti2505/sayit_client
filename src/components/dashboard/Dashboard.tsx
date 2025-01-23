@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import DashNav from "./DashNav";
 // import CreateChatGroup from "../groupChat/pages/CreateChatGroup";
 import GroupChatCard from "../groupChat/pages/GroupChatCard";
 
 
 const Dashboard: React.FC = () => {
- 
+  
+  useEffect(()=>{
+    alert('dashboard')
+  },[])
+
   return (
     <>
       <DashNav />
