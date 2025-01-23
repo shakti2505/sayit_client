@@ -88,7 +88,6 @@ const ChatUserDialog: React.FC<Props> = ({ open, setOpen }: Props) => {
       const logged_in_user = localStorage.getItem("user") || "";
       if (data) {
         const JsonData = JSON.parse(data);
-        console.log("json data", JsonData);
         const user = JSON.parse(logged_in_user);
         if (JsonData?.name && JsonData?.chatgroup) {
           setOpen(false);
@@ -97,13 +96,15 @@ const ChatUserDialog: React.FC<Props> = ({ open, setOpen }: Props) => {
         if (user) {
           setLoggedInUserId(user.id);
         }
-        if (!logged_in_user) {
-          navigate(`/?gorup_id=${group_id}`);
-        }
       }
-      const user = JSON.parse(logged_in_user);
-      if (user) {
-        setLoggedInUserId(user.id);
+      if (!logged_in_user) {
+        navigate(`/?gorup_id=${group_id}`);
+        return;
+      } else {
+        const user = JSON.parse(logged_in_user);
+        if (user) {
+          setLoggedInUserId(user.id);
+        }
       }
     }
   }, [group_id]);
