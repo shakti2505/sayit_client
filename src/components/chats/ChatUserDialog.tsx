@@ -32,6 +32,7 @@ const ChatUserDialog: React.FC<Props> = ({ open, setOpen }: Props) => {
     passcode: "",
   });
   const [loggedInUserId, setLoggedInUserId] = useState("");
+  const [loggedInUserKey, setLoggedInUserKey] = useState("");
   const navigate = useNavigate();
 
   const { data } = useSelector(
@@ -57,6 +58,7 @@ const ChatUserDialog: React.FC<Props> = ({ open, setOpen }: Props) => {
           name: newUser.name,
           group_id: group_id as string,
           chatgroup: data?._id?.toString() || "",
+          key: loggedInUserKey,
         };
 
         const res = await dispatch(addNewUserToGroup(payload));
@@ -82,28 +84,23 @@ const ChatUserDialog: React.FC<Props> = ({ open, setOpen }: Props) => {
   // checking if user is already in added in the group then dialog to add a new user to group will not appear
 
   useEffect(() => {
-    console.log("group_id", group_id);
     if (group_id) {
       const data = localStorage.getItem(group_id);
       const logged_in_user = localStorage.getItem("user") || "";
-      if (data) {
-        const JsonData = JSON.parse(data);
-        const user = JSON.parse(logged_in_user);
-        if (JsonData?.name && JsonData?.chatgroup) {
-          setOpen(false);
-        }
-
-        if (user) {
-          setLoggedInUserId(user.id);
-        }
-      }
       if (!logged_in_user) {
         navigate(`/?gorup_id=${group_id}`);
-        return;
       } else {
         const user = JSON.parse(logged_in_user);
         if (user) {
           setLoggedInUserId(user.id);
+          setLoggedInUserKey(user.public_key);
+        }
+      }
+
+      if (data) {
+        const JsonData = JSON.parse(data);
+        if (JsonData?.name && JsonData?.chatgroup) {
+          setOpen(false);
         }
       }
     }
