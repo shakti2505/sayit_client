@@ -13,7 +13,7 @@ const ChatNav: React.FC<ChatNavProps> = ({ setSerchMessage }: ChatNavProps) => {
   );
 
   return (
-    <nav className=" flex justify-between items-center  px-6 py-2">
+    <nav className=" flex justify-between items-center px-6 py-2">
       <div className="flex space-x-4 md:space-x-0 items-center">
         <div className="md:hidden">
           <MobileChatSidebar />
@@ -28,7 +28,7 @@ const ChatNav: React.FC<ChatNavProps> = ({ setSerchMessage }: ChatNavProps) => {
           onChange={(e) => setSerchMessage(e.target.value)}
           type="text"
           placeholder="Search"
-          className="outline-none bg-[#F4F4F5] rounded-full p-1 px-2 text-md w-48 transform transition-all duration-150 hover:w-96 focus:w-96 focus:ring-2 focus:ring-blue-500 ease-in-out"
+          className="outline-none bg-[#F4F4F5] rounded-full p-1 px-2 text-md w-24 transform transition-all duration-150 hover:w-28 focus:w-32 focus:ring-2 focus:ring-blue-500 ease-in-out"
         />
       </div>
     </nav>

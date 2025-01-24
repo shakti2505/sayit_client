@@ -5,11 +5,12 @@ import ChatSidebar from "../ChatSideBar";
 import ChatNav from "../ChatNav";
 import ChatUserDialog from "../ChatUserDialog";
 import GroupChats from "./GroupChats";
+import { GroupChatV2 } from "./GroupChatsV2";
 
 export const ChatBase = () => {
   const { group_id } = useParams();
   const [openAddNewUserDialog, setopenAddNewUserDialog] = useState(true);
-  const [searchMessage, setSearchMessage]  = useState('');
+  const [searchMessage, setSearchMessage] = useState("");
 
   let socket = useMemo(() => {
     const socket = getSocket();
@@ -43,17 +44,20 @@ export const ChatBase = () => {
   return (
     <div className="flex">
       <ChatSidebar />
-      <div className="w-full md:w-4/5 bg-gradient-to-b from-gray-50 to-white">
-        {openAddNewUserDialog ? (
-          <ChatUserDialog
-            open={openAddNewUserDialog}
-            setOpen={setopenAddNewUserDialog}
-          />
-        ) : (
+      <GroupChatV2 />
+
+      {/* {openAddNewUserDialog ? (
+        <ChatUserDialog
+          open={openAddNewUserDialog}
+          setOpen={setopenAddNewUserDialog}
+        />
+      ) : (
+        <div className="flex-1">
           <ChatNav setSerchMessage={setSearchMessage} />
-        )}
-        <GroupChats searchMessage={searchMessage} />
-      </div>
+        </div>
+      )} */}
+
+      {/* <GroupChats searchMessage={searchMessage} /> */}
     </div>
   );
 };

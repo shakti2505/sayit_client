@@ -51,7 +51,7 @@ const ChatSidebar: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div className="hidden md:block h-screen overflow-y-scroll w-1/5 bg-muted px-2">
+    <div className="flex-3 hidden md:block h-screen overflow-y-scroll w-1/5 bg-muted px-2 ">
       <div className="flex flex-row justify-between items-center">
         <button
           onClick={() => navigate("/dashboard")}

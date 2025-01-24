@@ -30,6 +30,7 @@ const GroupChats: React.FC<GroupChatProps> = ({
   // const { data } = useSelector(
   //   (ChatGroups: RootState) => ChatGroups.getGroupByID
   // );
+
   const groupChats = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupChat
   );
@@ -97,9 +98,7 @@ const GroupChats: React.FC<GroupChatProps> = ({
       name: chatUser?.name ?? "Unknown",
       group_id: group_id ?? "",
     };
-    socket.emit("message", payload, () => {
-        
-    });
+    socket.emit("message", payload, () => {});
     setMessage("");
     setMessages([...messages, payload]);
   };
@@ -118,7 +117,7 @@ const GroupChats: React.FC<GroupChatProps> = ({
   groupedMessages = groupMessagesByDate(messages);
 
   return (
-    <div className="flex flex-col h-[94vh] p-4 bg-red-50 rounded-md">
+    <div className="flex flex-col h-[30rem] p-4 bg-red-50 rounded-md">
       <div className="flex-1 overflow-y-auto flex flex-col-reverse">
         <div ref={messagesEndRef} />
         {messages.length !== 0 ? (

@@ -30,8 +30,6 @@ const ChatPage: React.FC<ChatPageProps> = () => {
 
   return (
     <div>
-      {/* <Button onClick={() => navigate("/dashboard")}>GO Back</Button> */}
-      {/* <h1>Hellow I am chat!</h1> */}
       <ChatBase />
     </div>
   );
