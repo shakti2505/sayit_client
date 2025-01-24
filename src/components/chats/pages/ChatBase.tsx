@@ -2,15 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { getSocket } from "../../../lib/socket.config";
 import { useParams } from "react-router-dom";
 import ChatSidebar from "../ChatSideBar";
-import ChatNav from "../ChatNav";
+// import ChatNav from "../ChatNav";
 import ChatUserDialog from "../ChatUserDialog";
-import GroupChats from "./GroupChats";
+// import GroupChats from "./GroupChats";
 import { GroupChatV2 } from "./GroupChatsV2";
 
 export const ChatBase = () => {
   const { group_id } = useParams();
   const [openAddNewUserDialog, setopenAddNewUserDialog] = useState(true);
-  const [searchMessage, setSearchMessage] = useState("");
+  // const [searchMessage, setSearchMessage] = useState("");
 
   let socket = useMemo(() => {
     const socket = getSocket();
@@ -46,16 +46,12 @@ export const ChatBase = () => {
       <ChatSidebar />
       <GroupChatV2 />
 
-      {/* {openAddNewUserDialog ? (
+      {openAddNewUserDialog && (
         <ChatUserDialog
           open={openAddNewUserDialog}
           setOpen={setopenAddNewUserDialog}
         />
-      ) : (
-        <div className="flex-1">
-          <ChatNav setSerchMessage={setSearchMessage} />
-        </div>
-      )} */}
+      )}
 
       {/* <GroupChats searchMessage={searchMessage} /> */}
     </div>
