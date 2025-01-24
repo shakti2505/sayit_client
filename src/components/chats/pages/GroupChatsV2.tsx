@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Check, Plus, Send, CheckCheck, CheckIcon } from "lucide-react";
+import { Send, CheckCheck, CheckIcon } from "lucide-react";
 
 import { cn } from "../../../lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
@@ -27,46 +27,18 @@ import { useParams } from "react-router-dom";
 //   DialogTitle,
 // } from "../../ui/dialog";
 import { Input } from "../../ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../../ui/tooltip";
+// import {
+//   Tooltip,
+//   TooltipContent,
+//   TooltipProvider,
+//   TooltipTrigger,
+// } from "../../ui/tooltip";
 
-const users = [
-  {
-    name: "Olivia Martin",
-    email: "m@example.com",
-    avatar: "/avatars/01.png",
-  },
-  {
-    name: "Isabella Nguyen",
-    email: "isabella.nguyen@email.com",
-    avatar: "/avatars/03.png",
-  },
-  {
-    name: "Emma Wilson",
-    email: "emma@example.com",
-    avatar: "/avatars/05.png",
-  },
-  {
-    name: "Jackson Lee",
-    email: "lee@example.com",
-    avatar: "/avatars/02.png",
-  },
-  {
-    name: "William Kim",
-    email: "will@email.com",
-    avatar: "/avatars/04.png",
-  },
-] as const;
+// type User = (typeof users)[number];
 
-type User = (typeof users)[number];
-
-interface GroupChatProps {
-  searchMessage: string;
-}
+// interface GroupChatProps {
+//   searchMessage: string;
+// }
 type groupChatUserType = {
   name: string;
   group_id: string;
@@ -85,7 +57,7 @@ type messageType = {
 };
 
 export const GroupChatV2: React.FC = () => {
-  const [open, setOpen] = React.useState(false);
+  //   const [open, setOpen] = React.useState(false);
 
   const groupChats = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupChat
@@ -187,7 +159,7 @@ export const GroupChatV2: React.FC = () => {
               <p className="text-sm text-muted-foreground">m@example.com</p>
             </div>
           </div>
-          <TooltipProvider delayDuration={0}>
+          {/* <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -202,7 +174,7 @@ export const GroupChatV2: React.FC = () => {
               </TooltipTrigger>
               <TooltipContent sideOffset={10}>New message</TooltipContent>
             </Tooltip>
-          </TooltipProvider>
+          </TooltipProvider> */}
         </CardHeader>
 
         {/* Card Content */}
