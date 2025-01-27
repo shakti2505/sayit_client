@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ChatBase from "./ChatBase";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { getGroupsByID } from "../services/chatGroupServices";
 import type { AppDispatch } from "../../../store/store"; // Import AppDispatch type
 import { useDispatch } from "react-redux";
@@ -10,7 +10,9 @@ interface ChatPageProps {}
 
 const ChatPage: React.FC<ChatPageProps> = () => {
   const navigate = useNavigate();
-  const { group_id } = useParams();
+  const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
+  const group_id = searchParams.get("group_id"); // Extract the value of "group_id"
+  console.log("group_id from chat page", group_id);
   const useAppDispatch: () => AppDispatch = useDispatch;
   const dispatch = useAppDispatch(); // Typed dispatch
   // fetching groups chat by id
@@ -22,6 +24,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
   }, [group_id, navigate]);
 
   useEffect(() => {
+    alert(group_id)
     if (group_id) {
       dispatch(getGroupsByID(group_id));
       dispatch(getGroupChatsByID(group_id));
@@ -29,9 +32,9 @@ const ChatPage: React.FC<ChatPageProps> = () => {
   }, [group_id]);
 
   return (
-    <div>
+    <>
       <ChatBase />
-    </div>
+    </>
   );
 };
 

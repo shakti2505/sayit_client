@@ -9,8 +9,16 @@ import {
   getGroupChatfailure,
   getGroupChatsuccess,
 } from "../slices/getGroupChatsSlice";
+import {
+  getMessagesBySearchFailure,
+  getMessagesBySearchSuccess,
+  getMessagesBySearchStart,
+} from "../slices/queryMessagesSlice";
 import { AppDispatch } from "../../../store/store";
-import { GET_GROUP_CHATS_URL } from "../../../utilities/apiEndPoints";
+import {
+  GET_GROUP_CHATS_URL,
+  GET_MESSAGES_BY_SEARCH,
+} from "../../../utilities/apiEndPoints";
 import { toast } from "sonner";
 
 // save chats
@@ -35,6 +43,24 @@ export const getGroupChatsByID =
       toast.success(res.data.message);
     } catch (error) {
       dispatch(getGroupChatfailure("failed to fetch chats"));
+      return error;
+    }
+  };
+
+// get searched messages
+export const getMessgesBySearch =
+  (group_id: string, queryMessage: string, page: number, limit: number) =>
+  async (dispatch: AppDispatch) => {
+    dispatch(getMessagesBySearchStart());
+    try {
+      const res = await axios.get(
+        GET_MESSAGES_BY_SEARCH(group_id, queryMessage, page, limit)
+      );
+      dispatch(getMessagesBySearchSuccess(res.data));
+      toast.success("messages fetched successfully by search!");
+      return res;
+    } catch (error) {
+      dispatch(getMessagesBySearchFailure("failed to fetch messages"));
       return error;
     }
   };

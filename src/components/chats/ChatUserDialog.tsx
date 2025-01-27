@@ -84,27 +84,42 @@ const ChatUserDialog: React.FC<Props> = ({ open, setOpen }: Props) => {
   // checking if user is already in added in the group then dialog to add a new user to group will not appear
 
   useEffect(() => {
-    if (group_id) {
-      const data = localStorage.getItem(group_id);
-      const logged_in_user = localStorage.getItem("user") || "";
-      if (!logged_in_user) {
-        navigate(`/?gorup_id=${group_id}`);
+    const checkGroupData = () => {
+      // Check if group_id exists in localStorage
+      const localGroupData = localStorage.getItem(group_id as string);
+      if (localGroupData) {
+        try {
+          const parsedGroupData = JSON.parse(localGroupData);
+          if (parsedGroupData.chatgroup) {
+            setOpen(false);
+          }
+        } catch (error) {
+          console.error("Error parsing group data:", error);
+        }
+      }
+    };
+
+    const handleUserCheck = () => {
+      // Check if user is logged in
+      const loggedInUser = localStorage.getItem("user");
+      if (!loggedInUser) {
+        navigate(`/?group_id=${group_id}`);
       } else {
-        const user = JSON.parse(logged_in_user);
-        if (user) {
+        try {
+          const user = JSON.parse(loggedInUser);
           setLoggedInUserId(user.id);
           setLoggedInUserKey(user.public_key);
+        } catch (error) {
+          console.error("Error parsing user data:", error);
         }
       }
+    };
 
-      if (data) {
-        const JsonData = JSON.parse(data);
-        if (JsonData?.name && JsonData?.chatgroup) {
-          setOpen(false);
-        }
-      }
+    if (group_id) {
+      checkGroupData();
+      handleUserCheck();
     }
-  }, [group_id]);
+  }, [group_id, navigate]);
 
   return (
     <Dialog open={open}>

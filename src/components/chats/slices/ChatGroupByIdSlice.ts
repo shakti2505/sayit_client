@@ -1,5 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+interface GroupMembers {
+  member_id: String;
+  Public_key: String;
+}
+
 interface groupData {
   _id: string;
   group_id: string;
@@ -7,6 +12,7 @@ interface groupData {
   user_id: string;
   passcode: string;
   created_At: string;
+  members: Array<GroupMembers>;
 }
 
 interface ChatGroupState {

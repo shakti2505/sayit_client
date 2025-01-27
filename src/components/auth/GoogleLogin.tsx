@@ -39,15 +39,16 @@ const GoogleLogin: React.FC = () => {
             image,
             token: result.token,
             id: _id,
-            public_key,  
+            public_key,
           })
         );
 
         // Redirect to the home page
         if (groupid) {
-          navigate(`/chats/${groupid}`);
+          navigate(`/chats?group_id=${groupid}`);
         } else {
-          navigate("/dashboard");
+          alert('to chats')
+          navigate("/chats");
         }
       }
     } catch (err) {
@@ -64,7 +65,7 @@ const GoogleLogin: React.FC = () => {
   });
 
   return (
-    <Button variant="outline" onClick={googleLogin}>
+    <Button className="text-foreground" variant="outline" onClick={googleLogin}>
       <img
         src={googlesvg}
         className=" mr-4"

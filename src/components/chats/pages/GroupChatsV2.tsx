@@ -1,5 +1,12 @@
 import * as React from "react";
-import { Send, CheckCheck, CheckIcon } from "lucide-react";
+import {
+  Send,
+  CheckCheck,
+  CheckIcon,
+  Plus,
+  MicIcon,
+  Sticker,
+} from "lucide-react";
 
 import { cn } from "../../../lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
@@ -9,7 +16,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getSocket } from "../../../lib/socket.config";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store"; // Import AppDispatch type
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+
 // import {
 //   Command,
 //   CommandEmpty,
@@ -26,7 +34,8 @@ import { useParams } from "react-router-dom";
 //   DialogHeader,
 //   DialogTitle,
 // } from "../../ui/dialog";
-import { Input } from "../../ui/input";
+import MobileChatSidebar from "../MobileChatSideBar";
+import ChatSearchSheet from "./ChatSearchSheet";
 // import {
 //   Tooltip,
 //   TooltipContent,
@@ -56,19 +65,27 @@ type messageType = {
   isReceived: boolean;
 };
 
-export const GroupChatV2: React.FC = () => {
-  //   const [open, setOpen] = React.useState(false);
+const GroupChatV2: React.FC = () => {
+  // const navigate = useNavigate();
 
+  // gropchats data
   const groupChats = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupChat
   );
 
+  // group data
+  const { data } = useSelector(
+    (ChatGroups: RootState) => ChatGroups.getGroupByID
+  );
+
+  const [_, setSearchedMessageId] = useState("");
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<Array<messageType>>(groupChats.data);
   // const [messageReceived, setMessagereceived] = useState(false);
   const [chatUser, setChatUser] = useState<groupChatUserType>();
-  const { group_id } = useParams();
+  const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
+  const group_id = searchParams.get("group_id"); // Extract the value of "group_id"
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -106,6 +123,19 @@ export const GroupChatV2: React.FC = () => {
     }
   }, [group_id]);
 
+  // scroll to the selected Messages from the searchsheet
+
+  const scrollToMessage = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "center" }); // Smoothly scroll to the element
+      element.style.backgroundColor = "grey";
+      setTimeout(() => {
+        element.style.backgroundColor = "";
+      }, 2000);
+    }
+  };
+
   const handleChange = (msg: string) => {
     setMessage(msg);
     // setMessagereceived(false);
@@ -113,9 +143,9 @@ export const GroupChatV2: React.FC = () => {
 
   let groupedMessages;
 
+  const sender = JSON.parse(localStorage.getItem("user") || "");
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    const sender = JSON.parse(localStorage.getItem("user") || "");
     const payload: messageType = {
       isRead: false,
       isReceived: false,
@@ -146,229 +176,135 @@ export const GroupChatV2: React.FC = () => {
 
   return (
     <>
-      <Card className="flex flex-col grow max-sm:h-screen ">
+      <Card className="flex-2 flex-grow flex-col h-full bg-background rounded-none border-none">
         {/* Card Header */}
-        <CardHeader className="flex flex-row items-center">
-          <div className="flex items-center space-x-4">
-            <Avatar>
-              <AvatarImage src="/avatars/01.png" alt="Image" />
-              <AvatarFallback>OM</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-sm font-medium leading-none">Sofia Davis</p>
-              <p className="text-sm text-muted-foreground">m@example.com</p>
+        <CardHeader className="flex flex-row items-center bg-muted w-full py-5">
+          <div className="flex flex-row items-center  w-full  space-x-4 ">
+            <div className="flex flex-row items-center w-full space-x-4 ">
+              <div className="md:hidden">
+                <MobileChatSidebar />
+              </div>
+              <Avatar>
+                <AvatarImage src="/avatars/01.png" alt="Image" />
+                <AvatarFallback>OM</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-sm font-medium leading-none">{data?.name}</p>
+                <p className="text-sm text-muted-foreground">m@example.com</p>
+              </div>
             </div>
           </div>
-          {/* <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="ml-auto rounded-full"
-                  onClick={() => setOpen(true)}
-                >
-                  <Plus />
-                  <span className="sr-only">New message</span>
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent sideOffset={10}>New message</TooltipContent>
-            </Tooltip>
-          </TooltipProvider> */}
+          <ChatSearchSheet
+            setSearchedMessageId={setSearchedMessageId}
+            scrollToMessage={scrollToMessage}
+          />
         </CardHeader>
 
         {/* Card Content */}
-        <CardContent className="flex-grow ">
-          <div className="flex-1 flex flex-col-reverse overflow-y-auto max-sm:h-[25rem] md:h-[25.5rem] lg:h-[25.6rem] xl:h-[32rem]">
+        <CardContent className="flex-grow overflow-y-auto relative bg-background text-muted-foreground">
+          <div
+            className="flex flex-col-reverse overflow-y-auto 
+      h-[20rem] sm:h-[25rem] md:h-[25.5rem] lg:h-[25.6rem] xl:h-[32rem] 
+      p-2 sm:p-4 md:p-6"
+          >
             <div ref={messagesEndRef} />
             {messages.length !== 0 ? (
-              <div className="flex flex-col gap-2  p-2">
-                {
-                  // Render the grouped messages
-                  Object.entries(groupedMessages).map(
-                    ([date, messagesForDate]) => {
-                      if (messagesForDate[0].group_id === group_id) {
-                        return (
-                          <React.Fragment key={date}>
-                            <div className="">
-                              {/* Date Header */}
-                              <div className="flex flex-row justify-center items-center w-full sticky top-0">
-                                <div className="p-1 px-3  text my-4 text-xs bg-[#18181B] rounded-xl text-white">
-                                  {date}
-                                </div>
-                              </div>
-
-                              {/* Messages for the Date */}
-                              <div className="flex flex-col gap-2">
-                                {messagesForDate
-                                  .filter((message) =>
-                                    message.message.toLowerCase().includes("")
-                                  )
-                                  .map((item) => {
-                                    return (
-                                      <>
-                                        <div
-                                          key={item?._id}
-                                          //   className={`rounded-lg p-2 inline-block max-w-[45%] ${
-                                          //     item.name === chatUser?.name
-                                          //       ? "bg-primary text-primary-foreground self-end"
-                                          //       : "bg-gradient-to-r from-gray-200 to-gray-300 text-black self-start"
-                                          //   }`}
-                                          className={cn(
-                                            "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
-                                            item.name === chatUser?.name
-                                              ? "ml-auto bg-primary text-primary-foreground"
-                                              : "bg-muted"
-                                          )}
-                                        >
-                                          <span className="break-words">
-                                            {item.message}
-                                          </span>
-                                          <div className="flex flex-row justify-end">
-                                            <div className="text-[11px] flex flex-row items-center gap-2">
-                                              {new Date(
-                                                item.createdAt
-                                              ).toLocaleTimeString([], {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                              })}
-                                              {item.isReceived ? (
-                                                <CheckCheck />
-                                              ) : (
-                                                <CheckIcon />
-                                              )}
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </>
-                                    );
-                                  })}
+              <div className="flex flex-col gap-2 p-2 z-20">
+                {/* Render the grouped messages */}
+                {Object.entries(groupedMessages).map(
+                  ([date, messagesForDate]) => {
+                    if (messagesForDate[0].group_id === group_id) {
+                      return (
+                        <React.Fragment key={date}>
+                          <div className="text-background">
+                            {/* Date Header */}
+                            <div className="flex flex-row justify-center items-center w-full sticky top-0 ">
+                              <div className="p-1 px-3 my-4 text-xs bg-[#18181B] rounded-xl text-foreground ">
+                                {date}
                               </div>
                             </div>
-                          </React.Fragment>
-                        );
-                      }
+
+                            {/* Messages for the Date */}
+                            <div className="flex flex-col gap-2 ">
+                              {messagesForDate.map((item) => (
+                                <div
+                                  id={item._id}
+                                  key={item?._id}
+                                  className={cn(
+                                    "flex w-max max-w-96 flex-col gap-2 rounded-lg px-3 py-2 text-sm ",
+                                    item.name === chatUser?.name
+                                      ? "ml-auto bg-primary text-primary-foreground"
+                                      : "bg-muted"
+                                  )}
+                                >
+                                  <span className="font-bold text-blue-500 text-xs">
+                                    {sender.name}
+                                  </span>
+                                  <span className="break-words text-md">
+                                    {item.message}
+                                  </span>
+                                  <span className="break-words">{}</span>
+                                  <div className="flex flex-row justify-end">
+                                    <div className="text-[11px] flex flex-row items-center gap-2">
+                                      {new Date(
+                                        item.createdAt
+                                      ).toLocaleTimeString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })}
+                                      {item.isReceived ? (
+                                        <CheckCheck />
+                                      ) : (
+                                        <CheckIcon />
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      );
                     }
-                  )
-                }
+                  }
+                )}
               </div>
             ) : (
-              <div className="flex flex-row justify-center items-center bg-gradient-to-r from-blue-400 to-blue-600 rounded-md">
-                <div>
-                  <p className="text-white font-bold">
-                    Start new conversation...{" "}
-                  </p>
-                </div>
+              <div className="text-foreground bg-background flex flex-row justify-center items-center rounded-md">
+                <p className="font-bold">Start new conversation...</p>
               </div>
             )}
           </div>
         </CardContent>
 
         {/* Card Footer */}
-        <CardFooter>
-          <form
-            onSubmit={handleSubmit}
-            className="flex w-full items-center space-x-2"
-          >
-            <Input
+        <CardFooter className="sticky bottom-0 bg-muted py-4 gap-2">
+          <Plus size={30} className="text-foreground hover:cursor-pointer" />
+          <div className="flex flex-row items-center p-2 bg-[#202C33] border-none w-full rounded-xl gap-2 ">
+            <Sticker className="text-muted-foreground  hover:cursor-pointer" />
+            <input
               id="message"
               placeholder="Type your message..."
-              className="flex-1"
+              className=" w-full bg-[#202C33] border-none outline-none text-muted-foreground p-1 text-base  outline-0"
               autoComplete="off"
               value={message}
               onChange={(e) => handleChange(e.target.value)}
             />
-            <Button type="submit" size="icon" disabled={message.length === 0}>
-              <Send />
-              <span className="sr-only">Send</span>
+            <Button
+              onClick={handleSubmit}
+              size="icon"
+              className="bg-background "
+              disabled={message.length === 0}
+            >
+              <Send className="text-foreground hover:cursor-pointer" />
             </Button>
-          </form>
+          </div>
+          <MicIcon className="text-muted-foreground hover:cursor-pointer" />
         </CardFooter>
       </Card>
-
-      {/* <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="gap-0 p-0 outline-none">
-          <DialogHeader className="px-4 pb-4 pt-5">
-            <DialogTitle>New message</DialogTitle>
-            <DialogDescription>
-              Invite a user to this thread. This will create a new group
-              message.
-            </DialogDescription>
-          </DialogHeader>
-          <Command className="overflow-hidden rounded-t-none border-t bg-transparent">
-            <CommandInput placeholder="Search user..." />
-            <CommandList>
-              <CommandEmpty>No users found.</CommandEmpty>
-              <CommandGroup className="p-2">
-                {users.map((user) => (
-                  <CommandItem
-                    key={user.email}
-                    className="flex items-center px-2"
-                    onSelect={() => {
-                      if (selectedUsers.includes(user)) {
-                        return setSelectedUsers(
-                          selectedUsers.filter(
-                            (selectedUser) => selectedUser !== user
-                          )
-                        )
-                      }
-
-                      return setSelectedUsers(
-                        [...users].filter((u) =>
-                          [...selectedUsers, user].includes(u)
-                        )
-                      )
-                    }}
-                  >
-                    <Avatar>
-                      <AvatarImage src={user.avatar} alt="Image" />
-                      <AvatarFallback>{user.name[0]}</AvatarFallback>
-                    </Avatar>
-                    <div className="ml-2">
-                      <p className="text-sm font-medium leading-none">
-                        {user.name}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {user.email}
-                      </p>
-                    </div>
-                    {selectedUsers.includes(user) ? (
-                      <Check className="ml-auto flex h-5 w-5 text-primary" />
-                    ) : null}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-          <DialogFooter className="flex items-center border-t p-4 sm:justify-between">
-            {selectedUsers.length > 0 ? (
-              <div className="flex -space-x-2 overflow-hidden">
-                {selectedUsers.map((user) => (
-                  <Avatar
-                    key={user.email}
-                    className="inline-block border-2 border-background"
-                  >
-                    <AvatarImage src={user.avatar} />
-                    <AvatarFallback>{user.name[0]}</AvatarFallback>
-                  </Avatar>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">
-                Select users to add to this thread.
-              </p>
-            )}
-            <Button
-              disabled={selectedUsers.length < 2}
-              onClick={() => {
-                setOpen(false)
-              }}
-            >
-              Continue
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog> */}
+      <p className="text-foreground bg-background"> </p>
     </>
   );
 };
+
+export default GroupChatV2;

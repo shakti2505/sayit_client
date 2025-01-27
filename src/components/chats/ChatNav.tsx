@@ -3,11 +3,9 @@ import MobileChatSidebar from "./MobileChatSideBar";
 import type { RootState } from "../../store/store"; // Import AppDispatch type
 import { useSelector } from "react-redux";
 
-interface ChatNavProps {
-  setSerchMessage: (query: string) => void; // Function taking a string and returning void
-}
 
-const ChatNav: React.FC<ChatNavProps> = ({ setSerchMessage }: ChatNavProps) => {
+
+const ChatNav: React.FC = () => {
   const { data } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupByID
   );
@@ -22,14 +20,6 @@ const ChatNav: React.FC<ChatNavProps> = ({ setSerchMessage }: ChatNavProps) => {
           {data?.name}
         </h1>
         <p></p>
-      </div>
-      <div>
-        <input
-          onChange={(e) => setSerchMessage(e.target.value)}
-          type="text"
-          placeholder="Search"
-          className="outline-none bg-[#F4F4F5] rounded-full p-1 px-2 text-md w-24 transform transition-all duration-150 hover:w-28 focus:w-32 focus:ring-2 focus:ring-blue-500 ease-in-out"
-        />
       </div>
     </nav>
   );

@@ -1,15 +1,29 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo } from "react";
 import { getSocket } from "../../../lib/socket.config";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import ChatSidebar from "../ChatSideBar";
+// import { useNavigate } from "react-router-dom";
+import { getGroupsByID } from "../services/chatGroupServices";
+import type { AppDispatch } from "../../../store/store"; // Import AppDispatch type
+import { useDispatch } from "react-redux";
+import { getGroupChatsByID } from "../services/groupChatsServices";
 // import ChatNav from "../ChatNav";
-import ChatUserDialog from "../ChatUserDialog";
-// import GroupChats from "./GroupChats";
-import { GroupChatV2 } from "./GroupChatsV2";
+// import ChatUserDialog from "../ChatUserDialog";
+// const ChatUserDialog = lazy(() => import("../ChatUserDialog"));
 
+// import GroupChats from "./GroupChats";
+// import { GroupChatV2 } from "./GroupChatsV2";
+
+const GroupChatV2 = lazy(() => import("./GroupChatsV2"));
 export const ChatBase = () => {
-  const { group_id } = useParams();
-  const [openAddNewUserDialog, setopenAddNewUserDialog] = useState(true);
+  // const navigate = useNavigate();
+  const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
+  const group_id = searchParams.get("group_id"); // Extract the value of "group_id"
+
+  const useAppDispatch: () => AppDispatch = useDispatch;
+  const dispatch = useAppDispatch(); // Typed dispatch
+  // fetching groups chat by id  const { group_id } = useParams();
+  // const [openAddNewUserDialog, setopenAddNewUserDialog] = useState(true);
   // const [searchMessage, setSearchMessage] = useState("");
 
   let socket = useMemo(() => {
@@ -37,22 +51,37 @@ export const ChatBase = () => {
     };
   }, [socket]);
 
+  // useEffect(() => {
+  //   if (!group_id) {
+  //     navigate("/not-found");
+  //   }
+  // }, [group_id, navigate]);
+
+  useEffect(() => {
+    if (group_id) {
+      dispatch(getGroupsByID(group_id));
+      dispatch(getGroupChatsByID(group_id));
+    }
+  }, [group_id]);
+
   // const handleClick = () => {
   //   socket.emit("message", { name: "shakti" });
   // };
 
   return (
-    <div className="flex">
+    <div className="flex bg-background">
       <ChatSidebar />
-      <GroupChatV2 />
-
-      {openAddNewUserDialog && (
-        <ChatUserDialog
-          open={openAddNewUserDialog}
-          setOpen={setopenAddNewUserDialog}
-        />
-      )}
-
+      <Suspense fallback={<div>Loading...</div>}>
+        <GroupChatV2 />
+      </Suspense>
+      {/* {openAddNewUserDialog && (
+        <Suspense fallback={<div>Loading...</div>}>
+          <ChatUserDialog
+            open={openAddNewUserDialog}
+            setOpen={setopenAddNewUserDialog}
+          />
+        </Suspense>
+      )} */}
       {/* <GroupChats searchMessage={searchMessage} /> */}
     </div>
   );

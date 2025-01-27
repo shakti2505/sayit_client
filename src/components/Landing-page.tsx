@@ -10,7 +10,6 @@ interface Props {
 }
 
 const LandingPage: React.FC<Props> = () => {
-    // window.crypto.subtle
     return (
         <div className="min-h-screen flex flex-col ">
             <Navbar/>

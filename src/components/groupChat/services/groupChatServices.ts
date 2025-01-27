@@ -44,13 +44,14 @@ export const createChatGroup =
           },
         }
       );
-      console.log("create chat group data", data);
       dispatch(createGroupChatSuccess(data));
       const groupUserPayload = {
         name: logged_in_user_data.name,
         group_id: data.data._id,
         user_id: data.data.group_admin,
       };
+      // get groups of user;
+      await dispatch(getGroups());
       // adding group admin to the group memeber's
       await dispatch(addNewUserToGroup(groupUserPayload));
       toast.success(data?.message);

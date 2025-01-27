@@ -27,3 +27,11 @@ export const GENERATE_GROUP_LINK = (group_id: string) => {
 export const GOOGLE_AUTH_URL = (authCode: string, key: string) => {
   return `${BASE_URL}/auth/google?code=${authCode}&key=${key}`;
 };
+export const GET_MESSAGES_BY_SEARCH = (
+  group_id: String,
+  queryMessage: string,
+  page: number,
+  limit = 20
+) => {
+  return `${API_URL}/search-messages?group_id=${group_id}&queryMessage=${queryMessage}&page=${page}&limit=${limit}`;
+};

@@ -7,7 +7,9 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import { Toaster } from "../src/components/ui/sonner";
-import ChatPage from "./components/chats/pages/ChatPage";
+// import ChatPage from "./components/chats/pages/ChatPage";
+import ChatBase from "./components/chats/pages/ChatBase";
+// import { ThemeProvider } from "@/components/theme-provider"
 
 function App() {
   return (
@@ -24,13 +26,13 @@ function App() {
           }
         />
         <Route
-          path="/chats/:group_id"
+          path="/chats"
           element={
-            <ChatPage />
+            <ChatBase />
           }
         />
       </Routes>
-      <Toaster richColors duration={1000} />
+      <Toaster duration={1000} />
     </Provider>
   );
 }
