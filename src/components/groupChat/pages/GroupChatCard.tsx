@@ -19,14 +19,13 @@ import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 // import arrowSvg from "../../assets/arrow_upright.svg";
 
 interface GroupChatCardProps {
-  LastMessgesOfGroup: {
-    message: string;
-    date: string;
-  };
+  // LastMessgesOfGroup: {
+  //   message: string;
+  //   date: string;
+  // };
 }
 
 const GroupChatCard: React.FC<GroupChatCardProps> = ({
-  LastMessgesOfGroup,
 }) => {
   const navigate = useNavigate();
   const [openEditDialog, setOpenEditDiolog] = useState(false);
@@ -177,7 +176,7 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({
                           <div className="flex flex-col gap-1  w-full p-2 ">
                             <CardTitle>{item.name}</CardTitle>
                             <CardDescription>
-                              {LastMessgesOfGroup.message.slice(0, 10)}
+                              {/* {LastMessgesOfGroup.message.slice(0, 10)} */}
                             </CardDescription>
                           </div>
                         </div>

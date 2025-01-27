@@ -130,7 +130,7 @@ const ChatSidebar: React.FC<Props> = () => {
         <TabsContent value="password">.</TabsContent>
         <TabsContent value="groups">
           {" "}
-          <GroupChatCard LastMessgesOfGroup={LastMessgesOfGroup} />
+          <GroupChatCard  />
         </TabsContent>
       </Tabs>
     </div>
