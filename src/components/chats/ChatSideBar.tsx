@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import type { AppDispatch } from "../../store/store"; // Import AppDispatch type
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { getAllGroupUsers } from "./services/chatGroupServices";
 import { useParams } from "react-router-dom";
-import type { RootState } from "../../store/store"; // Import AppDispatch type
+// import type { RootState } from "../../store/store"; // Import AppDispatch type
 // import User_skeleton_loader from "../common/Skeleton loader/User_skeleton_loader";
 // import {
 //   Avatar,
@@ -35,11 +35,6 @@ interface Props {
 }
 
 const ChatSidebar: React.FC<Props> = () => {
-  const [LastMessgesOfGroup, setLastMessageOfGroup] = useState({
-    message: "",
-    date: "",
-  });
-
   // const navigate = useNavigate();
   const { group_id } = useParams();
   const useAppDispatch: () => AppDispatch = useDispatch;
@@ -48,9 +43,6 @@ const ChatSidebar: React.FC<Props> = () => {
   //   (ChatGroupUsers: RootState) => ChatGroupUsers.getAllGroupUsers
   // );
 
-  const groupChats = useSelector(
-    (ChatGroups: RootState) => ChatGroups.getGroupChat
-  );
   // const [user, setUser] = useState<{ name: string; image: string } | null>(
   //   null
   // );
@@ -58,21 +50,6 @@ const ChatSidebar: React.FC<Props> = () => {
   useEffect(() => {
     if (group_id) {
       dispatch(getAllGroupUsers(group_id));
-    }
-  }, []);
-
-  useEffect(() => {
-    // const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-    // setUser(storedUser);
-
-    // setting last message of the group to show in sidebar
-    if (groupChats.data.length > 0) {
-      setLastMessageOfGroup({
-        message: groupChats.data[groupChats.data.length - 1].message,
-        date: new Date(
-          groupChats.data[groupChats.data.length - 1].createdAt
-        ).toISOString(),
-      });
     }
   }, []);
 
@@ -130,7 +107,7 @@ const ChatSidebar: React.FC<Props> = () => {
         <TabsContent value="password">.</TabsContent>
         <TabsContent value="groups">
           {" "}
-          <GroupChatCard  />
+          <GroupChatCard />
         </TabsContent>
       </Tabs>
     </div>
