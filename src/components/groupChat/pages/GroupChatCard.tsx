@@ -21,7 +21,6 @@ import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 interface GroupChatCardProps {
   LastMessgesOfGroup: {
     message: string;
-
     date: string;
   };
 }
@@ -60,7 +59,6 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({
 
   useEffect(() => {
     dispatch(getGroups());
-    console.log("LastMessgesOfGroup.message", LastMessgesOfGroup.message);
   }, []);
 
   return (
