@@ -48,7 +48,7 @@ const CreateChatGroup: React.FC = () => {
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
   const [open, setOpen] = useState(false);
   const [openGroupPicAndNameComponent, setOpenGroupPicAndNameComponent] =
-    useState(true);
+    useState(false);
   // using the state from coponent slice
   const { loading } = useSelector(
     (creteChatGroupState: RootState) => creteChatGroupState.createChatGroupApi
