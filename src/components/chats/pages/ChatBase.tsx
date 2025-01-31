@@ -1,7 +1,6 @@
-import { lazy, Suspense, useEffect, useMemo } from "react";
+import { lazy, useEffect, useMemo } from "react";
 import { getSocket } from "../../../lib/socket.config";
 import { useSearchParams } from "react-router-dom";
-import ChatSidebar from "../ChatSideBar";
 // import { useNavigate } from "react-router-dom";
 import { getGroupsByID } from "../services/chatGroupServices";
 import type { AppDispatch } from "../../../store/store"; // Import AppDispatch type
@@ -16,7 +15,6 @@ import { getGroupChatsByID } from "../services/groupChatsServices";
 
 import {
   SidebarProvider,
-  SidebarTrigger,
 } from "../../../components/ui/sidebar";
 import { AppSidebar } from "../../AppSidebar";
 

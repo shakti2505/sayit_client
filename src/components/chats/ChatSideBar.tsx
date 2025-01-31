@@ -20,7 +20,6 @@ import { useParams } from "react-router-dom";
 
 // import { ArrowLeft, UsersRound } from "lucide-react";
 import GroupChatCard from "../groupChat/pages/GroupChatCard";
-import { Search } from "lucide-react";
 import {
   Tabs,
   TabsContent,

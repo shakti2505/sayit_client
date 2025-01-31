@@ -15,7 +15,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../../../store/store"; // Import AppDispatch type
 import { getMessgesBySearch } from "../services/groupChatsServices";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Button } from "../../ui/button";
 import { debounce } from "../../../utils/resuableFunctions";
 

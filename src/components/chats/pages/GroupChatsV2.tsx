@@ -14,8 +14,8 @@ import { Button } from "../../ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "../../ui/card";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getSocket } from "../../../lib/socket.config";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../../../store/store"; // Import AppDispatch type
+import {  useSelector } from "react-redux";
+import type { RootState } from "../../../store/store"; // Import AppDispatch type
 import { useSearchParams } from "react-router-dom";
 // import {
 //   Command,
@@ -35,8 +35,8 @@ import { useSearchParams } from "react-router-dom";
 // } from "../../ui/dialog";
 import MobileChatSidebar from "../MobileChatSideBar";
 import ChatSearchSheet from "./ChatSearchSheet";
-import { SidebarTrigger } from "../../ui/sidebar";
-import { getGroupChatsByID } from "../services/groupChatsServices";
+// import { SidebarTrigger } from "../../ui/sidebar";
+// import { getGroupChatsByID } from "../services/groupChatsServices";
 
 // import {
 //   Tooltip,
@@ -95,8 +95,8 @@ const GroupChatV2: React.FC = () => {
   const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
   const group_id = searchParams.get("group_id"); // Extract the value of "group_id"
 
-  const useAppDispatch: () => AppDispatch = useDispatch;
-  const dispatch = useAppDispatch(); // Typed dispatch
+  // const useAppDispatch: () => AppDispatch = useDispatch;
+  // const dispatch = useAppDispatch(); // Typed dispatch
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
