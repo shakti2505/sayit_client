@@ -54,8 +54,8 @@ const ChatSidebar: React.FC<Props> = () => {
   }, []);
 
   return (
-    <div className="flex-1 hidden md:block overflow-y-auto h-screen w-1/5  px-2 bg-background border-r-slate-600 border-r">
-      <div className="flex flex-row px-8   items-center py-2 w-full">
+    <div className="flex-1 hidden md:block overflow-y-auto h-screen bg-background border-r-slate-600 border-r">
+      <div className="flex flex-row px-8 items-center w-full">
         {/* <button
           onClick={() => navigate("/dashboard")}
           className="cursor-pointer duration-200 hover:scale-125 active:scale-100"
@@ -63,21 +63,9 @@ const ChatSidebar: React.FC<Props> = () => {
         >
           <ArrowLeft />
         </button> */}
-        <div>
-          <p className="text-lg font-bold">Chats</p>
-        </div>
       </div>
-      <div className="rounded-lg flex p-2 mx-5  bg-[#202C33] border-none">
-        <Search />
-        <input
-          type="text"
-          className=" w-full bg-[#202C33] border-none outline-none text-muted-foreground pl-2 text-base font-semibold outline-0"
-          placeholder=""
-          id=""
-        />
-      </div>
-      <Tabs defaultValue="groups" className="p-2 ml-3 ">
-        <TabsList className="gap-1 bg-background">
+      <Tabs defaultValue="groups" >
+        <TabsList className="gap-1 bg-background fixed">
           <TabsTrigger className="rounded-full font-thin bg-muted" value="all">
             All
           </TabsTrigger>

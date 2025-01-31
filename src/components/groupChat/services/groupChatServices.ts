@@ -30,9 +30,7 @@ const userData = localStorage.getItem("user");
 const logged_in_user_data = userData ? JSON.parse(userData) : null;
 
 // api call for the create chat group api
-export const createChatGroup =
-  (payload: createChatSchemaType, token: string) =>
-  async (dispatch: AppDispatch) => {
+export const createChatGroup =(payload: createChatSchemaType, token: string) =>async (dispatch: AppDispatch) => {
     dispatch(createGroupChatStart());
     try {
       const { data } = await axios.post(

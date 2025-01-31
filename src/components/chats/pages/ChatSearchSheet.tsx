@@ -15,7 +15,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../../../store/store"; // Import AppDispatch type
 import { getMessgesBySearch } from "../services/groupChatsServices";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Button } from "../../ui/button";
 import { debounce } from "../../../utils/resuableFunctions";
 
@@ -29,7 +29,8 @@ const ChatSearchSheet: React.FC<ChatSearchSheetProps> = ({
 }: ChatSearchSheetProps) => {
   const useAppDispatch: () => AppDispatch = useDispatch;
   const dispatch = useAppDispatch(); // Typed dispatch
-  const { group_id } = useParams();
+  const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
+  const group_id = searchParams.get("group_id"); // Extract the value of "group_id"
 
   const { queryMessages, loading } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getQueryMessages
@@ -86,7 +87,7 @@ const ChatSearchSheet: React.FC<ChatSearchSheetProps> = ({
                 value={query}
                 type="text"
                 className=" w-full bg-[#202C33] border-none outline-none text-muted-foreground pl-2 text-base font-semibold outline-0"
-                placeholder=""
+                placeholder="Search messages"
                 id=""
               />
               {loading ? (

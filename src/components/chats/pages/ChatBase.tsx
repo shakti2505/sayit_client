@@ -14,6 +14,12 @@ import { getGroupChatsByID } from "../services/groupChatsServices";
 // import GroupChats from "./GroupChats";
 // import { GroupChatV2 } from "./GroupChatsV2";
 
+import {
+  SidebarProvider,
+  SidebarTrigger,
+} from "../../../components/ui/sidebar";
+import { AppSidebar } from "../../AppSidebar";
+
 const GroupChatV2 = lazy(() => import("./GroupChatsV2"));
 export const ChatBase = () => {
   // const navigate = useNavigate();
@@ -69,21 +75,26 @@ export const ChatBase = () => {
   // };
 
   return (
-    <div className="flex bg-background">
-      <ChatSidebar />
-      <Suspense fallback={<div>Loading...</div>}>
+    // <div className="flex bg-background">
+    //   <Suspense fallback={<div>Loading...</div>}>
+    //     <GroupChatV2 />
+    //   </Suspense>
+    //   {/* {openAddNewUserDialog && (
+    //     <Suspense fallback={<div>Loading...</div>}>
+    //       <ChatUserDialog
+    //         open={openAddNewUserDialog}
+    //         setOpen={setopenAddNewUserDialog}
+    //       />
+    //     </Suspense>
+    //   )} */}
+    //   {/* <GroupChats searchMessage={searchMessage} /> */}
+    // </div>
+    <>
+      <SidebarProvider>
+        <AppSidebar />
         <GroupChatV2 />
-      </Suspense>
-      {/* {openAddNewUserDialog && (
-        <Suspense fallback={<div>Loading...</div>}>
-          <ChatUserDialog
-            open={openAddNewUserDialog}
-            setOpen={setopenAddNewUserDialog}
-          />
-        </Suspense>
-      )} */}
-      {/* <GroupChats searchMessage={searchMessage} /> */}
-    </div>
+      </SidebarProvider>
+    </>
   );
 };
 

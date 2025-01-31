@@ -35,3 +35,14 @@ export const GET_MESSAGES_BY_SEARCH = (
 ) => {
   return `${API_URL}/search-messages?group_id=${group_id}&queryMessage=${queryMessage}&page=${page}&limit=${limit}`;
 };
+
+export const SEARCH_NEW_USER = (query: string) => {
+  if (query.endsWith("gmail.com")) {
+    return API_URL + `/search-user-by-name-or-email?email=${query}`;
+  } else {
+    return API_URL + `/search-user-by-name-or-email?name=${query}`;
+  }
+};
+
+export const ADD_NEW_CONTACT = API_URL + "/add-new-contact";
+export const GET_USERS_CONTACTS = API_URL + "/get-all-contacts-of-user";

@@ -27,6 +27,13 @@ import getQueryMessgesReducer, {
   QueryMessageState,
 } from "../components/chats/slices/queryMessagesSlice";
 
+import NewUserReducer, {
+  AddNewUserState,
+} from "../components/Contacts/slices/addNewContactSlice";
+
+import getUserContactReducer, {
+  UserContactState,
+} from "../components/Contacts/slices/getAllContactsSlice";
 const rootReducer = combineReducers({
   auth: authReducer,
   createChatGroupApi: createChatGroupReducer,
@@ -37,6 +44,8 @@ const rootReducer = combineReducers({
   addNewUserToGroup: getAddNewUsertoGroupReducer,
   getGroupChat: getChatsReducer,
   getQueryMessages: getQueryMessgesReducer,
+  SearchNewUserReducer: NewUserReducer,
+  getUserContacts: getUserContactReducer,
 });
 
 export default rootReducer;
@@ -52,4 +61,6 @@ export interface RootState {
   addNewUserToState: NewUserState;
   getGroupChatState: getGroupChatState;
   getQueryMessagesState: QueryMessageState;
+  SearchNewUserState: AddNewUserState;
+  getUserContactState: UserContactState;
 }
