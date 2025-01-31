@@ -14,7 +14,7 @@ import { Button } from "../../ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "../../ui/card";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getSocket } from "../../../lib/socket.config";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store"; // Import AppDispatch type
 import { useSearchParams } from "react-router-dom";
 // import {
@@ -218,11 +218,13 @@ const GroupChatV2: React.FC = () => {
                       <React.Fragment key={item._id}>
                         <div className="text-background">
                           {/* Date Header */}
-                          <div className="flex flex-row justify-center items-center w-full sticky top-0 ">
-                            <div className="p-1 px-3 my-4 text-xs bg-muted rounded-xl text-foreground ">
-                              {item._id}
+                          {item._id && (
+                            <div className="flex flex-row justify-center items-center w-full sticky top-0 ">
+                              <div className="p-1 px-3 my-4 text-xs bg-muted rounded-xl text-foreground ">
+                                {item._id}
+                              </div>
                             </div>
-                          </div>
+                          )}
 
                           {/* Messages for the Date */}
                           <div className="flex flex-col gap-2 ">
@@ -233,8 +235,8 @@ const GroupChatV2: React.FC = () => {
                                 className={cn(
                                   "flex w-max max-w-96 flex-col gap-2 rounded-lg px-3 py-2 text-sm ",
                                   message.name === chatUser?.name
-                                    ? "ml-auto bg-[hsl(var(--muted))] text-foreground "
-                                    : "bg-muted"
+                                    ? "ml-auto  bg-[hsl(var(--muted))] text-foreground "
+                                    : " bg-muted text-foreground "
                                 )}
                               >
                                 <span className="font-bold text-blue-500 text-xs">
