@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import {
   ArchiveX,
-  Command,
   File,
   Inbox,
   Send,
@@ -39,8 +38,8 @@ import {
 } from "../components/ui/tabs";
 import AddNewContact from "./Contacts/pages/AddNewContact";
 import UsersContacts from "./Contacts/pages/UsersContacts";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState, AppDispatch } from "../store/store"; // Import AppDispatch type
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../store/store"; // Import AppDispatch type
 import { getUsersContacts } from "./Contacts/services/AddNewUserServices";
 
 // Menu items.
@@ -221,7 +220,7 @@ export function AppSidebar() {
                       }}
                       onClick={() => {
                         setActiveItem(item);
-                        const mail = data.mails.sort(() => Math.random() - 0.5);
+                        // const mail = data.mails.sort(() => Math.random() - 0.5);
                         setOpen(true);
                       }}
                       isActive={activeItem.title === item.title}

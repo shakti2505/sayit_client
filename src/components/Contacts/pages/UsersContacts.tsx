@@ -1,18 +1,16 @@
-import React, { useEffect } from "react";
-import { ScrollArea } from "../../ui/scroll-area";
+import React from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store"; // Import AppDispatch type
-import { Button } from "../../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Separator } from "../../ui/separator";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 interface Props {
   // define your props here
 }
 
 const UsersContacts: React.FC<Props> = () => {
-  const navigate = useNavigate();
+//   const navigate = useNavigate();
   const { userContacts } = useSelector(
     (UserContact: RootState) => UserContact.getUserContacts
   );

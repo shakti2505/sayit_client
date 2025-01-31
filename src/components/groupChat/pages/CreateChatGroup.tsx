@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -87,7 +87,7 @@ const CreateChatGroup: React.FC = () => {
     }
   };
 
-  const handleGroupNameAndPicComponent = () => {};
+  // const handleGroupNameAndPicComponent = () => {};
 
   return (
     <>

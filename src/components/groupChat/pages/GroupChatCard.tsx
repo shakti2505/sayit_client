@@ -6,7 +6,7 @@ import { Loader } from "lucide-react";
 // import { Button } from "../../ui/button";
 // import { toast } from "sonner";
 import EditGroup from "./EditGroup";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CreateChatGroup from "./CreateChatGroup";
 import { Card, CardDescription, CardTitle } from "../../../components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
@@ -36,9 +36,9 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
   );
 
   // gropchats data
-  const groupChats = useSelector(
-    (ChatGroups: RootState) => ChatGroups.getGroupChat
-  );
+  // const groupChats = useSelector(
+  //   (ChatGroups: RootState) => ChatGroups.getGroupChat
+  // );
 
   // const handleSearch = (query: string) => {
   //   setSearchQuery(query);
