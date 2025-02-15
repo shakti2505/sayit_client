@@ -35,7 +35,7 @@ const ChatUserDialog: React.FC<Props> = ({ open, setOpen }: Props) => {
   const [loggedInUserKey, setLoggedInUserKey] = useState("");
   const navigate = useNavigate();
 
-  const { data } = useSelector(
+  const { chatGroups } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupByID
   );
 
@@ -57,7 +57,7 @@ const ChatUserDialog: React.FC<Props> = ({ open, setOpen }: Props) => {
           user_id: loggedInUserId,
           name: newUser.name,
           group_id: group_id as string,
-          chatgroup: data?._id?.toString() || "",
+          chatgroup: chatGroups?._id?.toString() || "",
           key: loggedInUserKey,
         };
 
@@ -74,7 +74,7 @@ const ChatUserDialog: React.FC<Props> = ({ open, setOpen }: Props) => {
 
     // checing if passcode matches with the entered passcode;
 
-    if (data?.passcode !== newUser.passcode) {
+    if (chatGroups?.passcode !== newUser.passcode) {
       toast.error("Please enter correct passcode");
     } else {
       setOpen(false);
