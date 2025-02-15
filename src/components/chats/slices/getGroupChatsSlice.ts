@@ -1,31 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {groupChats} from './types/groupMessagesTypes'
 
- interface messages {
-  _id: string;
-  sender_id: string;
-  createdAt: Date;
-  group_id: string;
-  message: string;
-  name: string;
-  isRead: boolean;
-  isReceived: boolean;
-}
-[];
 
- interface groupChats {
-  _id: string;
-  messages: Array<messages>;
-}
 
 interface getGroupChatState {
-  data: Array<groupChats>;
+  groupChats: Array<groupChats>;
   loading: boolean;
   error: string | null;
 }
 
-// initita state
+// initial state
 const initialState: getGroupChatState = {
-  data: [],
+  groupChats: [],
   loading: true,
   error: null,
 };
@@ -39,7 +25,7 @@ const groupChatsSlice = createSlice({
       (state.loading = true), (state.error = null);
     },
     getGroupChatsuccess: (state, action: PayloadAction<Array<groupChats>>) => {
-      (state.loading = false), (state.data = action.payload);
+      (state.loading = false), (state.groupChats = action.payload);
     },
     getGroupChatfailure: (state, action: PayloadAction<string>) => {
       (state.loading = false), (state.error = action.payload);

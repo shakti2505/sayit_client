@@ -11,6 +11,7 @@ interface QueryMessage {
   isRead: boolean;
   isReceived: boolean;
   createdAt: string;
+  iv:string;
 }
 
 interface QueryMessageState {
@@ -45,7 +46,6 @@ const queryMessageSlice = createSlice({
       state,
       action: PayloadAction<QueryMessagesResponse>
     ) => {
-      console.log("action", action.payload.messages);
       state.loading = false;
       state.queryMessages = action.payload.messages;
       state.pagination = action.payload.pagination;

@@ -1,77 +1,80 @@
-import { lazy, useEffect, useMemo } from "react";
-import { getSocket } from "../../../lib/socket.config";
+import { lazy, useEffect, useCallback, useState } from "react";
+// import { getSocket } from "../../../lib/socket.config";
 import { useSearchParams } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 import { getGroupsByID } from "../services/chatGroupServices";
-import type { AppDispatch } from "../../../store/store"; // Import AppDispatch type
-import { useDispatch } from "react-redux";
+import type { AppDispatch, RootState } from "../../../store/store"; // Import AppDispatch type
+import { useDispatch, useSelector } from "react-redux";
 import { getGroupChatsByID } from "../services/groupChatsServices";
-// import ChatNav from "../ChatNav";
-// import ChatUserDialog from "../ChatUserDialog";
-// const ChatUserDialog = lazy(() => import("../ChatUserDialog"));
 
-// import GroupChats from "./GroupChats";
-// import { GroupChatV2 } from "./GroupChatsV2";
-
-import {
-  SidebarProvider,
-} from "../../../components/ui/sidebar";
+import { SidebarProvider } from "../../../components/ui/sidebar";
 import { AppSidebar } from "../../AppSidebar";
+import { decryptAESKey } from "../../../crypto/decrypt";
+// import ChatSearchSheet from "./ChatSearchSheet";
+
+// import { AppSidebar2 } from "../../app-sidebar";
 
 const GroupChatV2 = lazy(() => import("./GroupChatsV2"));
 export const ChatBase = () => {
+  const [aesKey, setAesKey] = useState<CryptoKey>();
+  // const [_, setSearchedMessageId] = useState("");
+
   // const navigate = useNavigate();
   const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
-  const group_id = searchParams.get("group_id"); // Extract the value of "group_id"
+  const group_id = searchParams.get("group"); // Extract the value of "group_id"
 
   const useAppDispatch: () => AppDispatch = useDispatch;
   const dispatch = useAppDispatch(); // Typed dispatch
-  // fetching groups chat by id  const { group_id } = useParams();
-  // const [openAddNewUserDialog, setopenAddNewUserDialog] = useState(true);
-  // const [searchMessage, setSearchMessage] = useState("");
 
-  let socket = useMemo(() => {
-    const socket = getSocket();
-    // adding parameters in room,  a group ID
-    socket.auth = {
-      room: group_id,
-    };
-    return socket.connect();
-  }, []);
+  const { chatGroups } = useSelector(
+    (ChatGroups: RootState) => ChatGroups.getGroupByID
+  );
 
-  useEffect(() => {
-    // listening to the event
-    socket.on("connect", () => {
-      console.log("The socket is connected");
-    });
-
-    socket.on("message", (data) => {
-      console.log("The socket message", data);
-    });
-
-    // clearing the socket connection when the component is unmounted
-    return () => {
-      socket.close();
-    };
-  }, [socket]);
-
-  // useEffect(() => {
-  //   if (!group_id) {
-  //     navigate("/not-found");
+  // const scrollToMessage = (id: string) => {
+  //   const element = document.getElementById(id);
+  //   if (element) {
+  //     element.scrollIntoView({ behavior: "smooth", block: "center" }); // Smoothly scroll to the element
+  //     element.style.backgroundColor = "grey";
+  //     setTimeout(() => {
+  //       element.style.backgroundColor = "";
+  //     }, 2000);
   //   }
-  // }, [group_id, navigate]);
+  // };
+  // decrypting AES key
+  const getDecryptedAesKey = useCallback(async () => {
+    try {
+      const user = localStorage.getItem("user");
+      const loggedInUser = user ? JSON.parse(user) : null;
+      if (loggedInUser && chatGroups) {
+        const res = chatGroups?.encryptAESKeyForGroup.find(
+          (item) => item.user_id === loggedInUser.id
+        )?.encryptedAESKey;
 
+        if (res?.length !== 0) {
+          const key = await decryptAESKey(res as string);
+          setAesKey(key);
+          return key;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [chatGroups, decryptAESKey]);
+
+  //1 fetching chats and group by ID
   useEffect(() => {
     if (group_id) {
-      dispatch(getGroupsByID(group_id));
       dispatch(getGroupChatsByID(group_id));
+      dispatch(getGroupsByID(group_id));
     }
   }, [group_id]);
 
-  // const handleClick = () => {
-  //   socket.emit("message", { name: "shakti" });
-  // };
-
+  // 2- decrypting aes key when group chats fetched and redux states updated
+  useEffect(() => {
+    if (chatGroups) {
+      getDecryptedAesKey();
+    }
+  }, [chatGroups]);
   return (
     // <div className="flex bg-background">
     //   <Suspense fallback={<div>Loading...</div>}>
@@ -90,7 +93,7 @@ export const ChatBase = () => {
     <>
       <SidebarProvider>
         <AppSidebar />
-        <GroupChatV2 />
+        {aesKey && <GroupChatV2 aesKey={aesKey} />}
       </SidebarProvider>
     </>
   );

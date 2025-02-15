@@ -70,7 +70,9 @@ const CreateChatGroup: React.FC = () => {
 
   const onSubmit = async (payload: createChatSchemaType) => {
     if (token) {
-      const res = await dispatch(createChatGroup(payload, token));
+      const res = await dispatch(
+        createChatGroup(payload, selectedUsers, token)
+      );
       if (res.message === "Group created successfully") {
         setOpen(false);
         localStorage.setItem(
@@ -248,9 +250,10 @@ const CreateChatGroup: React.FC = () => {
             }`}
           >
             <div className="w-full p-3">
-              <ArrowLeft 
-              onClick={()=>setOpenGroupPicAndNameComponent(false)}
-              className="rounded-xl hover:cursor-pointer"  />
+              <ArrowLeft
+                onClick={() => setOpenGroupPicAndNameComponent(false)}
+                className="rounded-xl hover:cursor-pointer"
+              />
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="w-96">
               <div className="mt-2 flex flex-col items-center">

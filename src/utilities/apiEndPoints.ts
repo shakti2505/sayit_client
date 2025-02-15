@@ -24,9 +24,11 @@ export const GET_GROUP_CHATS_URL = (group_id: string) => {
 export const GENERATE_GROUP_LINK = (group_id: string) => {
   return API_URL + `/generate-group-link/${group_id}`;
 };
-export const GOOGLE_AUTH_URL = (authCode: string, key: string) => {
-  return `${BASE_URL}/auth/google?code=${authCode}&key=${key}`;
+export const GOOGLE_AUTH_URL = (authCode: string) => {
+  return `${BASE_URL}/auth/google?code=${authCode}`;
 };
+export const SAVE_PUBLIC_KEY = BASE_URL + "/auth/update-public-key";
+
 export const GET_MESSAGES_BY_SEARCH = (
   group_id: String,
   queryMessage: string,

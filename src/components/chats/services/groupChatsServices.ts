@@ -21,17 +21,6 @@ import {
 } from "../../../utilities/apiEndPoints";
 import { toast } from "sonner";
 
-// save chats
-// export const saveChats = () => async (dispatch:AppDispatch) => {
-
-//     dispatch(groupChatStart());
-//     try {
-//         const {data} = await axios.post()
-//     } catch (error) {
-
-//     }
-// };
-
 // get chats
 
 export const getGroupChatsByID =

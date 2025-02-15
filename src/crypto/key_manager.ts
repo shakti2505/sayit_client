@@ -1,14 +1,11 @@
 // generating private and public keys using web crypto API
-
-import { arrayBufferTobase64 } from "./utils";
-
 export const genrateAndStoreKeyPair = async () => {
   const keyPair = await window.crypto.subtle.generateKey(
     {
       name: "RSA-OAEP",
       modulusLength: 2048,
       publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-      hash: { name: "SHA-256" },
+      hash: "SHA-256",
     },
     true, // Keys are extractable
     ["encrypt", "decrypt"]
@@ -24,31 +21,57 @@ export const genrateAndStoreKeyPair = async () => {
   await storePrivateKeyInIndexedDB(privateKey);
 
   // save publickey for sharing
-  const publicKey = await window.crypto.subtle.exportKey(
+  const exportedPublicKey = await window.crypto.subtle.exportKey(
     "spki",
     keyPair.publicKey
   );
 
-  const convertedPublicKey = arrayBufferTobase64(publicKey);
+  // Convert ArrayBuffer to a Base64 string
+  const base64Key = btoa(
+    String.fromCharCode(...new Uint8Array(exportedPublicKey))
+  );
 
-  return convertedPublicKey;
+  // const formattedKey = base64Key.match(/.{1,64}/g)?.join("\n") || base64Key;
+  return base64Key;
+  // return `-----BEGIN PUBLIC KEY-----\n${formattedKey}\n-----END PUBLIC KEY-----`;
 };
 
 // retrieve keys
 export const getPrivateKeyFromIndexedDB =
   async (): Promise<CryptoKey | null> => {
-    const db = await openIndexedDB();
-    const transaction = db.transaction("keys", "readonly");
-    const store = transaction.objectStore("keys");
-    const request = store.get("privateKey");
-
     return new Promise((resolve, reject) => {
-      request.onsuccess = () => {
-        const result = request.result;
-        resolve(result || null); // Return the result if found, otherwise null
+      const request = indexedDB.open("sayIt_Database", 1);
+      request.onsuccess = async (event) => {
+        const db = (event.target as IDBOpenDBRequest).result;
+        const transction = db.transaction("keys", "readonly");
+        const store = transction.objectStore("keys");
+        const getRequest = store.get("privateKey");
+        getRequest.onsuccess = async () => {
+          if (getRequest.result) {
+            try {
+              const privateKeyBuffer = getRequest.result;
+              const privateKey = await window.crypto.subtle.importKey(
+                "pkcs8",
+                privateKeyBuffer.key,
+                { name: "RSA-OAEP", hash:"SHA-1"},
+                
+                false, // non-extractable
+                ["decrypt"]
+              );
+              resolve(privateKey);
+            } catch (error) {
+              reject(`Failed to import private key:${error}`);
+            }
+          } else {
+            reject(null);
+          }
+        };
+        getRequest.onerror = () => {
+          reject("ERROR retrieving private key from indexed DB");
+        };
       };
       request.onerror = () => {
-        reject(new Error("Key not found in IndexedDB"));
+        reject("error opening IndexeDB");
       };
     });
   };

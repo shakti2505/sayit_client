@@ -11,6 +11,7 @@ import CreateChatGroup from "./CreateChatGroup";
 import { Card, CardDescription, CardTitle } from "../../../components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Separator } from "../../ui/separator";
+import { getGroupChatsByID } from "../../chats/services/groupChatsServices";
 
 // import arrowSvg from "../../assets/arrow_upright.svg";
 
@@ -57,6 +58,14 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
   //   setOpenEditDiolog(true);
   // };
 
+ 
+
+  const handleGetGropChatById = (groupID: string) => {
+    dispatch(getGroupChatsByID(groupID));
+    navigate(`/chats?group=${groupID}`)
+
+  };
+
   useEffect(() => {
     dispatch(getGroups());
   }, []);
@@ -74,7 +83,7 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
                   {item ? (
                     <React.Fragment key={item.group_id}>
                       <Card
-                        onClick={() => navigate(`/chats?group_id=${item._id}`)}
+                        onClick={() => handleGetGropChatById(item._id)}
                         className="border-b rounded-none border-none cursor-pointer bg-inherit  hover:bg-gray-500 active:bg-[#2A3942] focus-card"
                       >
                         {/* <CardHeader className="flex flex-row items-center justify-between gap-2">
@@ -125,13 +134,11 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
                           </Avatar>{" "}
                           <div className="flex flex-col gap-1 w-full p-1 ">
                             <CardTitle>{item.name}</CardTitle>
-                            <CardDescription className="text-foreground">
-                            </CardDescription>
+                            <CardDescription className="text-foreground"></CardDescription>
                           </div>
                         </div>
                       </Card>
-                      <Separator/>
-
+                      <Separator />
                     </React.Fragment>
                   ) : (
                     <p>No group found</p>
