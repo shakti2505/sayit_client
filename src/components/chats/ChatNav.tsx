@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 
 
 const ChatNav: React.FC = () => {
-  const { data } = useSelector(
+  const { chatGroups } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupByID
   );
 
@@ -17,7 +17,7 @@ const ChatNav: React.FC = () => {
           <MobileChatSidebar />
         </div>
         <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-600 text-transparent bg-clip-text">
-          {data?.name}
+          {chatGroups?.name}
         </h1>
         <p></p>
       </div>
