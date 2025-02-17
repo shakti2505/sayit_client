@@ -48,3 +48,8 @@ export const SEARCH_NEW_USER = (query: string) => {
 
 export const ADD_NEW_CONTACT = API_URL + "/add-new-contact";
 export const GET_USERS_CONTACTS = API_URL + "/get-all-contacts-of-user";
+
+// update message status is read to true
+export const UPDATE_MESSAGE_STATUS = (messageId: string) => {
+  return API_URL + `/update-message-status/${messageId}`;
+};

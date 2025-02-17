@@ -24,7 +24,6 @@ const ChatPage: React.FC<ChatPageProps> = () => {
   }, [group_id, navigate]);
 
   useEffect(() => {
-    alert(group_id)
     if (group_id) {
       dispatch(getGroupsByID(group_id));
       dispatch(getGroupChatsByID(group_id));

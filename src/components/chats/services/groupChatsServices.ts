@@ -18,6 +18,7 @@ import { AppDispatch } from "../../../store/store";
 import {
   GET_GROUP_CHATS_URL,
   GET_MESSAGES_BY_SEARCH,
+  UPDATE_MESSAGE_STATUS,
 } from "../../../utilities/apiEndPoints";
 import { toast } from "sonner";
 
@@ -53,3 +54,24 @@ export const getMessgesBySearch =
       return error;
     }
   };
+
+export const updateMessgeStatus = async (messageId: string) => {
+  try {
+    const res = await axios.patch(
+      UPDATE_MESSAGE_STATUS(messageId),
+      {
+        isRead: true,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    if (res.status !== 200) {
+      toast.error("unable to update message status");
+    } else {
+      return true
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

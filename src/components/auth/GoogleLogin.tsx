@@ -49,7 +49,6 @@ const GoogleLogin: React.FC = () => {
         if (groupid) {
           navigate(`/chats?group_id=${groupid}`);
         } else {
-          alert('to chats')
           navigate("/chats");
         }
       }

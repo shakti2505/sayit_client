@@ -17,7 +17,7 @@ export interface groupData {
   name: string;
   user_id: string;
   passcode: string;
-  created_At: string;
+  createdAt: string;
   members: Array<GroupMembers>;
   encryptAESKeyForGroup: Array<encryptAESKeysData>;
 }

@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Send,
-  CheckCheck,
-  CheckIcon,
-  Plus,
-  MicIcon,
-  Sticker,
-  Search,
-} from "lucide-react";
+import { Send, CheckCheck, Plus, MicIcon, Sticker, Search } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
@@ -21,22 +13,13 @@ import MobileChatSidebar from "../MobileChatSideBar";
 import ChatSearchSheet from "./ChatSearchSheet";
 import { decryptMessage } from "../../../crypto/decrypt";
 import { encryptMessageWithAES } from "../../../crypto/encrypt";
+// import { updateMessgeStatus } from "../services/groupChatsServices";
+import { GroupMembers } from "../slices/types/chatGroupTypes";
+import { messages } from "../slices/types/groupMessagesTypes";
+
 // import { SheetTrigger } from "../../ui/sheet";
 
 // import Message_skeleton_Loader from "../../common/Skeleton loader/Message_skeleton_loader";
-
-interface messages {
-  _id: string;
-  sender_id: string;
-  createdAt: Date;
-  group_id: string;
-  message: string;
-  iv: string;
-  name: string;
-  isRead: boolean;
-  isReceived: boolean;
-}
-[];
 
 interface groupChats {
   _id: string;
@@ -50,6 +33,8 @@ interface GroupChatProps {
 const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   // const useAppDispatch: () => AppDispatch = useDispatch;
   // const dispatch = useAppDispatch(); // Typed dispatch
+
+  const messageRef = useRef<HTMLDivElement>(null);
 
   // group data
   const { chatGroups } = useSelector(
@@ -136,15 +121,15 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   };
 
   const sender = JSON.parse(localStorage.getItem("user") || "");
-
+  
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (aesKey) {
       const encryptedMsg = await encryptMessageWithAES(message, aesKey);
       if (encryptedMsg) {
         const payload: messages = {
-          isRead: false,
-          isReceived: false,
+          isRead: [],
+          isReceived: [],
           _id: "",
           sender_id: sender.id,
           createdAt: new Date(),
@@ -153,10 +138,12 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           name: sender.name,
           group_id: group_id ?? "",
         };
-        socket.emit("message", payload, () => {});
+        socket.emit("message", payload, (status: string) => {
+          console.log(status);
+        });
         const payloadDectypted: messages = {
-          isRead: false,
-          isReceived: false,
+          isRead: [],
+          isReceived: [],
           _id: "",
           sender_id: sender.id,
           createdAt: new Date(),
@@ -192,9 +179,10 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           data.iv,
           aesKey
         );
+        // const res = await updateMessgeStatus(data._id);
         const decryptedData: messages = {
-          isRead: data.isRead,
-          isReceived: data.isReceived,
+          isRead: [],
+          isReceived: [],
           _id: "",
           sender_id: data.sender_id,
           createdAt: data.createdAt,
@@ -207,8 +195,10 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           ...prevMessages,
           { _id: data._id, messages: [decryptedData] },
         ]);
+        // updating message status
         scrollToBottom();
       }
+      socket.emit("IsReceived", { received: true, receiverId: sender.id });
     });
 
     return () => {
@@ -218,7 +208,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
 
   return (
     <>
-      {groupChats.length > 0 ? (
+      
         <Card className="flex-2 flex-grow bg-background  overflow-y-hidden rounded-none border-none ">
           {/* Card Header */}
           <CardHeader className="flex flex-row items-center bg-muted w-full py-5 ">
@@ -240,7 +230,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                 <div className="flex flex-col items-start px-2">
                   <p className="text-sm font-medium">{chatGroups?.name}</p>
                   <div className="flex flex-row gap-2 mt-1">
-                    {chatGroups?.members.map((item) => {
+                    {chatGroups?.members.map((item: GroupMembers) => {
                       return (
                         <p className="text-xs font-medium  text-muted-foreground  ">
                           {item.member_name}
@@ -275,7 +265,6 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
         h-[20rem] sm:h-[25rem] md:h-[25.5rem] lg:h-[25.6rem] xl:h-[31.5rem] 
         p-2 sm:p-4 md:p-6"
             >
-              {/* <div ref={messagesEndRef} /> */}
               {messages.length !== 0 ? (
                 <div className="flex flex-col gap-2 p-2 z-20">
                   {/* Render the grouped messages */}
@@ -305,7 +294,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                                       id={message._id}
                                       key={message._id}
                                       className={cn(
-                                        "flex w-max max-w-96 flex-col gap-2 rounded-lg px-3 py-2 text-sm shadow-orange-100 shadow-sm",
+                                        "flex w-max max-w-96 flex-col gap-2 rounded-lg px-2 py-2 text-sm shadow-orange-100 shadow-sm",
                                         message.name === sender.name
                                           ? "bg-[hsl(var(--muted))] text-foreground self-end"
                                           : "bg-muted text-foreground self-start"
@@ -314,7 +303,11 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                                       <span className="font-bold text-blue-500 text-xs">
                                         {message.name}
                                       </span>
-                                      <span className="break-words text-md">
+                                      <span
+                                        ref={messageRef}
+                                        id="messageSpan"
+                                        className="break-words text-md"
+                                      >
                                         {message.message}
                                       </span>
                                       {/* <span className="break-words">{}</span> */}
@@ -327,9 +320,12 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                                             minute: "2-digit",
                                           })}
                                           {message.isReceived ? (
-                                            <CheckCheck />
+                                            <CheckCheck
+                                              size={15}
+                                              color="cyan"
+                                            />
                                           ) : (
-                                            <CheckIcon />
+                                            <CheckCheck size={15} />
                                           )}
                                         </div>
                                       </div>
@@ -383,11 +379,6 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
             <MicIcon className="text-muted-foreground hover:cursor-pointer" />
           </CardFooter>
         </Card>
-      ) : (
-        <div className="flex flex-col justify-center items-center w-full">
-          <div>Welcome to SayIt</div>
-        </div>
-      )}
     </>
   );
 };

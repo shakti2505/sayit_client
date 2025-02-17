@@ -17,9 +17,10 @@ import { getMessgesBySearch } from "../services/groupChatsServices";
 import { useSearchParams } from "react-router-dom";
 import { Button } from "../../ui/button";
 import { debounce } from "../../../utils/resuableFunctions";
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Separator } from "../../ui/separator";
-
+import { CardTitle, CardDescription } from "../../ui/card";
+import { Badge } from "../../ui/badge";
 interface ChatSearchSheetProps {
   setSearchedMessageId: (id: string) => void;
   scrollToMessage: (id: string) => void;
@@ -50,6 +51,11 @@ ChatSearchSheetProps) => {
     (ChatGroups: RootState) => ChatGroups.getQueryMessages
   );
   // const [messageQueryResult, setMessageQueryResult] = useState(queryMessages);
+  const { chatGroups } = useSelector(
+    (ChatGroups: RootState) => ChatGroups.getGroupByID
+  );
+
+  const admin = chatGroups?.members?.filter((item) => item.isAdmin === true);
 
   const [query, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -115,7 +121,7 @@ ChatSearchSheetProps) => {
       >
         <SheetHeader>
           <SheetTitle>{searchSheet && "Search Messages"}</SheetTitle>
-          <SheetDescription>
+          <SheetDescription className="overflow-y-auto h-screen py-5">
             {searchSheet && (
               <>
                 <div className="rounded-lg flex p-2 bg-[#202C33] border-none">
@@ -192,15 +198,59 @@ ChatSearchSheetProps) => {
                   </Avatar>{" "}
                   <div className="flex flex-col items-center gap-2">
                     <p className="text-3xl text-muted-foreground">
-                      Group Title here!
+                      {chatGroups?.name}
                     </p>
-                    <p className="text-md text-muted-foreground">2 members</p>
+                    <p className="text-md text-muted-foreground">
+                      Group {chatGroups?.members.length} members
+                    </p>
                   </div>
                 </div>
                 <Separator className="h-2 mt-2" />
-                <div className="">
-                  <p>Group created By</p>
+
+                <div className="flex flex-col justify-center gap-2 p-3 mt-2">
+                  {admin?.map((item) => (
+                    <p className="text-sm text-muted-foreground">
+                      Group created by {item.member_name}, on{" "}
+                      {new Date(
+                        chatGroups?.createdAt ? chatGroups?.createdAt : ""
+                      ).toLocaleDateString()}{" "}
+                      at{" "}
+                      {new Date(
+                        chatGroups?.createdAt ? chatGroups?.createdAt : ""
+                      ).toLocaleTimeString()}
+                    </p>
+                  ))}
                 </div>
+                <Separator className="h-2 mt-2" />
+
+                {chatGroups?.members.map((item) => (
+                  <div className="flex flex-row items-center gap-3 p-2">
+                    <Avatar>
+                      <AvatarImage
+                        className="rounded-full w-12"
+                        src={item.member_image}
+                        alt="@shadcn"
+                      />
+                      <AvatarFallback className="rounded-full p-3 text-md border">
+                        CN
+                      </AvatarFallback>
+                    </Avatar>{" "}
+                    <div className="flex flex-col gap-1 w-full p-2">
+                      <CardTitle>{item.member_name}</CardTitle>
+                      <CardDescription className="text-muted-foreground">
+                        status
+                      </CardDescription>
+                    </div>
+                    {item.isAdmin && (
+                      <Badge
+                        variant="outline"
+                        className="bg-background text-muted-foreground"
+                      >
+                        Admin
+                      </Badge>
+                    )}
+                  </div>
+                ))}
               </>
             )}
           </SheetDescription>

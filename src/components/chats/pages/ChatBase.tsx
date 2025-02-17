@@ -93,7 +93,15 @@ export const ChatBase = () => {
     <>
       <SidebarProvider>
         <AppSidebar />
-        {aesKey && <GroupChatV2 aesKey={aesKey} />}
+        {aesKey ? (
+          <GroupChatV2 aesKey={aesKey} />
+        ) : (
+          <div className="flex justify-center items-center w-full bg-background">
+            <div className="flex flex-row justify-center items-center">
+              <p className="text-9xl text-muted-foreground">Sayit</p>
+            </div>
+          </div>
+        )}
       </SidebarProvider>
     </>
   );
