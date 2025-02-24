@@ -49,7 +49,6 @@ export const ChatBase = () => {
         const res = chatGroups?.encryptAESKeyForGroup.find(
           (item) => item.user_id === loggedInUser.id
         )?.encryptedAESKey;
-
         if (res?.length !== 0) {
           const key = await decryptAESKey(res as string);
           setAesKey(key);

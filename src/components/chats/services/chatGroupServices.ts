@@ -12,6 +12,7 @@ import {
 import { AppDispatch } from "../../../store/store";
 import { toast } from "sonner";
 import {
+  ADD_CONTACTS_TO_GROUP,
   ADD_NEW_USER_TO_GROUP,
   GENERATE_GROUP_LINK,
   GET_GROUP_CHAT_BY_ID_URL,
@@ -24,6 +25,10 @@ import {
   addNewUserToGroup_success,
 } from "../slices/AddNewUserToGroupSlice";
 
+import {
+  ContactsType,
+  EncryptedAesKEyOfContactsType,
+} from "../slices/types/groupMembersType";
 // get group by ID (public);
 export const getGroupsByID = (id: string) => async (dispatch: AppDispatch) => {
   dispatch(getGroupByIdStart());
@@ -96,4 +101,30 @@ export const generateGroupLink = async (groupID: string) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+// add existing contacts to existing group
+export const addContactsToGroup = async (
+  selectedContacts: ContactsType,
+  groupId: string,
+  encryptedAesKeysOfContacts: EncryptedAesKEyOfContactsType
+) => {
+  try {
+    const res = await axios.patch(
+      ADD_CONTACTS_TO_GROUP,
+      {
+        groupId,
+        selectedContacts,
+        encryptedAesKeysOfContacts
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    if (res.status !== 201) {
+      toast.error("Unable to add contacts in group");
+    } else {
+      toast.success("Contacts added to group");
+    }
+  } catch (error) {}
 };

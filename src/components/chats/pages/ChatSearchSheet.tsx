@@ -7,7 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "../../../components/ui/sheet";
-import { Search, X } from "lucide-react";
+import { Search, X, UserPlus } from "lucide-react";
 // import { Card, CardTitle, CardDescription } from "../../ui/card";
 import { useState, useEffect, useCallback } from "react";
 // import Loader from "../../common/Loader";
@@ -21,6 +21,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Separator } from "../../ui/separator";
 import { CardTitle, CardDescription } from "../../ui/card";
 import { Badge } from "../../ui/badge";
+import AddContactToGroup from "./AddContactsToGroup";
 interface ChatSearchSheetProps {
   setSearchedMessageId: (id: string) => void;
   scrollToMessage: (id: string) => void;
@@ -40,8 +41,8 @@ const ChatSearchSheet: React.FC<ChatSearchSheetProps> = ({
   searchSheet,
   openSheet,
   setOpenSheet,
-}: // aeskey,
-ChatSearchSheetProps) => {
+  aeskey,
+}: ChatSearchSheetProps) => {
   const useAppDispatch: () => AppDispatch = useDispatch;
   const dispatch = useAppDispatch(); // Typed dispatch
   const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
@@ -223,8 +224,12 @@ ChatSearchSheetProps) => {
                 </div>
                 <Separator className="h-2 mt-2" />
 
+                {/* Button to open add members component */}
+                <AddContactToGroup aeskey={aeskey} />
+                {/* Button to add members comppnent */}
+
                 {chatGroups?.members.map((item) => (
-                  <div className="flex flex-row items-center gap-3 p-2">
+                  <div className="flex flex-row items-center gap-3 p-2 hover:bg-black/40 ">
                     <Avatar>
                       <AvatarImage
                         className="rounded-full w-12"

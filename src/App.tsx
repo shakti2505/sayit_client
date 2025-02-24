@@ -9,6 +9,7 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import { Toaster } from "../src/components/ui/sonner";
 // import ChatPage from "./components/chats/pages/ChatPage";
 import ChatBase from "./components/chats/pages/ChatBase";
+import LoginSignupPage from "./components/auth/LoginSignUpPage";
 // import { ThemeProvider } from "@/components/theme-provider"
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
     <Provider store={store}>
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/login-or-signup" element={<LoginSignupPage />} />
         <Route path="*" element={<NotFound />} />
         <Route
           path="/dashboard"
@@ -25,14 +27,9 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/chats"
-          element={
-            <ChatBase />
-          }
-        />
+        <Route path="/chats" element={<ChatBase />} />
       </Routes>
-      <Toaster duration={1000} />
+      <Toaster duration={1000} closeButton />
     </Provider>
   );
 }

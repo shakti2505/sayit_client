@@ -29,29 +29,25 @@ const Logout: React.FC<LogoutProps> = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/");  
-  }
+    navigate("/");
+  };
 
   return (
     <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            You’re one click away from freedom! 🚀
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={() => setOpen(false)}>
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction onClick={handleLogout}>
-            Continue
-          </AlertDialogAction>
+          <AlertDialogAction onClick={handleLogout}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

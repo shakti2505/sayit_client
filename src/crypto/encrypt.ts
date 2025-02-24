@@ -1,6 +1,6 @@
-
 // encrypt message with aes key
-
+import { ContactsType } from "../components/chats/slices/types/groupMembersType";
+import { importPublicKeyFromBase64 } from "./utils";
 export const encryptMessageWithAES = async (
   message: string,
   aesKey: CryptoKey
@@ -22,4 +22,44 @@ export const encryptMessageWithAES = async (
     ),
     iv: btoa(String.fromCharCode(...iv)), // converted IV to base64;
   };
+};
+
+// encrypting aes key with new contacts public key
+const encryptAESKeyWithPublicKey = async (
+  aesKey: CryptoKey,
+  UserPublicKey: string
+) => {
+  // Export AES key as raw buffer from cryptoKey format
+  const aesKeyBuffer = await window.crypto.subtle.exportKey("raw", aesKey);
+
+  // importing user's public key to crypto key use in encryption of aes key
+  const importedUsersPublicKey = await importPublicKeyFromBase64(UserPublicKey);
+  // checing availability of imported user's public key
+  if (importedUsersPublicKey) {
+    // encrypting aes key using the userspublic key
+    const encryptedAESKeyBuffer = await window.crypto.subtle.encrypt(
+      {
+        name: "RSA-OAEP",
+      },
+      importedUsersPublicKey,
+      aesKeyBuffer
+    );
+
+    // converting ecnrypted buffer to base64 and returing
+    return btoa(String.fromCharCode(...new Uint8Array(encryptedAESKeyBuffer)));
+  }
+};
+
+// function to encrypt the encrypt AES key to decrypt it again with the new group memebers public key
+export const encryptedAESkeyWithUsersPublicKey = async (
+  aesKey: CryptoKey,
+  selectedUsers: ContactsType
+) => {
+  return selectedUsers.map(async (member) => ({
+    user_id: member.contact_id, // Store user ID
+    encryptedAESKey: await encryptAESKeyWithPublicKey(
+      aesKey,
+      member.contact_public_key
+    ),
+  }));
 };

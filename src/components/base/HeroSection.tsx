@@ -18,6 +18,7 @@ const HeroSection: React.FC = () => {
       <div className="mt-12 w-full max-w-5xl flex justify-center">
         <img
           src={conversationImage}
+          loading="lazy"
           alt="Illustration"
           className="w-full h-auto bg-black"
         />

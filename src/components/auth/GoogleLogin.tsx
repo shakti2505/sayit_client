@@ -30,8 +30,6 @@ const GoogleLogin: React.FC = () => {
             user: name,
           })
         );
-        // 
-        
         // Save the user data to the local storage
         localStorage.setItem(
           "user",

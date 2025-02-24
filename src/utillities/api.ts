@@ -13,3 +13,4 @@ export const googleAuth = async (code:string) => {
     throw error; // Propagate the error to the caller
   }
 };
+ 

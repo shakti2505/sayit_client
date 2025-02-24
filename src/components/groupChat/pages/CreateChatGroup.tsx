@@ -30,7 +30,7 @@ import { createChatGroup } from "../services/groupChatServices";
 import type { AppDispatch, RootState } from "../../../store/store"; // Import AppDispatch type
 import { useUser } from "../../../utils/criticalState";
 import Loader from "../../common/Loader";
-import { Check, Camera, ArrowLeft } from "lucide-react";
+import { Check, Camera, ArrowLeft, CheckIcon } from "lucide-react";
 
 interface User {
   _id: string;
@@ -150,7 +150,7 @@ const CreateChatGroup: React.FC = () => {
           </Button>
         </DialogTrigger>
         <DialogContent
-          className="gap-0 p-0 outline-none"
+          className="gap-0 p- outline-none"
           onInteractOutside={(e) => e.preventDefault()}
         >
           <DialogHeader
@@ -158,10 +158,9 @@ const CreateChatGroup: React.FC = () => {
               openGroupPicAndNameComponent ? " hidden" : "px-4 pb-4 pt-5"
             }
           >
-            <DialogTitle>New message</DialogTitle>
+            <DialogTitle>New Group</DialogTitle>
             <DialogDescription>
-              Invite a user to this thread. This will create a new group
-              message.
+              Add contacts to this thread. This will create a new group.
             </DialogDescription>
           </DialogHeader>
           <Command
@@ -174,7 +173,7 @@ const CreateChatGroup: React.FC = () => {
             <CommandInput placeholder="Search user..." />
             <CommandList>
               <CommandEmpty>No users found.</CommandEmpty>
-              <CommandGroup className="p-2">
+              <CommandGroup className="px-2">
                 {userContacts.map((user) => (
                   <CommandItem
                     key={user._id}
@@ -273,7 +272,7 @@ const CreateChatGroup: React.FC = () => {
                 />
                 <span className="text-red-500">{errors?.name?.message}</span>
               </div>
-              <div className="mt-2 flex flex-col">
+              {/* <div className="mt-2 flex flex-col">
                 <input
                   type="number"
                   placeholder="Enter Passcode "
@@ -283,15 +282,14 @@ const CreateChatGroup: React.FC = () => {
                 <span className="text-red-500">
                   {errors?.passcode?.message}
                 </span>
-              </div>
-              <div className="mt-4 flex flex-col">
-                <Button
-                  className="w-full bg-background text-foreground"
-                  variant="outline"
+              </div> */}
+              <div className="flex items-center justify-center">
+                <button
+                  className="bg-background text-foreground mt-4 rounded-full bg-green-300 p-4"
                   disabled={loading}
                 >
-                  {loading ? <Loader /> : "Submit"}
-                </Button>
+                  {loading ? <Loader /> : <CheckIcon color="black" />}
+                </button>
               </div>
             </form>
           </div>

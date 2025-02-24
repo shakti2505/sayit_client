@@ -14,5 +14,6 @@ export function ModeToggle() {
       checked ? "Switched to Dark Mode" : "Switched to Light mode."
     );
   };
+
   return <Switch checked={isDarkMode} onCheckedChange={handleToggle} />;
 }

@@ -16,6 +16,26 @@ export const base64ToArrayBuffer = (base64: string) => {
 };
 
 export function formatPEM(base64String: string): string {
-  const formattedKey = base64String.replace(/\s+/g, ""); // removing spaces 
+  const formattedKey = base64String.replace(/\s+/g, ""); // removing spaces
   return formattedKey;
 }
+
+// importing public key from base64 string to cryptoKey format
+export const importPublicKeyFromBase64 = async (
+  base64Key: string
+): Promise<CryptoKey> => {
+  // Convert Base64 to Uint8Array safely
+  const encryptedAESKeyBuffer = new Uint8Array(
+    atob(base64Key)
+      .split("")
+      .map((c) => c.charCodeAt(0))
+  );
+  // Import the public key
+  return await window.crypto.subtle.importKey(
+    "spki", // SubjectPublicKeyInfo format for public keys
+    encryptedAESKeyBuffer,
+    { name: "RSA-OAEP", hash: "SHA-256" },
+    true,
+    ["encrypt"] // The key will be used for encryption
+  );
+};

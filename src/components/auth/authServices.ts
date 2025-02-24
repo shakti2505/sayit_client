@@ -1,8 +1,14 @@
 import axios from "axios";
+import { genrateAndStoreKeyPair } from "../../crypto/key_manager";
 import {
-  genrateAndStoreKeyPair,
-} from "../../crypto/key_manager";
-import { GOOGLE_AUTH_URL, SAVE_PUBLIC_KEY } from "../../utilities/apiEndPoints";
+  GOOGLE_AUTH_URL,
+  LOGIN_WITH_EMAIL_PASSWORD,
+  SAVE_PUBLIC_KEY,
+  SIGNUP_WITH_EMAIL_PASSWORD,
+} from "../../utilities/apiEndPoints";
+import { toast } from "sonner";
+import { SignupSchemaType } from "../../validations/authValidation/SignupformValidation";
+import { LoginSchemaType } from "../../validations/authValidation/loginFormValidation";
 
 // const BASE_URL = "http://localhost:8080";
 
@@ -17,32 +23,34 @@ interface GoogleAuthResponse {
   token: string;
 }
 
+const isPrivateKeyExist = (await window.indexedDB.databases())
+  .map((db) => db.name)
+  .includes("sayIt_Database");
+
+const genrateKeyPairAndSavePublicKey = async () => {
+  const key = await genrateAndStoreKeyPair();
+  await axios.patch(
+    SAVE_PUBLIC_KEY,
+    { public_key: key },
+    {
+      withCredentials: true, //
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+};
+
 export const googleAuth = async (
   authCode: string
 ): Promise<GoogleAuthResponse> => {
   try {
-    // genrating and storing public key and private keys
-    // const privateKey = await getPrivateKeyFromIndexedDB();
-    const isExisting = (await window.indexedDB.databases())
-      .map((db) => db.name)
-      .includes("sayIt_Database");
-
     const authRequest = await axios.get(GOOGLE_AUTH_URL(authCode), {
       withCredentials: true,
     });
 
-    if (!isExisting) {
-      const key = await genrateAndStoreKeyPair();
-      await axios.patch(
-        SAVE_PUBLIC_KEY,
-        { public_key: key },
-        {
-          withCredentials: true, //
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    if (!isPrivateKeyExist) {
+      genrateKeyPairAndSavePublicKey();
     }
 
     // executing both request concurrently
@@ -88,3 +96,41 @@ export const googleAuth = async (
 //     console.error("Error updating public key");
 //   }
 // };
+
+// signup with email and password
+export const signupWithEmail = async (payload: SignupSchemaType) => {
+  try {
+    const signupRes = await axios.post(SIGNUP_WITH_EMAIL_PASSWORD, {
+      username: payload.username,
+      email: payload.email,
+      password: payload.password,
+    });
+    if (signupRes.status != 201) {
+      toast.error(signupRes.data.message);
+    } else {
+      toast.success(signupRes.data.message);
+      return signupRes.data.message;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const loginWithEmail = async (payload: LoginSchemaType) => {
+  try {
+    const loginRes = await axios.post(LOGIN_WITH_EMAIL_PASSWORD, {
+      email: payload.email,
+      password: payload.password,
+    });
+    if (loginRes.status != 200) {
+      toast.error(loginRes.data.message);
+    } else if (!isPrivateKeyExist) {
+      genrateKeyPairAndSavePublicKey();
+      toast.success(loginRes.data.message);
+    } else {
+      toast.success(loginRes.data.message);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

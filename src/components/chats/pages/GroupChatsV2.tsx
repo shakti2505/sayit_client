@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getSocket } from "../../../lib/socket.config";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store"; // Import AppDispatch type
-import { useSearchParams } from "react-router-dom";
+import { useFetcher, useSearchParams } from "react-router-dom";
 import MobileChatSidebar from "../MobileChatSideBar";
 import ChatSearchSheet from "./ChatSearchSheet";
 import { decryptMessage } from "../../../crypto/decrypt";
@@ -86,6 +86,9 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
 
   // handle message decryption with decrypted AesKey
   const handleMessageDecryption = async () => {
+    if(messages.length>0){
+      setMessages([]);
+    }
     if (aesKey && groupChats.length > 0) {
       const decryptedMessages = await Promise.all(
         groupChats.map(async (msgByDate) => ({
@@ -121,7 +124,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   };
 
   const sender = JSON.parse(localStorage.getItem("user") || "");
-  
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (aesKey) {
@@ -168,7 +171,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
     if (aesKey) {
       handleMessageDecryption();
     }
-  }, [aesKey]);
+  }, [aesKey, group_id]);
 
   // capturing the messase and adding it in the messages state with other messages
   useEffect(() => {
@@ -205,89 +208,82 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
       socket.close();
     };
   }, [socket]);
-
   return (
     <>
-      
-        <Card className="flex-2 flex-grow bg-background  overflow-y-hidden rounded-none border-none ">
-          {/* Card Header */}
-          <CardHeader className="flex flex-row items-center bg-muted w-full py-5 ">
-            <button
-              className="flex flex-row items-center w-full space-x-4  hover:cursor-pointer"
-              onClick={handleGroupDetailsSheet}
-            >
-              <div className="flex flex-row items-center w-full space-x-4 ">
-                <div className="md:hidden">
-                  <MobileChatSidebar />
-                </div>
-                <Avatar>
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="Image"
-                  />
-                  <AvatarFallback>OM</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col items-start px-2">
-                  <p className="text-sm font-medium">{chatGroups?.name}</p>
-                  <div className="flex flex-row gap-2 mt-1">
-                    {chatGroups?.members.map((item: GroupMembers) => {
-                      return (
-                        <p className="text-xs font-medium  text-muted-foreground  ">
-                          {item.member_name}
-                        </p>
-                      );
-                    })}
-                  </div>
+      <Card className="flex-2 flex-grow bg-background  overflow-y-hidden rounded-none border-none ">
+        {/* Card Header */}
+        <CardHeader className="flex flex-row items-center bg-muted w-full py-5 ">
+          <button
+            className="flex flex-row items-center w-full space-x-4  hover:cursor-pointer"
+            onClick={handleGroupDetailsSheet}
+          >
+            <div className="flex flex-row items-center w-full space-x-4 ">
+              <div className="md:hidden">
+                <MobileChatSidebar />
+              </div>
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" alt="Image" />
+                <AvatarFallback>OM</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col items-start px-2">
+                <p className="text-sm font-medium">{chatGroups?.name}</p>
+                <div className="flex flex-row gap-2 mt-1">
+                  {chatGroups?.members.map((item: GroupMembers) => {
+                    return (
+                      <p className="text-xs font-medium  text-muted-foreground  ">
+                        {item.member_name}
+                      </p>
+                    );
+                  })}
                 </div>
               </div>
-            </button>
-            <ChatSearchSheet
-              setSearchedMessageId={setSearchedMessageId}
-              scrollToMessage={scrollToMessage}
-              setOpenGroupDetails={setOpenGroupDetails}
-              openGroupDetails={openGroupDetails}
-              searchSheet={searchSheet}
-              openSheet={openSheet}
-              handleGroupDetailsSheet={handleGroupDetailsSheet}
-              handleSearchSheet={handleSearchSheet}
-              setOpenSheet={setOpenSheet}
-              aeskey={aesKey}
-            />
-            <button onClick={handleSearchSheet}>
-              <Search />
-            </button>
-          </CardHeader>
+            </div>
+          </button>
+          <ChatSearchSheet
+            setSearchedMessageId={setSearchedMessageId}
+            scrollToMessage={scrollToMessage}
+            setOpenGroupDetails={setOpenGroupDetails}
+            openGroupDetails={openGroupDetails}
+            searchSheet={searchSheet}
+            openSheet={openSheet}
+            handleGroupDetailsSheet={handleGroupDetailsSheet}
+            handleSearchSheet={handleSearchSheet}
+            setOpenSheet={setOpenSheet}
+            aeskey={aesKey}
+          />
+          <button onClick={handleSearchSheet}>
+            <Search />
+          </button>
+        </CardHeader>
 
-          {/* Card Content */}
-          <CardContent className="flex-grow overflow-y-auto bg-background text-muted-foreground">
-            <div
-              className="flex flex-col-reverse overflow-y-auto 
+        {/* Card Content */}
+        <CardContent className="flex-grow overflow-y-auto bg-background text-muted-foreground">
+          <div
+            className="flex flex-col-reverse overflow-y-auto 
         h-[20rem] sm:h-[25rem] md:h-[25.5rem] lg:h-[25.6rem] xl:h-[31.5rem] 
         p-2 sm:p-4 md:p-6"
-            >
-              {messages.length !== 0 ? (
-                <div className="flex flex-col gap-2 p-2 z-20">
-                  {/* Render the grouped messages */}
-                  {messages.map((item) => {
-                    return (
-                      <>
-                        <React.Fragment key={item._id}>
-                          <div className="text-background">
-                            {/* Date Header */}
-                            {item._id && (
-                              <div className="flex flex-row justify-center items-center w-full sticky top-0 ">
-                                <div className="p-1 px-3 my-4 text-xs bg-muted rounded-xl text-foreground ">
-                                  {item._id}
-                                </div>
+          >
+            {messages.length !== 0 ? (
+              <div className="flex flex-col gap-2 z-20">
+                {/* Render the grouped messages */}
+                {messages.map((item) => {
+                  return (
+                    <>
+                      <React.Fragment key={item._id}>
+                        <div className="text-background">
+                          {/* Date Header */}
+                          {item._id && (
+                            <div className="flex flex-row justify-center items-center w-full sticky top-0 ">
+                              <div className="p-1 px-3 my-4 text-xs bg-muted rounded-xl text-foreground ">
+                                {item._id}
                               </div>
-                            )}
+                            </div>
+                          )}
 
-                            {/* Messages for the Date */}
-                            <div
-                              className="flex flex-col gap-2 "
-                              key={item._id}
-                            >
-                              {(item.messages as messages[])?.map((message) => {
+                          {/* Messages for the Date */}
+                          <div className="flex flex-col gap-2 " key={item._id}>
+                            {(item.messages as messages[])?.map((message) => {
+                              if (message.group_id === group_id) {
                                 return (
                                   <>
                                     <div
@@ -332,53 +328,55 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                                     </div>
                                   </>
                                 );
-                              })}
-                            </div>
+                              }
+                            })}
                           </div>
-                        </React.Fragment>
-                      </>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-foreground bg-background flex flex-row justify-center items-center rounded-md">
-                  <p className="font-bold">Start new conversation...</p>
-                </div>
-              )}
-            </div>
-          </CardContent>
-          {/* Card Footer */}
-          <CardFooter className="bg-muted py-4 gap-2 border-none">
-            <Plus size={30} className="text-foreground hover:cursor-pointer" />
-            <div className="flex flex-row items-center p-2 bg-background border-none w-full rounded-xl gap-2 ">
-              <Sticker className="text-muted-foreground hover:cursor-pointer" />
-              <input
-                id="message"
-                placeholder="Type your message..."
-                className="w-full outline-none text-muted-foreground bg-background p-1 text-base"
-                autoComplete="off"
-                value={message}
-                onChange={(e) => handleChange(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && message.trim().length > 0) {
-                    e.preventDefault(); // Prevents unintended behavior like newline in textarea
-                    handleSubmit(e); // Calls the submit function
-                  }
-                }}
-              />
-              <Button
-                onClick={handleSubmit}
-                size="icon"
-                className="bg-background"
-                disabled={message.length === 0}
-              >
-                <Send className="text-foreground hover:cursor-pointer" />
-              </Button>
-            </div>
+                        </div>
+                      </React.Fragment>
+                    </>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-foreground bg-background flex flex-row justify-center items-center rounded-md">
+                <p className="font-bold">Start new conversation...</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+        {/* Card Footer */}
+        <CardFooter className="bg-muted py-4 gap-2 border-none">
+          <Plus size={30} className="text-foreground hover:cursor-pointer" />
+          <div className="flex flex-row items-center p-2 bg-background border-none w-full rounded-xl gap-2 ">
+            <Sticker className="text-muted-foreground hover:cursor-pointer" />
+            <input
+              autoFocus
+              id="message"
+              placeholder="Type your message..."
+              className="w-full outline-none text-muted-foreground bg-background p-1 text-base"
+              autoComplete="off"
+              value={message}
+              onChange={(e) => handleChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && message.trim().length > 0) {
+                  e.preventDefault(); // Prevents unintended behavior like newline in textarea
+                  handleSubmit(e); // Calls the submit function
+                }
+              }}
+            />
+            <Button
+              onClick={handleSubmit}
+              size="icon"
+              className="bg-background"
+              disabled={message.length === 0}
+            >
+              <Send className="text-foreground hover:cursor-pointer" />
+            </Button>
+          </div>
 
-            <MicIcon className="text-muted-foreground hover:cursor-pointer" />
-          </CardFooter>
-        </Card>
+          <MicIcon className="text-muted-foreground hover:cursor-pointer" />
+        </CardFooter>
+      </Card>
     </>
   );
 };

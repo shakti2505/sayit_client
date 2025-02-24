@@ -3,12 +3,15 @@ export const API_URL = BASE_URL + "/api";
 export const GROUP_CHAT_URL = API_URL + "/create-chat-group";
 export const GET_GROUP_CHAT_URL = API_URL + "/chat-groups";
 
+// delete group
 export const DELETE_GROUP_CHAT_URL = (id: string) => {
   return API_URL + `/delete-group/${id}`;
 };
+// update chat group
 export const UPDATE_GROUP_CHAT_URL = (id: string) => {
   return API_URL + `/chat-group-update/${id}`;
 };
+
 export const GET_GROUP_CHAT_BY_ID_URL = (id: string) => {
   return API_URL + `/chat-group/${id}`;
 };
@@ -29,6 +32,7 @@ export const GOOGLE_AUTH_URL = (authCode: string) => {
 };
 export const SAVE_PUBLIC_KEY = BASE_URL + "/auth/update-public-key";
 
+// search message
 export const GET_MESSAGES_BY_SEARCH = (
   group_id: String,
   queryMessage: string,
@@ -38,6 +42,7 @@ export const GET_MESSAGES_BY_SEARCH = (
   return `${API_URL}/search-messages?group_id=${group_id}&queryMessage=${queryMessage}&page=${page}&limit=${limit}`;
 };
 
+// searh new user database by email or name
 export const SEARCH_NEW_USER = (query: string) => {
   if (query.endsWith("gmail.com")) {
     return API_URL + `/search-user-by-name-or-email?email=${query}`;
@@ -46,10 +51,20 @@ export const SEARCH_NEW_USER = (query: string) => {
   }
 };
 
+// add a user to contacts
 export const ADD_NEW_CONTACT = API_URL + "/add-new-contact";
+
+// get all contacts of user
 export const GET_USERS_CONTACTS = API_URL + "/get-all-contacts-of-user";
 
 // update message status is read to true
 export const UPDATE_MESSAGE_STATUS = (messageId: string) => {
   return API_URL + `/update-message-status/${messageId}`;
 };
+
+// add contacts to group
+export const ADD_CONTACTS_TO_GROUP = API_URL + "/add-contacts-to-group";
+
+// signup with email and password
+export const SIGNUP_WITH_EMAIL_PASSWORD = BASE_URL + "/auth/signup";
+export const LOGIN_WITH_EMAIL_PASSWORD = BASE_URL + "/auth/login";
