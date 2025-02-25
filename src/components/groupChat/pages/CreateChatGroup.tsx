@@ -28,7 +28,6 @@ import { Button } from "../../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { createChatGroup } from "../services/groupChatServices";
 import type { AppDispatch, RootState } from "../../../store/store"; // Import AppDispatch type
-import { useUser } from "../../../utils/criticalState";
 import Loader from "../../common/Loader";
 import { Check, Camera, ArrowLeft, CheckIcon } from "lucide-react";
 
@@ -44,7 +43,6 @@ interface User {
 }
 
 const CreateChatGroup: React.FC = () => {
-  const { token } = useUser();
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
   const [open, setOpen] = useState(false);
   const [openGroupPicAndNameComponent, setOpenGroupPicAndNameComponent] =
@@ -69,23 +67,19 @@ const CreateChatGroup: React.FC = () => {
   });
 
   const onSubmit = async (payload: createChatSchemaType) => {
-    if (token) {
-      const res = await dispatch(
-        createChatGroup(payload, selectedUsers, token)
+    const res = await dispatch(
+      createChatGroup(payload, selectedUsers)
+    );
+    if (res.message === "Group created successfully") {
+      setOpen(false);
+      localStorage.setItem(
+        res.data._id as string,
+        JSON.stringify({
+          user_id: res.data.group_admin,
+          name: res.data.name,
+          chatgroup: res.data._id,
+        })
       );
-      if (res.message === "Group created successfully") {
-        setOpen(false);
-        localStorage.setItem(
-          res.data._id as string,
-          JSON.stringify({
-            user_id: res.data.group_admin,
-            name: res.data.name,
-            chatgroup: res.data._id,
-          })
-        );
-      }
-    } else {
-      console.error("Token is undefined");
     }
   };
 

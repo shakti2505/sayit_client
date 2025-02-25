@@ -105,23 +105,28 @@ export const signupWithEmail = async (payload: SignupSchemaType) => {
       email: payload.email,
       password: payload.password,
     });
-    if (signupRes.status != 201) {
-      toast.error(signupRes.data.message);
-    } else {
+    if (signupRes.status === 201) {
       toast.success(signupRes.data.message);
       return signupRes.data.message;
     }
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    toast.error(error.response.data.message);
+    return error.response.data.message;
   }
 };
 
 export const loginWithEmail = async (payload: LoginSchemaType) => {
   try {
-    const loginRes = await axios.post(LOGIN_WITH_EMAIL_PASSWORD, {
-      email: payload.email,
-      password: payload.password,
-    });
+    const loginRes = await axios.post(
+      LOGIN_WITH_EMAIL_PASSWORD,
+      {
+        email: payload.email,
+        password: payload.password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
     if (loginRes.status != 200) {
       toast.error(loginRes.data.message);
     } else if (!isPrivateKeyExist) {

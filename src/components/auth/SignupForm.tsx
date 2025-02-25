@@ -67,7 +67,12 @@ export function SignupForm({
               <div className="grid gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="username">Username</Label>
-                  <Input type="text" {...register("username")} required />
+                  <Input
+                    type="text"
+                    {...register("username")}
+                    autoFocus
+                    required
+                  />
                   <span className="text-red-500">
                     {errors?.username?.message}
                   </span>

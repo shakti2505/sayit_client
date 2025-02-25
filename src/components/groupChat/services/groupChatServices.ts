@@ -36,11 +36,7 @@ const logged_in_user_data = userData ? JSON.parse(userData) : null;
 
 // api call for the create chat group api
 export const createChatGroup =
-  (
-    payload: createChatSchemaType,
-    selectedUsers: Array<GroupMembers>,
-    token: string
-  ) =>
+  (payload: createChatSchemaType, selectedUsers: Array<GroupMembers>) =>
   async (dispatch: AppDispatch) => {
     dispatch(createGroupChatStart());
     try {
@@ -52,9 +48,7 @@ export const createChatGroup =
           selectedUsers: selectedUsers,
         },
         {
-          headers: {
-            Authorization: token,
-          },
+          withCredentials: true,
         }
       );
       dispatch(createGroupChatSuccess(data));

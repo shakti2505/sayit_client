@@ -2,6 +2,7 @@ import React from "react";
 import conversationImage from "../../assets/images/conversation.jpg";
 
 const HeroSection: React.FC = () => {
+
   return (
     <section className="flex-1 flex flex-col items-center justify-center text-center p-12 bg-background">
       <h1 className="text-5xl font-extrabold mb-4 text-foreground">

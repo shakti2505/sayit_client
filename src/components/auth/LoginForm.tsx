@@ -31,7 +31,7 @@ export function LoginForm({
 
   const onSubmit = async (payload: LoginSchemaType) => {
     try {
-      const res = await loginWithEmail(payload);
+      await loginWithEmail(payload);
     } catch (error) {
       console.log(error);
     }
@@ -59,6 +59,7 @@ export function LoginForm({
                 <div className="grid gap-2">
                   <Label htmlFor="text">Email</Label>
                   <Input
+                    autoFocus
                     id="email"
                     type="text"
                     required
@@ -78,6 +79,7 @@ export function LoginForm({
                     </a>
                   </div>
                   <Input
+                    autoFocus
                     id="password"
                     type="password"
                     {...register("password")}

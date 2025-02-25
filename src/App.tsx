@@ -29,7 +29,7 @@ function App() {
         />
         <Route path="/chats" element={<ChatBase />} />
       </Routes>
-      <Toaster duration={1000} closeButton />
+      <Toaster duration={10000} closeButton />
     </Provider>
   );
 }
