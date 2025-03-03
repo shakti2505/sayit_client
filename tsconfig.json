@@ -8,7 +8,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+     "target": "ES2022",
+    "module": "ESNext"
   }
 
 }

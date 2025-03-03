@@ -24,8 +24,7 @@ interface GoogleAuthResponse {
   token: string;
 }
 
-const isPrivateKeyExist = (await window.indexedDB.databases())
-  .map((db) => db.name)
+const isPrivateKeyExist = (await window.indexedDB.databases()).map((db) => db.name)
   .includes("sayIt_Database");
 
 const genrateKeyPairAndSavePublicKey = async () => {
