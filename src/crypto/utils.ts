@@ -39,3 +39,13 @@ export const importPublicKeyFromBase64 = async (
     ["encrypt"] // The key will be used for encryption
   );
 };
+
+export const exportPrivateKey = async (privateKey: CryptoKey) => {
+  // export the key in pkcs8 format for priate key
+  const exportedKey = await window.crypto.subtle.exportKey("pkcs8", privateKey);
+
+  // convert array buffer to base64 for easy storage
+  const base64PrivateKey = arrayBufferTobase64(exportedKey);
+
+  return base64PrivateKey;
+};

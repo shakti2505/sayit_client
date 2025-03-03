@@ -17,10 +17,12 @@ import {
   LoginSchemaType,
 } from "../../validations/authValidation/loginFormValidation";
 import { loginWithEmail } from "./authServices";
+import { useNavigate } from "react-router-dom";
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -31,7 +33,21 @@ export function LoginForm({
 
   const onSubmit = async (payload: LoginSchemaType) => {
     try {
-      await loginWithEmail(payload);
+      const res = await loginWithEmail(payload);
+      const { name, email, image, _id, public_key } = res.loggedInUser;
+      if (res.message === "logged in successfully") {
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            name,
+            email,
+            image,
+            id: _id,
+            public_key,
+          })
+        );
+        navigate("/chats");
+      }
     } catch (error) {
       console.log(error);
     }

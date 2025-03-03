@@ -35,7 +35,6 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
   const { data } = useSelector(
     (getChatGroup: RootState) => getChatGroup.getChatGroup
   );
-
   // gropchats data
   // const groupChats = useSelector(
   //   (ChatGroups: RootState) => ChatGroups.getGroupChat

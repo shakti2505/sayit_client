@@ -36,7 +36,7 @@ export const genrateAndStoreKeyPair = async () => {
   // return `-----BEGIN PUBLIC KEY-----\n${formattedKey}\n-----END PUBLIC KEY-----`;
 };
 
-// retrieve keys
+// retrieve private key
 export const getPrivateKeyFromIndexedDB =
   async (): Promise<CryptoKey | null> => {
     return new Promise((resolve, reject) => {
@@ -53,9 +53,9 @@ export const getPrivateKeyFromIndexedDB =
               const privateKey = await window.crypto.subtle.importKey(
                 "pkcs8",
                 privateKeyBuffer.key,
-                { name: "RSA-OAEP", hash:"SHA-1"},
-                
-                false, // non-extractable
+                { name: "RSA-OAEP", hash: "SHA-1" },
+
+                true, // non-extractable
                 ["decrypt"]
               );
               resolve(privateKey);
@@ -89,7 +89,6 @@ const storePrivateKeyInIndexedDB = async (key: ArrayBuffer) => {
       reject(new Error("Failed to store the private key in IndexedDB"));
   });
 };
-
 // indexedDB Helper: opend database
 const openIndexedDB = async (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
@@ -115,4 +114,32 @@ const openIndexedDB = async (): Promise<IDBDatabase> => {
       }
     };
   });
+};
+
+// generate AES key from the password -we derive a 256-bit AES key using PBKDF2.
+
+export const deriveAESKeyFromPassword = async (
+  password: string,
+  salt: Uint8Array
+) => {
+  const encoder = new TextEncoder();
+  const keyMaterial = await window.crypto.subtle.importKey(
+    "raw",
+    encoder.encode(password),
+    { name: "PBKDF2" },
+    false,
+    ["deriveKey"]
+  );
+  return await window.crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: salt,
+      iterations: 100000, // High iteration count for security
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    true,
+    ["encrypt", "decrypt"]
+  );
 };

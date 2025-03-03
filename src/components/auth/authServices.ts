@@ -3,12 +3,15 @@ import { genrateAndStoreKeyPair } from "../../crypto/key_manager";
 import {
   GOOGLE_AUTH_URL,
   LOGIN_WITH_EMAIL_PASSWORD,
+  LOGOUT_USER,
   SAVE_PUBLIC_KEY,
   SIGNUP_WITH_EMAIL_PASSWORD,
 } from "../../utilities/apiEndPoints";
 import { toast } from "sonner";
 import { SignupSchemaType } from "../../validations/authValidation/SignupformValidation";
 import { LoginSchemaType } from "../../validations/authValidation/loginFormValidation";
+import { logout } from "./authSlices";
+import { AppDispatch } from "../../store/store";
 
 // const BASE_URL = "http://localhost:8080";
 
@@ -135,7 +138,21 @@ export const loginWithEmail = async (payload: LoginSchemaType) => {
     } else {
       toast.success(loginRes.data.message);
     }
+    return loginRes.data;
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    const res = await axios.post(LOGOUT_USER, {}, { withCredentials: true });
+    if (res.status === 200) {
+      toast.success(res.data.message);
+      return res.data.message;
+    }
+  } catch (error) {
+    console.log(error);
+    return error;
   }
 };

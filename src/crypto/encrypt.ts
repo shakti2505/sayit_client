@@ -1,5 +1,6 @@
 // encrypt message with aes key
 import { ContactsType } from "../components/chats/slices/types/groupMembersType";
+import { deriveAESKeyFromPassword } from "./key_manager";
 import { importPublicKeyFromBase64 } from "./utils";
 export const encryptMessageWithAES = async (
   message: string,
@@ -62,4 +63,35 @@ export const encryptedAESkeyWithUsersPublicKey = async (
       member.contact_public_key
     ),
   }));
+};
+
+// encrypt the priate key using password-derived AES key
+export const encryptPrivateKey = async (
+  password: string,
+  data: string
+): Promise<{ encryptedData: string; iv: string; salt: string }> => {
+  const encoder = new TextEncoder();
+  const encodedData = encoder.encode(data);
+
+  // Generate a random salt and IV
+  const salt = window.crypto.getRandomValues(new Uint8Array(16));
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+  // Derive an AES key from the password
+  const aesKey = await deriveAESKeyFromPassword(password, salt);
+
+  // Encrypt data using AES-GCM
+  const encryptedBuffer = await window.crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    aesKey,
+    encodedData
+  );
+
+  return {
+    encryptedData: btoa(
+      String.fromCharCode(...new Uint8Array(encryptedBuffer))
+    ), // Convert to Base64
+    iv: btoa(String.fromCharCode(...iv)), // Store IV in Base64
+    salt: btoa(String.fromCharCode(...salt)), // Store salt in Base64
+  };
 };

@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 import { logout } from "./authSlices";
 import { useDispatch } from "react-redux";
+import { logoutUser } from "./authServices";
 
 interface LogoutProps {
   open: boolean;
@@ -29,8 +30,11 @@ const Logout: React.FC<LogoutProps> = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    dispatch(logout());
+  const handleLogout = async () => {
+    const res = await logoutUser();
+    if (res === "loggoed Out successfully") {
+      dispatch(logout());
+    }
     navigate("/");
   };
 
