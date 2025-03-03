@@ -24,8 +24,18 @@ interface GoogleAuthResponse {
   token: string;
 }
 
-const isPrivateKeyExist = (await window.indexedDB.databases()).map((db) => db.name)
-  .includes("sayIt_Database");
+let isPrivateKeyExist :boolean;
+const checkPrivateKeyExistence = async () => {
+  const databases = await window.indexedDB.databases();
+  return databases.map((db) => db.name).includes("sayIt_Database");
+};
+checkPrivateKeyExistence().then((exists) => {
+  isPrivateKeyExist = exists;
+});
+
+// const isPrivateKeyExist = (await window.indexedDB.databases())
+//   .map((db) => db.name)
+//   .includes("sayIt_Database");
 
 const genrateKeyPairAndSavePublicKey = async () => {
   const key = await genrateAndStoreKeyPair();
