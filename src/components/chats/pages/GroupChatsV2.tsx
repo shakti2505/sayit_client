@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getSocket } from "../../../lib/socket.config";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store"; // Import AppDispatch type
-import { useFetcher, useSearchParams } from "react-router-dom";
+import {useSearchParams } from "react-router-dom";
 import MobileChatSidebar from "../MobileChatSideBar";
 import ChatSearchSheet from "./ChatSearchSheet";
 import { decryptMessage } from "../../../crypto/decrypt";

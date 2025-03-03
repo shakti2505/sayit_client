@@ -7,7 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "../../../components/ui/sheet";
-import { Search, X, UserPlus } from "lucide-react";
+import { Search, X } from "lucide-react";
 // import { Card, CardTitle, CardDescription } from "../../ui/card";
 import { useState, useEffect, useCallback } from "react";
 // import Loader from "../../common/Loader";

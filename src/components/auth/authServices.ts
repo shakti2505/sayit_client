@@ -10,8 +10,6 @@ import {
 import { toast } from "sonner";
 import { SignupSchemaType } from "../../validations/authValidation/SignupformValidation";
 import { LoginSchemaType } from "../../validations/authValidation/loginFormValidation";
-import { logout } from "./authSlices";
-import { AppDispatch } from "../../store/store";
 
 // const BASE_URL = "http://localhost:8080";
 
