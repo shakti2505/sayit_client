@@ -94,11 +94,7 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
       );
   }, [qrOn]);
 
-  useEffect(() => {
-    if (scannedResult.length > 0) {
-      setOpenQrReader(false);
-    }
-  }, [scannedResult]);
+  
 
   if (openQrReader) {
     return (
