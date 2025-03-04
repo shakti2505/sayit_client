@@ -42,7 +42,6 @@ import { useDispatch } from "react-redux";
 import type { AppDispatch } from "../store/store"; // Import AppDispatch type
 import { getUsersContacts } from "./Contacts/services/AddNewUserServices";
 import LinkDevice from "./Link device/LinkDevice";
-import QrReader from "./Link device/QrReader";
 
 // Menu items.
 // This is sample data

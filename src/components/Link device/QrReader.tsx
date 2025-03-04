@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import QrScanner from "qr-scanner";
 import { Button } from "../ui/button";
-import { Scan, ScanQrCode } from "lucide-react";
+import { Scan } from "lucide-react";
 import { getDataWithDeviceLinkKey } from "./link_device_services";
 import { decryptPrivateKeyWithPassword } from "../../crypto/decrypt";
 interface Props {
