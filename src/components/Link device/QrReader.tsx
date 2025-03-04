@@ -92,6 +92,12 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
       );
   }, [qrOn]);
 
+  useEffect(() => {
+    if (scannedResult.length > 0) {
+      setOpenQrReader(false);
+    }
+  }, [scannedResult]);
+
   if (openQrReader) {
     return (
       <div className="qr-reader">
@@ -128,7 +134,7 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
       />
       <button onClick={handleScannedData}>Submit</button>
     </>;
-  } else {
+  } else if (!openQrReader && scannedResult.length === 0) {
     return (
       <Button
         variant="outline"
