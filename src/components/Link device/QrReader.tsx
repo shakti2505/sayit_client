@@ -28,8 +28,10 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
 
   // sucess;
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
-    console.log(result.data);
-    setScannedResult(result?.data);
+    console.log("key", result.data);
+    if (result.data.length > 0) {
+      setScannedResult(result.data);
+    }
   };
 
   // Fail
@@ -108,20 +110,6 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
             <Scan width={350} height={350} color="white" strokeWidth={0.3} />
           )}
         </div>
-        {/* Show Data Result if scan is success */}
-        {scannedResult && (
-          <p
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              zIndex: 99999,
-              color: "white",
-            }}
-          >
-            Scanned Result: {scannedResult}
-          </p>
-        )}
       </div>
     );
   } else if (!openQrReader && scannedResult?.length > 0) {
@@ -132,6 +120,7 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
           placeholder="Enter password"
           onChange={(e) => handlePassword(e.target.value)}
           value={password}
+          className="p-2 rounded-xl text-muted-foreground bg-background"
         />
         <button onClick={handleScannedData}>Submit</button>
       </>
