@@ -30,6 +30,7 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
     console.log("key", result.data);
     if (result.data.length > 0) {
+      setOpenQrReader(false);
       handleScannedData(result.data);
     }
   };
