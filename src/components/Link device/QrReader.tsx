@@ -125,15 +125,17 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
       </div>
     );
   } else if (!openQrReader && scannedResult?.length > 0) {
-    <>
-      <input
-        type="text"
-        placeholder="Enter password"
-        onChange={(e) => handlePassword(e.target.value)}
-        value={password}
-      />
-      <button onClick={handleScannedData}>Submit</button>
-    </>;
+    return (
+      <>
+        <input
+          type="text"
+          placeholder="Enter password"
+          onChange={(e) => handlePassword(e.target.value)}
+          value={password}
+        />
+        <button onClick={handleScannedData}>Submit</button>
+      </>
+    );
   } else if (!openQrReader && scannedResult.length === 0) {
     return (
       <Button
