@@ -18,13 +18,13 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
   const [qrOn, setQrOn] = useState(true);
 
   // handle password
-  const handlePassword = (value: string) => {
-    setPassword(value);
-  };
+  // const handlePassword = (value: string) => {
+  //   setPassword(value);
+  // };
 
   // result
-  const [scannedResult, setScannedResult] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [scannedResult] = useState<string>("");
+  // const [password, setPassword] = useState<string>("");
 
   // sucess;
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
@@ -39,7 +39,7 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
     console.error(err);
   };
 
-  const handleScannedData = async (key:string) => {
+  const handleScannedData = async (key: string) => {
     // get data using device link key
     const { deviceLinkEncryptedKey, deviceLinkIv, deviceLinkSalt } =
       await getDataWithDeviceLinkKey(key);
@@ -112,19 +112,19 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
         </div>
       </div>
     );
-  // } else if (!openQrReader && scannedResult?.length > 0) {
-  //   return (
-  //     <>
-  //       <input
-  //         type="text"
-  //         placeholder="Enter password"
-  //         onChange={(e) => handlePassword(e.target.value)}
-  //         value={password}
-  //         className="p-2 rounded-xl text-muted-foreground bg-background"
-  //       />
-  //       <button onClick={handleScannedData}>Submit</button>
-  //     </>
-  //   );
+    // } else if (!openQrReader && scannedResult?.length > 0) {
+    //   return (
+    //     <>
+    //       <input
+    //         type="text"
+    //         placeholder="Enter password"
+    //         onChange={(e) => handlePassword(e.target.value)}
+    //         value={password}
+    //         className="p-2 rounded-xl text-muted-foreground bg-background"
+    //       />
+    //       <button onClick={handleScannedData}>Submit</button>
+    //     </>
+    //   );
   } else if (!openQrReader && scannedResult.length === 0) {
     return (
       <Button
