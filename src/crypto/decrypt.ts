@@ -1,6 +1,6 @@
 // function to decrypt the AES keys using private key
 
-import { getPrivateKeyFromIndexedDB } from "./key_manager";
+import { deriveAESKeyFromPassword, getPrivateKeyFromIndexedDB } from "./key_manager";
 import { base64ToArrayBuffer } from "./utils";
 
 export const decryptAESKey = async (
@@ -67,4 +67,41 @@ export const decryptMessage = async (
   } catch (error) {
     console.log(`Error in decrypting Data: ${error}`);
   }
+};
+
+
+// decrypt private key with password
+
+export const decryptPrivateKeyWithPassword = async (
+  password: string,
+  encryptedData: string,
+  iv: string,
+  salt: string
+): Promise<string> => {
+  const decoder = new TextDecoder();
+
+  // Convert Base64 to Uint8Array
+  const encryptedBuffer = new Uint8Array(
+    atob(encryptedData).split("").map((char) => char.charCodeAt(0))
+  );
+
+  const ivBuffer = new Uint8Array(
+    atob(iv).split("").map((char) => char.charCodeAt(0))
+  );
+
+  const saltBuffer = new Uint8Array(
+    atob(salt).split("").map((char) => char.charCodeAt(0))
+  );
+
+  // Derive AES key from the password
+  const aesKey = await deriveAESKeyFromPassword(password, saltBuffer);
+
+  // Decrypt the data
+  const decryptedBuffer = await window.crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: ivBuffer },
+    aesKey,
+    encryptedBuffer
+  );
+
+  return decoder.decode(decryptedBuffer);
 };

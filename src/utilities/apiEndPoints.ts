@@ -67,6 +67,16 @@ export const ADD_CONTACTS_TO_GROUP = API_URL + "/add-contacts-to-group";
 
 // signup with email and password
 export const SIGNUP_WITH_EMAIL_PASSWORD = BASE_URL + "/auth/signup";
+
 export const LOGIN_WITH_EMAIL_PASSWORD = BASE_URL + "/auth/login";
+
 export const LOGOUT_USER = BASE_URL + "/auth/logout";
+
+// to create device link key
 export const ADD_DEVICE_LINK_KEY = BASE_URL + "/auth/add-device-link-key";
+
+// to get the data with device link ke
+
+export const GET_DATA_WITH_DEVICE_LINK_KEY = (key: string) => {
+  return `${BASE_URL}/auth/get-data-with-device-link-key?key=${key}`;
+};

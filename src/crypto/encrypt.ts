@@ -95,3 +95,4 @@ export const encryptPrivateKey = async (
     salt: btoa(String.fromCharCode(...salt)), // Store salt in Base64
   };
 };
+

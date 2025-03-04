@@ -77,7 +77,7 @@ export const getPrivateKeyFromIndexedDB =
   };
 
 // IndexedDB Helper: Store the Key
-const storePrivateKeyInIndexedDB = async (key: ArrayBuffer) => {
+export const storePrivateKeyInIndexedDB = async (key: ArrayBuffer) => {
   const db = await openIndexedDB();
   const transaction = db.transaction("keys", "readwrite");
   const store = transaction.objectStore("keys");

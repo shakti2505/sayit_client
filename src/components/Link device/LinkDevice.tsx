@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MonitorSmartphone } from "lucide-react";
+import { MonitorSmartphone, Smartphone } from "lucide-react";
 import { Button } from "../ui/button";
 import { getPrivateKeyFromIndexedDB } from "../../crypto/key_manager";
 import { exportPrivateKey } from "../../crypto/utils";
@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "../../components/ui/dialog";
 import { addDeviceLinkKey } from "./link_device_services";
+
 interface Props {
   // define your props here
 }
@@ -48,8 +49,12 @@ const LinkDevice: React.FC<Props> = () => {
       <div className="flex flex-col justify-center items-center">
         <p className="text-muted-foreground text-lg">Link another device</p>
         <MonitorSmartphone size={100} strokeWidth={0.5} color="cyan" />
-        <Button onClick={() => generateQRCode("12345")} className="w-full">
-          Link Device
+        <Button
+          variant="outline"
+          onClick={() => generateQRCode("12345")}
+          className="w-full"
+        >
+          Generate QRcode
         </Button>
       </div>
       <Dialog>
@@ -60,12 +65,48 @@ const LinkDevice: React.FC<Props> = () => {
           <DialogHeader>
             <DialogTitle>Link Device</DialogTitle>
             <DialogDescription>
-              Scan QR code to Link the device
+              Scan QR code from mobile device you want to link and follow the
+              process.
+              <div className="flex flex-row items-center w-full p-2">
+                <p className="flex items-center gap-2">
+                  1. Open your <Smartphone color="cyan" /> Smart Phone.
+                </p>
+              </div>
+              <div className="flex flex-row items-center w-full  p-2">
+                <p className="flex items-center gap-2">
+                  2. Click on <b>Getting Started</b> button on Home page.
+                </p>
+              </div>
+              <div className="flex flex-row items-center w-full  p-2">
+                <p className="flex items-center gap-2">
+                  3. Select <b>Link Device</b> option.
+                </p>
+              </div>
+              <div className="flex flex-row items-center w-full  p-2">
+                <p className="flex items-center gap-2">
+                  4. Click on <b>ScanQRcode</b> Button.
+                </p>
+              </div>
+              <div className="flex flex-row items-center w-full  p-2">
+                <p className="flex items-center gap-2">
+                  5. Scan below QR code with the new device.
+                </p>
+              </div>
             </DialogDescription>
           </DialogHeader>
-          <QRCodeSVG className="mt-5 p-2" value={qrCodeData} size={256} />
+          <QRCodeSVG
+            className="mt-5"
+            value={qrCodeData}
+            size={256}
+            fill="#FFFFFF"
+            fgColor="#000000"
+            title="Link device"
+            marginSize={1}
+          />
           <DialogFooter>
-            <Button type="submit">Save changes</Button>
+            <Button variant="outline" type="submit">
+              Save changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

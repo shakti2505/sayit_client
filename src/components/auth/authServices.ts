@@ -24,7 +24,7 @@ interface GoogleAuthResponse {
   token: string;
 }
 
-let isPrivateKeyExist :boolean;
+let isPrivateKeyExist: boolean;
 const checkPrivateKeyExistence = async () => {
   const databases = await window.indexedDB.databases();
   return databases.map((db) => db.name).includes("sayIt_Database");

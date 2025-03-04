@@ -5,17 +5,14 @@ import { SignupForm } from "../auth/SignupForm";
 import { ArrowLeftCircleIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import QrReader from "../Link device/QrReader";
-import { Button } from "../ui/button";
 interface Props {
   // define your props here
 }
 
 const LoginSignupPage: React.FC<Props> = () => {
   const navigate = useNavigate();
-  const [openQrReader, setOpenQrReader] = useState<boolean>(false);
-  const handleQrReader = () => {
-    setOpenQrReader(true);
-  };
+  const [openQrReader, setOpenQrReader] = useState(false);
+
   return (
     <>
       <div className="flex items-start justify-start bg-background">
@@ -45,11 +42,10 @@ const LoginSignupPage: React.FC<Props> = () => {
             </TabsContent>
             <TabsContent value="linkDevice" className="w-full">
               <div className="flex flex-row justify-center items-center w-full h-96 border rounded-xl p-2">
-                {openQrReader ? (
-                  <QrReader />
-                ) : (
-                  <Button onClick={handleQrReader}>Scan QR</Button>
-                )}
+                <QrReader
+                  openQrReader={openQrReader}
+                  setOpenQrReader={setOpenQrReader}
+                />
               </div>
             </TabsContent>
           </Tabs>

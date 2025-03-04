@@ -220,7 +220,6 @@ export function AppSidebar() {
             {activeItem.title === "Link Device" && (
               <SidebarGroupContent>
                 <LinkDevice/>
-                <QrReader/>
               </SidebarGroupContent>
             )}
           </SidebarGroup>
