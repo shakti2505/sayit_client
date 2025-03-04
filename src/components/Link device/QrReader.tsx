@@ -30,7 +30,7 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
     console.log("key", result.data);
     if (result.data.length > 0) {
-      setScannedResult(result.data);
+      handleScannedData(result.data);
     }
   };
 
@@ -39,14 +39,14 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
     console.error(err);
   };
 
-  const handleScannedData = async () => {
+  const handleScannedData = async (key:string) => {
     // get data using device link key
     const { deviceLinkEncryptedKey, deviceLinkIv, deviceLinkSalt } =
-      await getDataWithDeviceLinkKey(scannedResult);
+      await getDataWithDeviceLinkKey(key);
 
     // decrypt the received data
     const decrypteData = await decryptPrivateKeyWithPassword(
-      password,
+      "12345",
       deviceLinkEncryptedKey,
       deviceLinkIv,
       deviceLinkSalt
@@ -112,19 +112,19 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
         </div>
       </div>
     );
-  } else if (!openQrReader && scannedResult?.length > 0) {
-    return (
-      <>
-        <input
-          type="text"
-          placeholder="Enter password"
-          onChange={(e) => handlePassword(e.target.value)}
-          value={password}
-          className="p-2 rounded-xl text-muted-foreground bg-background"
-        />
-        <button onClick={handleScannedData}>Submit</button>
-      </>
-    );
+  // } else if (!openQrReader && scannedResult?.length > 0) {
+  //   return (
+  //     <>
+  //       <input
+  //         type="text"
+  //         placeholder="Enter password"
+  //         onChange={(e) => handlePassword(e.target.value)}
+  //         value={password}
+  //         className="p-2 rounded-xl text-muted-foreground bg-background"
+  //       />
+  //       <button onClick={handleScannedData}>Submit</button>
+  //     </>
+  //   );
   } else if (!openQrReader && scannedResult.length === 0) {
     return (
       <Button
