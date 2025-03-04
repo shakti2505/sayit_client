@@ -30,11 +30,13 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
     console.log(result.data);
     setScannedResult(result?.data);
+    setOpenQrReader(false);
   };
 
   // Fail
   const onScanFail = (err: string | Error) => {
     console.error(err);
+    setOpenQrReader(false);
   };
 
   const handleScannedData = async () => {
@@ -91,11 +93,6 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
         "Camera is blocked or not accessible. Please allow camera in your browser permissions and Reload."
       );
   }, [qrOn]);
-
-  useEffect(() => {
-    console.log("scannedResult", scannedResult);
-    setOpenQrReader(false);
-  }, [scannedResult]);
 
   if (openQrReader) {
     return (
