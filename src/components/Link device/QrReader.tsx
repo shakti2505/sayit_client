@@ -17,20 +17,19 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
   const qrBoxEl = useRef<HTMLDivElement>(null);
   const [qrOn, setQrOn] = useState(true);
 
-  // handle password
-  // const handlePassword = (value: string) => {
-  //   setPassword(value);
-  // };
-
   // result
-  const [scannedResult] = useState<string>("");
-  // const [password, setPassword] = useState<string>("");
+  const [scannedResult, setScannedResult] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
+  // handle password
+  const handlePassword = (value: string) => {
+    setPassword(value);
+  };
   // sucess;
   const onScanSuccess = async (result: QrScanner.ScanResult) => {
     console.log("key", result.data);
     if (result.data.length > 0) {
-      await handleScannedData(result.data);
+      setScannedResult(result.data);
       setOpenQrReader(false);
     }
   };
@@ -40,19 +39,19 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
     console.error(err);
   };
 
-  const handleScannedData = async (key: string) => {
+  const handleScannedData = async () => {
     // get data using device link key
     const { deviceLinkEncryptedKey, deviceLinkIv, deviceLinkSalt } =
-      await getDataWithDeviceLinkKey(key);
+      await getDataWithDeviceLinkKey(scannedResult);
 
     // decrypt the received data
     const decrypteData = await decryptPrivateKeyWithPassword(
-      "12345",
+      password,
       deviceLinkEncryptedKey,
       deviceLinkIv,
       deviceLinkSalt
     );
-    console.table(decrypteData);
+    console.log("decrypte Data PK", decrypteData);
   };
 
   useEffect(() => {
@@ -107,19 +106,19 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
         </div>
       </div>
     );
-    // } else if (!openQrReader && scannedResult?.length > 0) {
-    //   return (
-    //     <>
-    //       <input
-    //         type="text"
-    //         placeholder="Enter password"
-    //         onChange={(e) => handlePassword(e.target.value)}
-    //         value={password}
-    //         className="p-2 rounded-xl text-muted-foreground bg-background"
-    //       />
-    //       <button onClick={handleScannedData}>Submit</button>
-    //     </>
-    //   );
+  } else if (!openQrReader && scannedResult?.length > 0) {
+    return (
+      <>
+        <input
+          type="text"
+          placeholder="Enter password"
+          onChange={(e) => handlePassword(e.target.value)}
+          value={password}
+          className="p-2 rounded-xl text-muted-foreground bg-background"
+        />
+        <button onClick={handleScannedData}>Submit</button>
+      </>
+    );
   } else if (!openQrReader && scannedResult.length === 0) {
     return (
       <Button

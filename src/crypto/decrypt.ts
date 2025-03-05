@@ -1,6 +1,9 @@
 // function to decrypt the AES keys using private key
 
-import { deriveAESKeyFromPassword, getPrivateKeyFromIndexedDB } from "./key_manager";
+import {
+  deriveAESKeyFromPassword,
+  getPrivateKeyFromIndexedDB,
+} from "./key_manager";
 import { base64ToArrayBuffer } from "./utils";
 
 export const decryptAESKey = async (
@@ -12,11 +15,11 @@ export const decryptAESKey = async (
     if (!privateKey) throw new Error("Private key Not found in indexed DB");
 
     // convert base64string to arraybuffer
-    const encrytedAESkeyBuffer = base64ToArrayBuffer(encrytedAESkeyBase64)
+    const encrytedAESkeyBuffer = base64ToArrayBuffer(encrytedAESkeyBase64);
     //  Decrypt the AES key using the RSA private key
     const decryptedAESKeyBuffer = await window.crypto.subtle.decrypt(
       { name: "RSA-OAEP" },
-      privateKey, 
+      privateKey,
       encrytedAESkeyBuffer
     );
     // import decrypted AES key
@@ -69,7 +72,6 @@ export const decryptMessage = async (
   }
 };
 
-
 // decrypt private key with password
 
 export const decryptPrivateKeyWithPassword = async (
@@ -82,15 +84,21 @@ export const decryptPrivateKeyWithPassword = async (
 
   // Convert Base64 to Uint8Array
   const encryptedBuffer = new Uint8Array(
-    atob(encryptedData).split("").map((char) => char.charCodeAt(0))
+    atob(encryptedData)
+      .split("")
+      .map((char) => char.charCodeAt(0))
   );
 
   const ivBuffer = new Uint8Array(
-    atob(iv).split("").map((char) => char.charCodeAt(0))
+    atob(iv)
+      .split("")
+      .map((char) => char.charCodeAt(0))
   );
 
   const saltBuffer = new Uint8Array(
-    atob(salt).split("").map((char) => char.charCodeAt(0))
+    atob(salt)
+      .split("")
+      .map((char) => char.charCodeAt(0))
   );
 
   // Derive AES key from the password
@@ -102,6 +110,8 @@ export const decryptPrivateKeyWithPassword = async (
     aesKey,
     encryptedBuffer
   );
+
+  console.log("decryptedBuffer", decryptedBuffer);
 
   return decoder.decode(decryptedBuffer);
 };
