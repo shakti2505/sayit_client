@@ -55,7 +55,7 @@ export const getPrivateKeyFromIndexedDB =
                 privateKeyBuffer.key,
                 { name: "RSA-OAEP", hash: "SHA-1" },
 
-                true, // non-extractable
+                true, // extractable
                 ["decrypt"]
               );
               resolve(privateKey);

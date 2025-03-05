@@ -49,3 +49,4 @@ export const exportPrivateKey = async (privateKey: CryptoKey) => {
 
   return base64PrivateKey;
 };
+

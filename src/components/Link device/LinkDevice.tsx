@@ -28,7 +28,7 @@ const LinkDevice: React.FC<Props> = () => {
       // get the private key
       const privateKey = await getPrivateKeyFromIndexedDB();
       if (privateKey) {
-        // export private key(convert to base64 string)
+        // export private key(convert to base64 string).
         const privateKeyBase64 = await exportPrivateKey(privateKey);
         // encrypt private key using password
         const { encryptedData, iv, salt } = await encryptPrivateKey(

@@ -81,6 +81,8 @@ export const decryptPrivateKeyWithPassword = async (
   iv: string,
   salt: string
 ): Promise<string> => {
+  const decoder = new TextDecoder();
+
   // Convert Base64 to Uint8Array
   const encryptedBuffer = new Uint8Array(
     atob(encryptedData)
@@ -110,7 +112,11 @@ export const decryptPrivateKeyWithPassword = async (
     encryptedBuffer
   );
 
-  // store the decrypted private Key in indexedDB
-  await storePrivateKeyInIndexedDB(decryptedBuffer);
-  return "Key stored In IndexedDB";
+  console.log("decryptedBuffer", decryptedBuffer);
+  const decodedBase64 = decoder.decode(decryptedBuffer);
+
+  // convert Base64 to arrayBuffer
+  const arrayBuffer = base64ToArrayBuffer(decodedBase64);
+  await storePrivateKeyInIndexedDB(arrayBuffer);
+  return "Key restored";
 };
