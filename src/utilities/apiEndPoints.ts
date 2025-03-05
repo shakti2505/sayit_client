@@ -80,3 +80,6 @@ export const ADD_DEVICE_LINK_KEY = BASE_URL + "/auth/add-device-link-key";
 export const GET_DATA_WITH_DEVICE_LINK_KEY = (key: string) => {
   return `${BASE_URL}/auth/get-data-with-device-link-key?key=${key}`;
 };
+
+export const LOGIN_AFTER_LINK_DEVICE_SUCCESSFULLY =
+  API_URL + "/login-after-link-successfully";

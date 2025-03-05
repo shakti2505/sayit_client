@@ -2,7 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import QrScanner from "qr-scanner";
 import { Button } from "../ui/button";
 import { Scan } from "lucide-react";
-import { getDataWithDeviceLinkKey } from "./link_device_services";
+import {
+  getDataWithDeviceLinkKey,
+  loginAfterLinkDeviceSuccessFully,
+} from "./link_device_services";
 import { decryptPrivateKeyWithPassword } from "../../crypto/decrypt";
 interface Props {
   // define your props here
@@ -41,7 +44,7 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
 
   const handleScannedData = async () => {
     // get data using device link key
-    const { deviceLinkEncryptedKey, deviceLinkIv, deviceLinkSalt } =
+    const { deviceLinkEncryptedKey, deviceLinkIv, deviceLinkSalt, user_id } =
       await getDataWithDeviceLinkKey(scannedResult);
 
     // decrypt the received data
@@ -51,7 +54,21 @@ const QrReader: React.FC<Props> = ({ openQrReader, setOpenQrReader }) => {
       deviceLinkIv,
       deviceLinkSalt
     );
-    console.log("decrypte Data PK", decrypteData);
+    if (decrypteData) {
+      // login user, once the private key is stored in the database
+      const { _id, name, email, image, public_key } =
+        await loginAfterLinkDeviceSuccessFully(user_id);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name,
+          email,
+          image,
+          id: _id,
+          public_key,
+        })
+      );
+    }
   };
 
   useEffect(() => {
