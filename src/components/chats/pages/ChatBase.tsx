@@ -10,7 +10,6 @@ import { getGroupChatsByID } from "../services/groupChatsServices";
 import { SidebarProvider } from "../../../components/ui/sidebar";
 import { AppSidebar } from "../../AppSidebar";
 import { decryptAESKey } from "../../../crypto/decrypt";
-import ProgressBar from "../../common/ProgressBar";
 // import ChatSearchSheet from "./ChatSearchSheet";
 
 // import { AppSidebar2 } from "../../app-sidebar";
@@ -26,7 +25,7 @@ export const ChatBase = () => {
   const useAppDispatch: () => AppDispatch = useDispatch;
   const dispatch = useAppDispatch(); // Typed dispatch
 
-  const { chatGroups, loading } = useSelector(
+  const { chatGroups } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupByID
   );
 

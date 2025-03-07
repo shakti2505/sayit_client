@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getSocket } from "../../../lib/socket.config";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store"; // Import AppDispatch type
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {useSearchParams } from "react-router-dom";
 import MobileChatSidebar from "../MobileChatSideBar";
 import ChatSearchSheet from "./ChatSearchSheet";
 import { decryptMessage } from "../../../crypto/decrypt";
@@ -32,7 +32,6 @@ interface GroupChatProps {
 const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   // const useAppDispatch: () => AppDispatch = useDispatch;
   // const dispatch = useAppDispatch(); // Typed dispatch
-  const navigate = useNavigate();
   const messageRef = useRef<HTMLDivElement>(null);
 
   // group data
