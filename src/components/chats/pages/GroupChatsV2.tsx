@@ -16,6 +16,7 @@ import { encryptMessageWithAES } from "../../../crypto/encrypt";
 import { GroupMembers } from "../slices/types/chatGroupTypes";
 import { messages } from "../slices/types/groupMessagesTypes";
 import notificaitonICon from "../../../../public/message-circle-white.svg";
+import { showNotification } from "../../../service worker/services";
 // import { SheetTrigger } from "../../ui/sheet";
 
 // import Message_skeleton_Loader from "../../common/Skeleton loader/Message_skeleton_loader";
@@ -173,20 +174,6 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
 
   // capturing the messase and adding it in the messages state with other messages
   useEffect(() => {
-    // asking notification permission from user
-    if (
-      Notification.permission === "default" ||
-      Notification.permission === "denied"
-    ) {
-      Notification.requestPermission().then((permission: string) => {
-        if (permission === "granted") {
-          alert("Permission Granted");
-        } else {
-          alert("Permissition denied");
-        }
-      });
-    }
-
     socket.on("message", async (data) => {
       if (aesKey) {
         const decryptedMessage = await decryptMessage(
@@ -206,22 +193,16 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           name: data.name,
           group_id: data.group_id,
         };
-        console.log(decryptedData.message);
-        if (Notification.permission === "granted") {
-           new Notification(
-            `Message received from ${decryptedData.name}`,
-            {
-              body: decryptedMessage,
-              icon: notificaitonICon,
-            }
-          );
-        }
+
         setMessages((prevMessages) => [
           ...prevMessages,
           { _id: data._id, messages: [decryptedData] },
         ]);
         // updating message status
         scrollToBottom();
+
+        // triggere notification
+        showNotification("New Message", decryptedData.message);
       }
       socket.emit("IsReceived", { received: true, receiverId: sender.id });
     });

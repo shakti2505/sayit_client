@@ -10,9 +10,12 @@ import { Toaster } from "../src/components/ui/sonner";
 // import ChatPage from "./components/chats/pages/ChatPage";
 import ChatBase from "./components/chats/pages/ChatBase";
 import LoginSignupPage from "./components/auth/LoginSignUpPage";
+import useNotification from "./service worker/hooks/useNotification";
 // import { ThemeProvider } from "@/components/theme-provider"
 
 function App() {
+  useNotification(); // Request notification permission on load
+
   return (
     <Provider store={store}>
       <Routes>
