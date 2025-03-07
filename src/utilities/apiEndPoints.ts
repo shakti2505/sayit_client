@@ -83,3 +83,9 @@ export const GET_DATA_WITH_DEVICE_LINK_KEY = (key: string) => {
 
 export const LOGIN_AFTER_LINK_DEVICE_SUCCESSFULLY =
   API_URL + "/login-after-link-successfully";
+
+export const CREATE_PASSWORD = BASE_URL + "/auth/create-password";
+
+// VERIFY PASSWORD BEFORE QR CODE GENERATION
+export const VERIFY_PASSWORD_FOR_QR_CODE_GENERATION =
+  BASE_URL + "/auth/verify-password";

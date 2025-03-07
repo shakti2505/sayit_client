@@ -1,11 +1,13 @@
 import axios from "axios";
 import { genrateAndStoreKeyPair } from "../../crypto/key_manager";
 import {
+  CREATE_PASSWORD,
   GOOGLE_AUTH_URL,
   LOGIN_WITH_EMAIL_PASSWORD,
   LOGOUT_USER,
   SAVE_PUBLIC_KEY,
   SIGNUP_WITH_EMAIL_PASSWORD,
+  VERIFY_PASSWORD_FOR_QR_CODE_GENERATION,
 } from "../../utilities/apiEndPoints";
 import { toast } from "sonner";
 import { SignupSchemaType } from "../../validations/authValidation/SignupformValidation";
@@ -161,5 +163,43 @@ export const logoutUser = async () => {
   } catch (error) {
     console.log(error);
     return error;
+  }
+};
+
+export const createPasswordAuth = async (password: string) => {
+  try {
+    const res = await axios.patch(
+      CREATE_PASSWORD,
+      { password },
+      { withCredentials: true }
+    );
+    if (res.status === 201) {
+      toast.success(res.data.message);
+    }
+  } catch (error: any) {
+    toast.error(error.response.data.message);
+  }
+};
+
+// verify user and password for QR code generation to link the devices
+
+export const verifyPassword = async (password: string) => {
+  try {
+    const res = await axios.post(
+      VERIFY_PASSWORD_FOR_QR_CODE_GENERATION,
+      {
+        password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+    if (res.status === 200) {
+      toast.success(res.data.message);
+      return res.data.message;
+    }
+  } catch (error) {
+    toast.error("Internal Server error");
+    console.log(error);
   }
 };

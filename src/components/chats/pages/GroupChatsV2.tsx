@@ -8,15 +8,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getSocket } from "../../../lib/socket.config";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store"; // Import AppDispatch type
-import {useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import MobileChatSidebar from "../MobileChatSideBar";
 import ChatSearchSheet from "./ChatSearchSheet";
 import { decryptMessage } from "../../../crypto/decrypt";
 import { encryptMessageWithAES } from "../../../crypto/encrypt";
-// import { updateMessgeStatus } from "../services/groupChatsServices";
 import { GroupMembers } from "../slices/types/chatGroupTypes";
 import { messages } from "../slices/types/groupMessagesTypes";
-
+import notificaitonICon from "../../../../public/message-circle-white.svg";
 // import { SheetTrigger } from "../../ui/sheet";
 
 // import Message_skeleton_Loader from "../../common/Skeleton loader/Message_skeleton_loader";
@@ -33,7 +32,7 @@ interface GroupChatProps {
 const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   // const useAppDispatch: () => AppDispatch = useDispatch;
   // const dispatch = useAppDispatch(); // Typed dispatch
-
+  const navigate = useNavigate();
   const messageRef = useRef<HTMLDivElement>(null);
 
   // group data
@@ -86,7 +85,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
 
   // handle message decryption with decrypted AesKey
   const handleMessageDecryption = async () => {
-    if(messages.length>0){
+    if (messages.length > 0) {
       setMessages([]);
     }
     if (aesKey && groupChats.length > 0) {
@@ -175,6 +174,20 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
 
   // capturing the messase and adding it in the messages state with other messages
   useEffect(() => {
+    // asking notification permission from user
+    if (
+      Notification.permission === "default" ||
+      Notification.permission === "denied"
+    ) {
+      Notification.requestPermission().then((permission: string) => {
+        if (permission === "granted") {
+          alert("Permission Granted");
+        } else {
+          alert("Permissition denied");
+        }
+      });
+    }
+
     socket.on("message", async (data) => {
       if (aesKey) {
         const decryptedMessage = await decryptMessage(
@@ -194,6 +207,16 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           name: data.name,
           group_id: data.group_id,
         };
+        if (Notification.permission === "granted") {
+          const n = new Notification(
+            `Message received from ${decryptedData.name}`,
+            {
+              body: decryptedMessage,
+              icon: notificaitonICon,
+            }
+          );
+          n.close();
+        }
         setMessages((prevMessages) => [
           ...prevMessages,
           { _id: data._id, messages: [decryptedData] },

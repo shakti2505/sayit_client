@@ -10,6 +10,7 @@ import { getGroupChatsByID } from "../services/groupChatsServices";
 import { SidebarProvider } from "../../../components/ui/sidebar";
 import { AppSidebar } from "../../AppSidebar";
 import { decryptAESKey } from "../../../crypto/decrypt";
+import ProgressBar from "../../common/ProgressBar";
 // import ChatSearchSheet from "./ChatSearchSheet";
 
 // import { AppSidebar2 } from "../../app-sidebar";
@@ -18,7 +19,6 @@ const GroupChatV2 = lazy(() => import("./GroupChatsV2"));
 export const ChatBase = () => {
   const [aesKey, setAesKey] = useState<CryptoKey>();
   // const [_, setSearchedMessageId] = useState("");
-
   // const navigate = useNavigate();
   const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
   const group_id = searchParams.get("group"); // Extract the value of "group_id"
@@ -26,9 +26,11 @@ export const ChatBase = () => {
   const useAppDispatch: () => AppDispatch = useDispatch;
   const dispatch = useAppDispatch(); // Typed dispatch
 
-  const { chatGroups } = useSelector(
+  const { chatGroups, loading } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupByID
   );
+
+  const [progress, setProgress] = useState(0);
 
   // const scrollToMessage = (id: string) => {
   //   const element = document.getElementById(id);
@@ -74,6 +76,19 @@ export const ChatBase = () => {
       getDecryptedAesKey();
     }
   }, [chatGroups]);
+
+  useEffect(() => {
+   const time =  setInterval(() => {
+      if (progress < 100) {
+        setProgress((p) => p + 1);
+      }
+    }, 20);
+
+    return ()=>{
+      clearTimeout(time);
+    }
+  }, [progress]);
+
   return (
     // <div className="flex bg-background">
     //   <Suspense fallback={<div>Loading...</div>}>
@@ -91,17 +106,19 @@ export const ChatBase = () => {
     // </div>
     <>
       <SidebarProvider>
+        <div className="bg-background"></div>
         <AppSidebar />
         {aesKey ? (
           <GroupChatV2 aesKey={aesKey} />
         ) : (
           <div className="flex justify-center items-center w-full bg-background">
-            <div className="flex flex-row justify-center items-center">
-              <p className="text-9xl text-muted-foreground">Sayit</p>
+            <div className="flex flex-col justify-center items-center gap-5">
+              <p className="text-9xl text-muted-foreground gap-5">Sayit</p>
             </div>
           </div>
         )}
       </SidebarProvider>
+      {/* <ProgressBar progress={progress} bgcolor={"red"} /> */}
     </>
   );
 };
