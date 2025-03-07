@@ -282,7 +282,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
         <CardContent className="flex-grow overflow-y-auto bg-background text-muted-foreground">
           <div
             className="flex flex-col-reverse overflow-y-auto 
-        h-[20rem] sm:h-[25rem] md:h-[25.5rem] lg:h-[25.6rem] xl:h-[31.5rem] 
+        h-[20rem] max-sm:h-[25rem] md:h-[25.5rem] lg:h-[25.6rem] xl:h-[31.5rem] 
         p-2 sm:p-4 md:p-6"
           >
             {messages.length !== 0 ? (
