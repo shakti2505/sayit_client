@@ -206,6 +206,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           name: data.name,
           group_id: data.group_id,
         };
+        console.log(decryptedData.message);
         if (Notification.permission === "granted") {
           const n = new Notification(
             `Message received from ${decryptedData.name}`,
@@ -214,7 +215,6 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
               icon: notificaitonICon,
             }
           );
-          n.close();
         }
         setMessages((prevMessages) => [
           ...prevMessages,
