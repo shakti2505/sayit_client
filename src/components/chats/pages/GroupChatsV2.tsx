@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { getSocket } from "../../../lib/socket.config";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store"; // Import AppDispatch type
-import {useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import MobileChatSidebar from "../MobileChatSideBar";
 import ChatSearchSheet from "./ChatSearchSheet";
 import { decryptMessage } from "../../../crypto/decrypt";
@@ -232,11 +232,11 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   }, [socket]);
   return (
     <>
-      <Card className="flex-2 flex-grow bg-background  overflow-y-hidden rounded-none border-none ">
+      <Card className="flex-2 flex-grow bg-background overflow-y-auto rounded-none border border-red-300 ">
         {/* Card Header */}
-        <CardHeader className="flex flex-row items-center bg-muted w-full py-5 ">
+        <CardHeader className="flex flex-row items-center bg-muted w-full">
           <button
-            className="flex flex-row items-center w-full space-x-4  hover:cursor-pointer"
+            className="flex flex-row items-center w-full space-x-4 hover:cursor-pointer"
             onClick={handleGroupDetailsSheet}
           >
             <div className="flex flex-row items-center w-full space-x-4 ">
@@ -282,11 +282,10 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
         <CardContent className="flex-grow overflow-y-auto bg-background text-muted-foreground">
           <div
             className="flex flex-col-reverse overflow-y-auto 
-        h-[20rem] max-sm:h-[25rem] md:h-[25.5rem] lg:h-[25.6rem] xl:h-[31.5rem] 
-        p-2 sm:p-4 md:p-6"
+        p-2 sm:p-4 md:p-6 h-lvh"
           >
             {messages.length !== 0 ? (
-              <div className="flex flex-col gap-2 z-20">
+              <div className="flex flex-col gap-2 z-20  ">
                 {/* Render the grouped messages */}
                 {messages.map((item) => {
                   return (
@@ -303,7 +302,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                           )}
 
                           {/* Messages for the Date */}
-                          <div className="flex flex-col gap-2 " key={item._id}>
+                          <div className="flex flex-col gap-2" key={item._id}>
                             {(item.messages as messages[])?.map((message) => {
                               if (message.group_id === group_id) {
                                 return (
