@@ -208,7 +208,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
         };
         console.log(decryptedData.message);
         if (Notification.permission === "granted") {
-          const n = new Notification(
+           new Notification(
             `Message received from ${decryptedData.name}`,
             {
               body: decryptedMessage,
