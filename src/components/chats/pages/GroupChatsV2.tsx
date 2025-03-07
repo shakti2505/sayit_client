@@ -15,7 +15,6 @@ import { decryptMessage } from "../../../crypto/decrypt";
 import { encryptMessageWithAES } from "../../../crypto/encrypt";
 import { GroupMembers } from "../slices/types/chatGroupTypes";
 import { messages } from "../slices/types/groupMessagesTypes";
-import notificaitonICon from "../../../../public/message-circle-white.svg";
 import { showNotification } from "../../../service worker/services";
 // import { SheetTrigger } from "../../ui/sheet";
 
@@ -193,7 +192,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           name: data.name,
           group_id: data.group_id,
         };
-
+        
         setMessages((prevMessages) => [
           ...prevMessages,
           { _id: data._id, messages: [decryptedData] },
