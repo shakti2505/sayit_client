@@ -232,7 +232,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   }, [socket]);
   return (
     <>
-      <Card className="flex-2 flex-grow bg-background overflow-y-auto rounded-none border border-red-300 ">
+      <Card className="flex-2 flex-grow bg-background overflow-y-auto rounded-none border-none">
         {/* Card Header */}
         <CardHeader className="flex flex-row items-center bg-muted w-full">
           <button
