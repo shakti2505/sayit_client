@@ -9,5 +9,7 @@ export const showNotification = async (title: string, body: string) => {
   registration.showNotification(title, {
     body: body,
     icon: notificationIcon,
-  });
+
+  }, 
+)
 };

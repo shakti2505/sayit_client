@@ -218,7 +218,7 @@ export function AppSidebar() {
             )}
             {activeItem.title === "Link Device" && (
               <SidebarGroupContent>
-                <LinkDevice/>
+                <LinkDevice />
               </SidebarGroupContent>
             )}
           </SidebarGroup>

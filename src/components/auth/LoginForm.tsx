@@ -18,6 +18,10 @@ import {
 } from "../../validations/authValidation/loginFormValidation";
 import { loginWithEmail } from "./authServices";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+
+
+
 export function LoginForm({
   className,
   ...props
@@ -31,7 +35,10 @@ export function LoginForm({
     resolver: zodResolver(createLoginSchema),
   });
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const onSubmit = async (payload: LoginSchemaType) => {
+    setLoading(true);
     try {
       const res = await loginWithEmail(payload);
       const { name, email, image, _id, public_key } = res.loggedInUser;
@@ -47,9 +54,11 @@ export function LoginForm({
           })
         );
         navigate("/chats");
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -62,8 +71,8 @@ export function LoginForm({
         </CardHeader>
         <CardContent>
           <div className="grid gap-6">
-            <div className="flex flex-col gap-4">
-              <GoogleAuthWrapper />
+            <div className="flex flex-col gap-4" >
+              <GoogleAuthWrapper  />
             </div>
             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
               <span className="relative z-10 bg-background px-2 text-muted-foreground">

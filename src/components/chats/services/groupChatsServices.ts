@@ -29,8 +29,7 @@ export const getGroupChatsByID =
     dispatch(getGroupChatStart());
     try {
       const res = await axios.get(GET_GROUP_CHATS_URL(group_id));
-      dispatch(getGroupChatsuccess(res.data.data));
-      toast.success(res.data.message);
+      dispatch(getGroupChatsuccess(res.data));
     } catch (error) {
       dispatch(getGroupChatfailure("failed to fetch chats"));
       return error;

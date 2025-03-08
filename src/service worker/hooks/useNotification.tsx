@@ -7,7 +7,6 @@ const useNotification = () => {
     if (Notification.permission === "default") {
       Notification.requestPermission().then((perm) => {
         setPermission(perm);
-        console.log(`Notification permission: ${perm}`);
       });
     }
   }, []);

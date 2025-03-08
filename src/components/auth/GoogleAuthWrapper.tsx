@@ -1,8 +1,7 @@
-
 import GoogleLogin from "./GoogleLogin";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
- const GoogleAuthWrapper = () => {
+const GoogleAuthWrapper = () => {
   // Access the Google Client ID from the environment variable
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 

@@ -16,6 +16,7 @@ import { encryptMessageWithAES } from "../../../crypto/encrypt";
 import { GroupMembers } from "../slices/types/chatGroupTypes";
 import { messages } from "../slices/types/groupMessagesTypes";
 import { showNotification } from "../../../service worker/services";
+import User_skeleton_loader from "../../common/Skeleton loader/User_skeleton_loader";
 // import { SheetTrigger } from "../../ui/sheet";
 
 // import Message_skeleton_Loader from "../../common/Skeleton loader/Message_skeleton_loader";
@@ -40,7 +41,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   );
 
   // group chats
-  const { groupChats } = useSelector(
+  const { groupChats, loading } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupChat
   );
 
@@ -55,8 +56,8 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   const [messages, setMessages] = useState<Array<groupChats>>([]);
   const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
   const group_id = searchParams.get("group"); // Extract the value of "group_id"
-  // const [loadingDecryptedMessages, setLoadingDecryptedMessages] =
-  useState(false);
+  const [loadingDecryptedMessages, setLoadingDecryptedMessages] =
+    useState(false);
 
   const handleGroupDetailsSheet = () => {
     setOpenSheet(true);
@@ -84,9 +85,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
 
   // handle message decryption with decrypted AesKey
   const handleMessageDecryption = async () => {
-    if (messages.length > 0) {
-      setMessages([]);
-    }
+    setLoadingDecryptedMessages(true);
     if (aesKey && groupChats.length > 0) {
       const decryptedMessages = await Promise.all(
         groupChats.map(async (msgByDate) => ({
@@ -101,7 +100,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
         }))
       );
       setMessages(decryptedMessages);
-      // setLoadingDecryptedMessages(false);
+      setLoadingDecryptedMessages(false);
     }
   };
 
@@ -169,7 +168,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
     if (aesKey) {
       handleMessageDecryption();
     }
-  }, [aesKey, group_id]);
+  }, [aesKey, group_id, groupChats]);
 
   // capturing the messase and adding it in the messages state with other messages
   useEffect(() => {
@@ -192,7 +191,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           name: data.name,
           group_id: data.group_id,
         };
-        
+
         setMessages((prevMessages) => [
           ...prevMessages,
           { _id: data._id, messages: [decryptedData] },
@@ -210,19 +209,20 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
       socket.close();
     };
   }, [socket]);
+
   return (
     <>
       <Card className="flex-2 flex-grow bg-background overflow-y-auto rounded-none border-none">
         {/* Card Header */}
-        <CardHeader className="flex flex-row items-center bg-muted w-full">
+        <CardHeader className="flex flex-row items-center gap-3 bg-muted w-full">
+          <div className="md:hidden">
+            <MobileChatSidebar />
+          </div>
           <button
             className="flex flex-row items-center w-full space-x-4 hover:cursor-pointer"
             onClick={handleGroupDetailsSheet}
           >
             <div className="flex flex-row items-center w-full space-x-4 ">
-              <div className="md:hidden">
-                <MobileChatSidebar />
-              </div>
               <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" alt="Image" />
                 <AvatarFallback>OM</AvatarFallback>
@@ -232,7 +232,10 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                 <div className="flex flex-row gap-2 mt-1">
                   {chatGroups?.members.map((item: GroupMembers) => {
                     return (
-                      <p className="text-xs font-medium  text-muted-foreground  ">
+                      <p
+                        className="text-xs font-medium  text-muted-foreground"
+                        key={item.member_id}
+                      >
                         {item.member_name}
                       </p>
                     );
@@ -264,29 +267,28 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
             className="flex flex-col-reverse overflow-y-auto 
         p-2 sm:p-4 md:p-6 h-lvh"
           >
-            {messages.length !== 0 ? (
+            {messages.length !== 0 && (
               <div className="flex flex-col gap-2 z-20  ">
                 {/* Render the grouped messages */}
-                {messages.map((item) => {
-                  return (
-                    <>
-                      <React.Fragment key={item._id}>
-                        <div className="text-background">
-                          {/* Date Header */}
-                          {item._id && (
-                            <div className="flex flex-row justify-center items-center w-full sticky top-0 ">
-                              <div className="p-1 px-3 my-4 text-xs bg-muted rounded-xl text-foreground ">
-                                {item._id}
+                {!loading && !loadingDecryptedMessages
+                  ? messages.map((item) => {
+                      return (
+                        <React.Fragment key={item._id}>
+                          <div className="text-background">
+                            {/* Date Header */}
+                            {item._id && (
+                              <div className="flex flex-row justify-center items-center w-full sticky top-0">
+                                <div className="p-1 px-3 my-4 text-xs bg-muted rounded-xl text-foreground ">
+                                  {item._id}
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
 
-                          {/* Messages for the Date */}
-                          <div className="flex flex-col gap-2" key={item._id}>
-                            {(item.messages as messages[])?.map((message) => {
-                              if (message.group_id === group_id) {
-                                return (
-                                  <>
+                            {/* Messages for the Date */}
+                            <div className="flex flex-col gap-2">
+                              {(item.messages as messages[])?.map((message) => {
+                                if (message.group_id === group_id) {
+                                  return (
                                     <div
                                       id={message._id}
                                       key={message._id}
@@ -297,19 +299,19 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                                           : "bg-muted text-foreground self-start"
                                       )}
                                     >
-                                      <span className="font-bold text-blue-500 text-xs">
+                                      <span className="font-bold text-muted-foreground text-sm">
                                         {message.name}
                                       </span>
                                       <span
                                         ref={messageRef}
                                         id="messageSpan"
-                                        className="break-words text-md"
+                                        className="break-words text-xl"
                                       >
                                         {message.message}
                                       </span>
                                       {/* <span className="break-words">{}</span> */}
                                       <div className="flex flex-row justify-end">
-                                        <div className="text-[11px] flex flex-row items-center gap-2">
+                                        <div className="text-[11px] flex flex-row items-center gap-2 text-muted-foreground">
                                           {new Date(
                                             message.createdAt
                                           ).toLocaleTimeString([], {
@@ -327,20 +329,32 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                                         </div>
                                       </div>
                                     </div>
-                                  </>
-                                );
-                              }
-                            })}
+                                  );
+                                }
+                              })}
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      );
+                    })
+                  : messages.map(() => {
+                      return (
+                        <div className="flex flex-col">
+                          <div className="self-start">
+                            <User_skeleton_loader />
+                          </div>
+                          <div className="self-end">
+                            <User_skeleton_loader />
+                          </div>
+                          <div className="self-start">
+                            <User_skeleton_loader />
+                          </div>
+                          <div className="self-end">
+                            <User_skeleton_loader />
                           </div>
                         </div>
-                      </React.Fragment>
-                    </>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-foreground bg-background flex flex-row justify-center items-center rounded-md">
-                <p className="font-bold">Start new conversation...</p>
+                      );
+                    })}
               </div>
             )}
           </div>

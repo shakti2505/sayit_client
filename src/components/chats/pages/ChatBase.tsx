@@ -25,7 +25,7 @@ export const ChatBase = () => {
   const useAppDispatch: () => AppDispatch = useDispatch;
   const dispatch = useAppDispatch(); // Typed dispatch
 
-  const { chatGroups } = useSelector(
+  const { chatGroups, loading } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupByID
   );
 
@@ -64,8 +64,8 @@ export const ChatBase = () => {
   //1 fetching chats and group by ID
   useEffect(() => {
     if (group_id) {
-      dispatch(getGroupChatsByID(group_id));
       dispatch(getGroupsByID(group_id));
+      dispatch(getGroupChatsByID(group_id));
     }
   }, [group_id]);
 
@@ -77,15 +77,15 @@ export const ChatBase = () => {
   }, [chatGroups]);
 
   useEffect(() => {
-   const time =  setInterval(() => {
+    const time = setInterval(() => {
       if (progress < 100) {
         setProgress((p) => p + 1);
       }
     }, 20);
 
-    return ()=>{
+    return () => {
       clearTimeout(time);
-    }
+    };
   }, [progress]);
 
   return (
@@ -105,9 +105,8 @@ export const ChatBase = () => {
     // </div>
     <>
       <SidebarProvider>
-        <div className="bg-background"></div>
         <AppSidebar />
-        {aesKey ? (
+        {aesKey && !loading ? (
           <GroupChatV2 aesKey={aesKey} />
         ) : (
           <div className="flex justify-center items-center w-full bg-background">

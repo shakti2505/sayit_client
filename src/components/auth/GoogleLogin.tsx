@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useGoogleLogin, CodeResponse } from "@react-oauth/google";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { googleAuth } from "./authServices";
@@ -7,8 +7,10 @@ import googlesvg from "../../assets/images/google.png";
 import { AppDispatch } from "../../store/store";
 import { useDispatch } from "react-redux";
 import { login } from "../../components/auth/authSlices";
+import Loader from "../common/Loader";
 
 const GoogleLogin: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [searchParams] = useSearchParams();
@@ -17,6 +19,7 @@ const GoogleLogin: React.FC = () => {
   const responseGoogle = async (authResponse: CodeResponse) => {
     try {
       if (authResponse["code"]) {
+        setLoading(true);
         // Use the separated service for Google authentication
         const result = await googleAuth(authResponse["code"]);
         const { name, email, image, _id, public_key } = result.user;
@@ -48,10 +51,12 @@ const GoogleLogin: React.FC = () => {
           navigate(`/chats?group_id=${groupid}`);
         } else {
           navigate("/chats");
+          setLoading(false);
         }
       }
     } catch (err) {
       console.log("Error during Google login:", err);
+      setLoading(false);
     }
   };
 
@@ -63,7 +68,7 @@ const GoogleLogin: React.FC = () => {
     flow: "auth-code", // Ensure you're using the authorization code flow
   });
 
-  return (
+  return !loading ? (
     <Button className="text-foreground" variant="outline" onClick={googleLogin}>
       <img
         src={googlesvg}
@@ -73,6 +78,15 @@ const GoogleLogin: React.FC = () => {
         alt="google"
       />
       Continue with Google
+    </Button>
+  ) : (
+    <Button
+      disabled={true}
+      className="text-foreground"
+      variant="outline"
+      onClick={googleLogin}
+    >
+      <Loader />
     </Button>
   );
 };
