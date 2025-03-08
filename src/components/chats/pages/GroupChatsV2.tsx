@@ -290,6 +290,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                                 if (message.group_id === group_id) {
                                   return (
                                     <div
+                                      ref={messagesEndRef}
                                       id={message._id}
                                       key={message._id}
                                       className={cn(
