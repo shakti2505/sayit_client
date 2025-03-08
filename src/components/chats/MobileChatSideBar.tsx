@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import {
   Sheet,
   SheetContent,
@@ -8,7 +8,7 @@ import {
 } from "../../components/ui/sheet";
 // import { HamburgerMenuIcon } from "@radix-ui/react";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
-import type { RootState } from "../../store/store"; // Import AppDispatch type
+// import type { RootState } from "../../store/store"; // Import AppDispatch type
 import { AppSidebar } from "../AppSidebar";
 import { SidebarProvider } from "../ui/sidebar";
 
