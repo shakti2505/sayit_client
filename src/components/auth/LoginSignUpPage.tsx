@@ -12,7 +12,6 @@ interface Props {
 const LoginSignupPage: React.FC<Props> = () => {
   const navigate = useNavigate();
   const [openQrReader, setOpenQrReader] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <>

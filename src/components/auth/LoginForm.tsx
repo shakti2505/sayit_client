@@ -18,7 +18,6 @@ import {
 } from "../../validations/authValidation/loginFormValidation";
 import { loginWithEmail } from "./authServices";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
 
 
@@ -35,10 +34,8 @@ export function LoginForm({
     resolver: zodResolver(createLoginSchema),
   });
 
-  const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit = async (payload: LoginSchemaType) => {
-    setLoading(true);
     try {
       const res = await loginWithEmail(payload);
       const { name, email, image, _id, public_key } = res.loggedInUser;
@@ -54,11 +51,9 @@ export function LoginForm({
           })
         );
         navigate("/chats");
-        setLoading(false);
       }
     } catch (error) {
       console.log(error);
-      setLoading(false);
     }
   };
 
