@@ -9,15 +9,14 @@ import {
 // import { HamburgerMenuIcon } from "@radix-ui/react";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import type { RootState } from "../../store/store"; // Import AppDispatch type
-import { useState } from "react";
 import { AppSidebar } from "../AppSidebar";
 import { SidebarProvider } from "../ui/sidebar";
 
 export default function MobileChatSidebar() {
 
-  const { data } = useSelector(
-    (ChatGroupUsers: RootState) => ChatGroupUsers.getAllGroupUsers
-  );
+  // const { data } = useSelector(
+  //   (ChatGroupUsers: RootState) => ChatGroupUsers.getAllGroupUsers
+  // );
 
   return (
     <Sheet>
