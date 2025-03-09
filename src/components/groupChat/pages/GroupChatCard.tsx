@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store"; // Import AppDispatch type
 import { getGroups } from "../services/groupChatServices";
-import { Loader } from "lucide-react";
 // import { Button } from "../../ui/button";
 // import { toast } from "sonner";
 import EditGroup from "./EditGroup";
@@ -12,6 +11,7 @@ import { Card, CardDescription, CardTitle } from "../../../components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Separator } from "../../ui/separator";
 import { getGroupChatsByID } from "../../chats/services/groupChatsServices";
+import User_skeleton_loader from "../../common/Skeleton loader/User_skeleton_loader";
 
 // import arrowSvg from "../../assets/arrow_upright.svg";
 
@@ -140,13 +140,13 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
                       <Separator />
                     </React.Fragment>
                   ) : (
-                    <p>No group found</p>
+                    <p className="text-white">No group found</p>
                   )}
                 </React.Fragment>
               );
             })
         ) : (
-          <Loader />
+          <User_skeleton_loader />
         )}
         <EditGroup
           openEditDialog={openEditDialog}

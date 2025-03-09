@@ -212,9 +212,9 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
 
   return (
     <>
-      <Card className="flex-2 flex-grow bg-background overflow-y-auto rounded-none border-none">
+      <Card className="relative flex-2 flex-grow bg-background overflow-y-auto rounded-none border-none">
         {/* Card Header */}
-        <CardHeader className="flex flex-row items-center gap-3 bg-muted w-full">
+        <CardHeader className="fixed flex flex-row items-center gap-3 bg-muted w-full z-40">
           <div className="md:hidden">
             <MobileChatSidebar />
           </div>
@@ -227,7 +227,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                 <AvatarImage src="https://github.com/shadcn.png" alt="Image" />
                 <AvatarFallback>OM</AvatarFallback>
               </Avatar>
-              <div className="flex flex-col items-start px-2">
+              <div className="flex flex-col items-start px-2 sticky">
                 <p className="text-sm font-medium">{chatGroups?.name}</p>
                 <div className="flex flex-row gap-2 mt-1">
                   {chatGroups?.members.map((item: GroupMembers) => {
@@ -264,11 +264,10 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
         {/* Card Content */}
         <CardContent className="flex-grow overflow-y-auto bg-background text-muted-foreground">
           <div
-            className="flex flex-col-reverse overflow-y-auto 
-        p-2 sm:p-4 md:p-6 h-lvh"
+            className="flex flex-col-reverse overflow-y-auto h-lvh"
           >
             {messages.length !== 0 && (
-              <div className="flex flex-col gap-2 z-20  ">
+              <div className="flex flex-col gap-2 px-5 py-16">
                 {/* Render the grouped messages */}
                 {!loading && !loadingDecryptedMessages
                   ? messages.map((item) => {
@@ -290,11 +289,10 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                                 if (message.group_id === group_id) {
                                   return (
                                     <div
-                                      ref={messagesEndRef}
                                       id={message._id}
                                       key={message._id}
                                       className={cn(
-                                        "flex w-max max-w-96 flex-col gap-2 rounded-lg px-2 py-2 text-sm shadow-orange-100 shadow-sm",
+                                        "flex w-max max-w-96 flex-col gap-2 rounded-2xl px-2 py-2 text-sm shadow-cyan-300 shadow-sm",
                                         message.name === sender.name
                                           ? "bg-[hsl(var(--muted))] text-foreground self-end"
                                           : "bg-muted text-foreground self-start"
@@ -304,6 +302,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                                         {message.name}
                                       </span>
                                       <span
+                                        style={{ scrollBehavior: "smooth" }} // Smooth scrolling
                                         ref={messageRef}
                                         id="messageSpan"
                                         className="break-words text-xl"
@@ -361,7 +360,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           </div>
         </CardContent>
         {/* Card Footer */}
-        <CardFooter className="bg-muted py-4 gap-2 border-none">
+        <CardFooter className="absolute bottom-0 w-full bg-muted py-4 gap-2 border-none z-40">
           <Plus size={30} className="text-foreground hover:cursor-pointer" />
           <div className="flex flex-row items-center p-2 bg-background border-none w-full rounded-xl gap-2 ">
             <Sticker className="text-muted-foreground hover:cursor-pointer" />

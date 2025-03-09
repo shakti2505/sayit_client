@@ -67,9 +67,7 @@ const CreateChatGroup: React.FC = () => {
   });
 
   const onSubmit = async (payload: createChatSchemaType) => {
-    const res = await dispatch(
-      createChatGroup(payload, selectedUsers)
-    );
+    const res = await dispatch(createChatGroup(payload, selectedUsers));
     if (res.message === "Group created successfully") {
       setOpen(false);
       localStorage.setItem(
