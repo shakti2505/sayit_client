@@ -64,14 +64,18 @@ export const decryptMessage = async (
     const ivBuffer = b642ab(iv);
     const encryptedData = b642ab(message);
 
-    const decryptedMessage = await window.crypto.subtle.decrypt(
-      { name: "AES-GCM", iv: ivBuffer },
-      AesKey,
-      encryptedData
-    );
+    if (ivBuffer && encryptedData) {
+      const decryptedMessage = await window.crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: ivBuffer },
+        AesKey,
+        encryptedData
+      );
 
-    const deCipher = new TextDecoder().decode(decryptedMessage);
-    return deCipher;
+      const deCipher = new TextDecoder().decode(decryptedMessage);
+      return deCipher;
+    }else{
+      alert("no iv and enc data");
+    }
   } catch (error) {
     console.log(`Error in decrypting Data: ${error}`);
   }
@@ -116,7 +120,6 @@ export const decryptPrivateKeyWithPassword = async (
     encryptedBuffer
   );
 
-  console.log("decryptedBuffer", decryptedBuffer);
   const decodedBase64 = decoder.decode(decryptedBuffer);
 
   // convert Base64 to arrayBuffer

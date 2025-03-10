@@ -98,10 +98,10 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
     setLoadingDecryptedMessages(true);
     if (aesKey && groupChats.length > 0) {
       const decryptedMessages = await Promise.all(
-        groupChats.map(async (msgByDate) => ({
+        groupChats.map(async (msgByDate:any) => ({
           ...msgByDate,
           messages: await Promise.all(
-            msgByDate.messages.map(async (item) => ({
+            msgByDate.messages.map(async (item:any) => ({
               ...item,
               message:
                 (await decryptMessage(item.message, item.iv, aesKey)) || "", // Decrypt message
@@ -176,7 +176,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
     if (aesKey) {
       handleMessageDecryption();
     }
-  }, [aesKey, group_id, groupChats]);
+  }, [aesKey, groupChats]);
 
   // capturing the messase and adding it in the messages state with other messages
   useEffect(() => {
@@ -189,7 +189,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
         );
         // const res = await updateMessgeStatus(data._id);
         const decryptedData: messages = {
-          isRead: [],
+          isRead: [], 
           isReceived: [],
           _id: "",
           sender_id: data.sender_id,
@@ -199,7 +199,6 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           name: data.name,
           group_id: data.group_id,
         };
-
         setMessages((prevMessages) => [
           ...prevMessages,
           { _id: data._id, messages: [decryptedData] },
@@ -216,7 +215,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
     return () => {
       socket.close();
     };
-  }, []);
+  }, [socket]);
 
   return (
     <>

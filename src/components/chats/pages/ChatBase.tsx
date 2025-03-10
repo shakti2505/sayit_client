@@ -30,7 +30,7 @@ export const ChatBase = () => {
     (ChatGroups: RootState) => ChatGroups.getGroupByID
   );
 
-  const [progress, setProgress] = useState(0);
+  // const [progress, setProgress] = useState(0);
 
   // const scrollToMessage = (id: string) => {
   //   const element = document.getElementById(id);
@@ -60,7 +60,7 @@ export const ChatBase = () => {
     } catch (error) {
       console.log(error);
     }
-  }, [chatGroups, decryptAESKey]);
+  }, [chatGroups]);
 
   //1 fetching chats and group by ID
   useEffect(() => {
@@ -77,17 +77,21 @@ export const ChatBase = () => {
     }
   }, [chatGroups]);
 
-  useEffect(() => {
-    const time = setInterval(() => {
-      if (progress < 100) {
-        setProgress((p) => p + 1);
-      }
-    }, 20);
+  useEffect(()=>{
+    console.log("aesKey", aesKey);
+  },[aesKey]);
 
-    return () => {
-      clearTimeout(time);
-    };
-  }, [progress]);
+  // useEffect(() => {
+  //   const time = setInterval(() => {
+  //     if (progress < 100) {
+  //       setProgress((p) => p + 1);
+  //     }
+  //   }, 20);
+
+  //   return () => {
+  //     clearTimeout(time);
+  //   };
+  // }, [progress]);
 
   return (
     // <div className="flex bg-background">
