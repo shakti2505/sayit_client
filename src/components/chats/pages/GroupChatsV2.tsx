@@ -187,7 +187,6 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           data.iv,
           aesKey
         );
-        console.log("decryptedMessage", decryptedMessage);
         // const res = await updateMessgeStatus(data._id);
         const decryptedData: messages = {
           isRead: [],
@@ -209,7 +208,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
         scrollToBottom();
 
         // triggere notification
-        // showNotification("New Message", decryptedData.message);
+        showNotification("New Message", decryptedData.message);
       }
       // socket.emit("IsReceived", { received: true, receiverId: sender.id });
     });
