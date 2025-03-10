@@ -45,20 +45,24 @@ export const decryptMessage = async (
   try {
     if (!message || !iv || !AesKey) {
       console.log(`provide all data to encrypt ${message} ${iv} ${AesKey}`);
+      return;
     }
-    // Convert IV from Base64 (or other format) to Uint8Array
-    const ivBuffer = new Uint8Array(
-      atob(iv) // Decode Base64 to binary
-        .split("")
-        .map((char) => char.charCodeAt(0))
-    );
+    // // Convert IV from Base64 (or other format) to Uint8Array
+    // const ivBuffer = new Uint8Array(
+    //   atob(iv) // Decode Base64 to binary
+    //     .split("")
+    //     .map((char) => char.charCodeAt(0))
+    // );
 
-    // Convert message from Base64 to Uint8Array
-    const encryptedData = new Uint8Array(
-      atob(message)
-        .split("")
-        .map((char) => char.charCodeAt(0))
-    );
+    // // Convert message from Base64 to Uint8Array
+    // const encryptedData = new Uint8Array(
+    //   atob(message)
+    //     .split("")
+    //     .map((char) => char.charCodeAt(0))
+    // );
+
+    const ivBuffer = b642ab(iv);
+    const encryptedData = b642ab(message);
 
     const decryptedMessage = await window.crypto.subtle.decrypt(
       { name: "AES-GCM", iv: ivBuffer },
@@ -120,3 +124,8 @@ export const decryptPrivateKeyWithPassword = async (
   await storePrivateKeyInIndexedDB(arrayBuffer);
   return "Key restored";
 };
+
+//  https://stackoverflow.com/a/41106346 or https://stackoverflow.com/a/21797381/9014097
+function b642ab(base64string: string) {
+  return Uint8Array.from(atob(base64string), (c) => c.charCodeAt(0));
+}

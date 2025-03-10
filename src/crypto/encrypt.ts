@@ -17,11 +17,15 @@ export const encryptMessageWithAES = async (
     aesKey,
     encoder.encode(message)
   );
+  // return {
+  //   encryptedMessage: btoa(
+  //     String.fromCharCode(...new Uint8Array(encryptedBuffer))
+  //   ),
+  //   iv: btoa(String.fromCharCode(...iv)), // converted IV to base64;
+  // };
   return {
-    encryptedMessage: btoa(
-      String.fromCharCode(...new Uint8Array(encryptedBuffer))
-    ),
-    iv: btoa(String.fromCharCode(...iv)), // converted IV to base64;
+    encryptedMessage: ab2b64(encryptedBuffer),
+    iv: ab2b64(iv),
   };
 };
 
@@ -95,4 +99,9 @@ export const encryptPrivateKey = async (
     salt: btoa(String.fromCharCode(...salt)), // Store salt in Base64
   };
 };
+
+function ab2b64(arrayBuffer: ArrayBuffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+}
+
 

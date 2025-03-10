@@ -139,15 +139,13 @@ export const loginWithEmail = async (payload: LoginSchemaType) => {
         withCredentials: true,
       }
     );
-    if (loginRes.status != 200) {
-      toast.error(loginRes.data.message);
-    } else if (!isPrivateKeyExist) {
-      genrateKeyPairAndSavePublicKey();
+    if (loginRes.status === 200) {
       toast.success(loginRes.data.message);
-    } else {
-      toast.success(loginRes.data.message);
+      if (!isPrivateKeyExist) {
+        genrateKeyPairAndSavePublicKey();
+      }
+      return loginRes.data;
     }
-    return loginRes.data;
   } catch (error) {
     console.log(error);
   }

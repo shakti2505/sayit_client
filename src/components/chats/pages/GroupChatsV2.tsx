@@ -83,6 +83,16 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
     return socket.connect();
   }, [group_id]);
 
+  // let socket2 = useMemo(() => {
+  //   const socket = getSocket();
+  //   return socket.connect();
+  // }, [socket]);
+
+  const getFirstName = (str: String) => {
+    const res = str.split(" ");
+    return res[0];
+  };
+
   // handle message decryption with decrypted AesKey
   const handleMessageDecryption = async () => {
     setLoadingDecryptedMessages(true);
@@ -210,6 +220,14 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
     };
   }, [socket]);
 
+  // useEffect(() => {
+  //   socket2.emit("joinOneToOne", sender.id);
+  // }, [socket2]);
+
+  useEffect(() => {
+    console.log(messages);
+  }, [messages]);
+
   return (
     <>
       <Card className="relative flex-2 flex-grow bg-background overflow-y-auto rounded-none border-none">
@@ -236,7 +254,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                         className="text-xs font-medium  text-muted-foreground"
                         key={item.member_id}
                       >
-                        {item.member_name}
+                        {getFirstName(item.member_name)}
                       </p>
                     );
                   })}
@@ -263,9 +281,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
 
         {/* Card Content */}
         <CardContent className="flex-grow overflow-y-auto bg-background text-muted-foreground">
-          <div
-            className="flex flex-col-reverse overflow-y-auto h-lvh"
-          >
+          <div className="flex flex-col-reverse overflow-y-auto h-lvh">
             {messages.length !== 0 && (
               <div className="flex flex-col gap-2 px-5 py-16">
                 {/* Render the grouped messages */}
