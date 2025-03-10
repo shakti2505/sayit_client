@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import { getGroupsByID } from "../services/chatGroupServices";
 import type { AppDispatch, RootState } from "../../../store/store"; // Import AppDispatch type
 import { useDispatch, useSelector } from "react-redux";
-// import { getGroupChatsByID } from "../services/groupChatsServices";
+import { getGroupChatsByID } from "../services/groupChatsServices";
 
 import { SidebarProvider } from "../../../components/ui/sidebar";
 import { AppSidebar } from "../../AppSidebar";
@@ -66,7 +66,7 @@ export const ChatBase = () => {
   useEffect(() => {
     if (group_id) {
       dispatch(getGroupsByID(group_id));
-      // dispatch(getGroupChatsByID(group_id));
+      dispatch(getGroupChatsByID(group_id));
     }
   }, [group_id]);
 

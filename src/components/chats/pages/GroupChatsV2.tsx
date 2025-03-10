@@ -148,9 +148,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
           name: sender.name,
           group_id: group_id ?? "",
         };
-        socket.emit("message", payload, (status: string) => {
-          console.log(status);
-        });
+        socket.emit("message", payload);
         const payloadDectypted: messages = {
           isRead: [],
           isReceived: [],
@@ -183,12 +181,13 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   // capturing the messase and adding it in the messages state with other messages
   useEffect(() => {
     socket.on("message", async (data) => {
-      if (aesKey) {
+      if (aesKey && data) {
         const decryptedMessage = await decryptMessage(
           data.message,
           data.iv,
           aesKey
         );
+        console.log("decryptedMessage", decryptedMessage);
         // const res = await updateMessgeStatus(data._id);
         const decryptedData: messages = {
           isRead: [],
@@ -210,23 +209,15 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
         scrollToBottom();
 
         // triggere notification
-        showNotification("New Message", decryptedData.message);
+        // showNotification("New Message", decryptedData.message);
       }
-      socket.emit("IsReceived", { received: true, receiverId: sender.id });
+      // socket.emit("IsReceived", { received: true, receiverId: sender.id });
     });
 
     return () => {
       socket.close();
     };
-  }, [socket]);
-
-  // useEffect(() => {
-  //   socket2.emit("joinOneToOne", sender.id);
-  // }, [socket2]);
-
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
+  }, []);
 
   return (
     <>
