@@ -124,7 +124,7 @@ const AddNewContact: React.FC = () => {
             ) : (
               <ScrollArea className="h-72 w-full rounded-md border mt-1">
                 <div className="p-4">
-                  {newUser.map((item) => (
+                  {newUser.map((item:any) => (
                     <>
                       <div
                         key={item._id}

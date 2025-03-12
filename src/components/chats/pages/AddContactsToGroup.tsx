@@ -38,7 +38,7 @@ interface User {
 }
 
 interface AddToContactsProps {
-  aeskey: CryptoKey;
+  aeskey?: CryptoKey;
 }
 
 const AddContactToGroup: React.FC<AddToContactsProps> = ({ aeskey }) => {
@@ -47,7 +47,7 @@ const AddContactToGroup: React.FC<AddToContactsProps> = ({ aeskey }) => {
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
   const group_id = searchParams.get("group"); // Extract the value of "group_id"
-  
+
   const { userContacts } = useSelector(
     (UserContact: RootState) => UserContact.getUserContacts
   );
@@ -55,24 +55,26 @@ const AddContactToGroup: React.FC<AddToContactsProps> = ({ aeskey }) => {
   const handleAddContactsToGroup = async () => {
     setLoading(true);
     try {
-      const res = await encryptedAESkeyWithUsersPublicKey(
-        aeskey,
-        selectedUsers
-      );
-      // array of object holding new contacts encrypted aes key and user_id
-      const encryptedAesKeyOfContacts = await Promise.all(res);
-      if (
-        selectedUsers.length > 0 &&
-        group_id &&
-        encryptedAesKeyOfContacts.length > 0
-      ) {
-        await addContactsToGroup(
-          selectedUsers,
-          group_id,
-          encryptedAesKeyOfContacts
+      if (aeskey) {
+        const res = await encryptedAESkeyWithUsersPublicKey(
+          aeskey,
+          selectedUsers
         );
-        setLoading(false);
-        setOpen(false);
+        // array of object holding new contacts encrypted aes key and user_id
+        const encryptedAesKeyOfContacts = await Promise.all(res);
+        if (
+          selectedUsers.length > 0 &&
+          group_id &&
+          encryptedAesKeyOfContacts.length > 0
+        ) {
+          await addContactsToGroup(
+            selectedUsers,
+            group_id,
+            encryptedAesKeyOfContacts
+          );
+          setLoading(false);
+          setOpen(false);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -83,14 +85,12 @@ const AddContactToGroup: React.FC<AddToContactsProps> = ({ aeskey }) => {
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <button
-            className="w-full flex flex-row items-center  gap-4 p-2 hover:bg-black/40"
-            onClick={() => setOpen(true)}
-          >
-            <UserPlus className="rounded-full bg-background p-2" size={40} />{" "}
-            Add members
-          </button>
+        <DialogTrigger
+          onClick={() => setOpen(true)}
+          className="w-full flex flex-row items-center gap-4 p-2 hover:bg-black/40"
+        >
+          <UserPlus className="rounded-full bg-background p-2" size={40} /> Add
+          members
         </DialogTrigger>
         <DialogContent
           className="gap-0 p-2 outline-none"
@@ -104,7 +104,7 @@ const AddContactToGroup: React.FC<AddToContactsProps> = ({ aeskey }) => {
             <CommandList>
               <CommandEmpty>No users found.</CommandEmpty>
               <CommandGroup className="p-2">
-                {userContacts.map((user) => (
+                {userContacts.map((user: any) => (
                   <CommandItem
                     key={user._id}
                     className="flex items-center px-2"

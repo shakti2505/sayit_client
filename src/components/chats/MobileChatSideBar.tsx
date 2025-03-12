@@ -9,7 +9,6 @@ import {
 // import { HamburgerMenuIcon } from "@radix-ui/react";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 // import type { RootState } from "../../store/store"; // Import AppDispatch type
-import { AppSidebar } from "../AppSidebar";
 import { SidebarProvider } from "../ui/sidebar";
 
 export default function MobileChatSidebar() {
@@ -28,7 +27,7 @@ export default function MobileChatSidebar() {
           <SheetTitle className="text-2xl font-bold">Users</SheetTitle>
         </SheetHeader>
         <SidebarProvider>
-          <AppSidebar/>
+          {/* <AppSidebar/> */}
         </SidebarProvider>
       </SheetContent>
     </Sheet>

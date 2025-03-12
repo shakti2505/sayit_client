@@ -68,11 +68,9 @@ export const updateMessgeStatus = async (messageId: string) => {
     if (res.status !== 200) {
       toast.error("unable to update message status");
     } else {
-      return true
+      return true;
     }
   } catch (error) {
     console.log(error);
   }
 };
-
-

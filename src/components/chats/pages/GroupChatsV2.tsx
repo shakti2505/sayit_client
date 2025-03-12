@@ -1,5 +1,5 @@
 import React from "react";
-import { Send, CheckCheck, Plus, MicIcon, Sticker, Search } from "lucide-react";
+import { Send, CheckCheck, Plus, MicIcon, Sticker } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
@@ -11,28 +11,22 @@ import type { RootState } from "../../../store/store"; // Import AppDispatch typ
 import { useSearchParams } from "react-router-dom";
 import MobileChatSidebar from "../MobileChatSideBar";
 import ChatSearchSheet from "./ChatSearchSheet";
-import { decryptMessage } from "../../../crypto/decrypt";
+import { decryptAESKey, decryptMessage } from "../../../crypto/decrypt";
 import { encryptMessageWithAES } from "../../../crypto/encrypt";
 import { GroupMembers } from "../slices/types/chatGroupTypes";
 import { messages } from "../slices/types/groupMessagesTypes";
 import { showNotification } from "../../../service worker/services";
 import User_skeleton_loader from "../../common/Skeleton loader/User_skeleton_loader";
-// import { SheetTrigger } from "../../ui/sheet";
-
-// import Message_skeleton_Loader from "../../common/Skeleton loader/Message_skeleton_loader";
 
 interface groupChats {
   _id: string;
   messages: Array<messages>;
 }
 
-interface GroupChatProps {
-  aesKey: CryptoKey;
-}
-
-const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
+const GroupChatV2: React.FC = () => {
   // const useAppDispatch: () => AppDispatch = useDispatch;
   // const dispatch = useAppDispatch(); // Typed dispatch
+  const [aesKey, setAesKey] = useState<CryptoKey>();
   const messageRef = useRef<HTMLDivElement>(null);
 
   // group data
@@ -41,40 +35,43 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
   );
 
   // group chats
-  const { groupChats, loading } = useSelector(
+  const { groupChats, loadingGroupChats } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupChat
   );
 
   // state to pass data in the left sheet to show group details
-  const [searchSheet, setSearchSheet] = useState(false);
-  const [openGroupDetails, setOpenGroupDetails] = useState(false);
   const [openSheet, setOpenSheet] = useState(false);
 
-  const [_, setSearchedMessageId] = useState("");
+  // input message
   const [message, setMessage] = useState("");
+
+  // message ref to scroll when new messsage appears
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // messages array to store the old messages of group
   const [messages, setMessages] = useState<Array<groupChats>>([]);
+
+  // typers state
+  const [typer, setTyper] = useState<string>("");
+
   const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
   const group_id = searchParams.get("group"); // Extract the value of "group_id"
   const [loadingDecryptedMessages, setLoadingDecryptedMessages] =
     useState(false);
 
+  const sender = JSON.parse(localStorage.getItem("user") || "");
+
+  // function to open group details side sheet
   const handleGroupDetailsSheet = () => {
     setOpenSheet(true);
-    setSearchSheet(false);
-    setOpenGroupDetails(true);
   };
 
-  const handleSearchSheet = () => {
-    setOpenSheet(true);
-    setOpenGroupDetails(false);
-    setSearchSheet(true);
-  };
-
+  //
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // create soket instance
   let socket = useMemo(() => {
     const socket = getSocket();
     socket.auth = {
@@ -83,28 +80,22 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
     return socket.connect();
   }, [group_id]);
 
-  // let socket2 = useMemo(() => {
-  //   const socket = getSocket();
-  //   return socket.connect();
-  // }, [socket]);
-
   const getFirstName = (str: String) => {
     const res = str.split(" ");
     return res[0];
   };
 
   // handle message decryption with decrypted AesKey
-  const handleMessageDecryption = async () => {
+  const handleMessageDecryption = async (key: CryptoKey) => {
     setLoadingDecryptedMessages(true);
-    if (aesKey && groupChats.length > 0) {
+    if (key && groupChats.length > 0) {
       const decryptedMessages = await Promise.all(
-        groupChats.map(async (msgByDate:any) => ({
+        groupChats.map(async (msgByDate: any) => ({
           ...msgByDate,
           messages: await Promise.all(
-            msgByDate.messages.map(async (item:any) => ({
+            msgByDate.messages.map(async (item: any) => ({
               ...item,
-              message:
-                (await decryptMessage(item.message, item.iv, aesKey)) || "", // Decrypt message
+              message: await decryptMessage(item.message, item.iv, key), // Decrypt message
             }))
           ),
         }))
@@ -114,26 +105,20 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
     }
   };
 
-  // scroll to the selected Messages from the searchsheet
-  const scrollToMessage = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "center" }); // Smoothly scroll to the element
-      element.style.backgroundColor = "grey";
-      setTimeout(() => {
-        element.style.backgroundColor = "";
-      }, 2000);
+  const handleChange = async (msg: string) => {
+    setMessage(msg);
+    // firing and event to detect who is typing
+    if (msg.length > 0) {
+      socket.emit("typing", sender.name);
+    }
+    if (msg.length === 0) {
+      socket.emit("notTyping", sender.name);
     }
   };
 
-  const handleChange = async (msg: string) => {
-    setMessage(msg);
-  };
-
-  const sender = JSON.parse(localStorage.getItem("user") || "");
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    socket.emit("notTyping", sender.name);
     if (aesKey) {
       const encryptedMsg = await encryptMessageWithAES(message, aesKey);
       if (encryptedMsg) {
@@ -166,30 +151,57 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
         ]);
 
         setMessage("");
+        setTyper("");
       }
     } else {
       console.log("no aes key");
     }
   };
 
-  useEffect(() => {
-    if (aesKey) {
-      handleMessageDecryption();
+  const getDecryptedAesKey = async () => {
+    try {
+      const user = localStorage.getItem("user");
+      const loggedInUser = user ? JSON.parse(user) : null;
+      if (loggedInUser && chatGroups) {
+        const res = chatGroups?.encryptAESKeyForGroup.find(
+          (item: any) => item.user_id === loggedInUser.id
+        )?.encryptedAESKey;
+        if (res?.length !== 0) {
+          const key = await decryptAESKey(res as string);
+          setAesKey(key);
+          return key;
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }, [aesKey, groupChats]);
+  };
+
+  // when this components load the fisrt aes key will be decrypted
+  useEffect(() => {
+    const fetchDecryptedAesKey = async () => {
+      const key = await getDecryptedAesKey();
+      if (key) {
+        handleMessageDecryption(key);
+      }
+    };
+    fetchDecryptedAesKey();
+  }, []);
 
   // capturing the messase and adding it in the messages state with other messages
   useEffect(() => {
     socket.on("message", async (data) => {
-      if (aesKey && data) {
+      const key = await getDecryptedAesKey();
+
+      if (data && key) {
         const decryptedMessage = await decryptMessage(
           data.message,
           data.iv,
-          aesKey
+          key
         );
         // const res = await updateMessgeStatus(data._id);
         const decryptedData: messages = {
-          isRead: [], 
+          isRead: [],
           isReceived: [],
           _id: "",
           sender_id: data.sender_id,
@@ -212,6 +224,16 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
       // socket.emit("IsReceived", { received: true, receiverId: sender.id });
     });
 
+    // caputuring isTyping event
+    socket.on("isTyping", (name) => {
+      setTyper(name);
+    });
+
+    // caputuring isTyping event
+    socket.on("notTyping", () => {
+      setTyper("");
+    });
+
     return () => {
       socket.close();
     };
@@ -221,6 +243,7 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
     <>
       <Card className="relative flex-2 flex-grow bg-background overflow-y-auto rounded-none border-none">
         {/* Card Header */}
+
         <CardHeader className="fixed flex flex-row items-center gap-3 bg-muted w-full z-40">
           <div className="md:hidden">
             <MobileChatSidebar />
@@ -251,30 +274,19 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
               </div>
             </div>
           </button>
-          <ChatSearchSheet
-            setSearchedMessageId={setSearchedMessageId}
-            scrollToMessage={scrollToMessage}
-            setOpenGroupDetails={setOpenGroupDetails}
-            openGroupDetails={openGroupDetails}
-            searchSheet={searchSheet}
-            openSheet={openSheet}
-            handleGroupDetailsSheet={handleGroupDetailsSheet}
-            handleSearchSheet={handleSearchSheet}
-            setOpenSheet={setOpenSheet}
-            aeskey={aesKey}
-          />
-          <button onClick={handleSearchSheet}>
-            <Search />
-          </button>
         </CardHeader>
+        <ChatSearchSheet
+          openSheet={openSheet}
+          setOpenSheet={setOpenSheet}
+          aesKey={aesKey}
+        />
 
-        {/* Card Content */}
         <CardContent className="flex-grow overflow-y-auto bg-background text-muted-foreground">
           <div className="flex flex-col-reverse overflow-y-auto h-lvh">
             {messages.length !== 0 && (
               <div className="flex flex-col gap-2 px-5 py-16">
                 {/* Render the grouped messages */}
-                {!loading && !loadingDecryptedMessages
+                {!loadingGroupChats && !loadingDecryptedMessages
                   ? messages.map((item) => {
                       return (
                         <React.Fragment key={item._id}>
@@ -360,6 +372,11 @@ const GroupChatV2: React.FC<GroupChatProps> = ({ aesKey }) => {
                         </div>
                       );
                     })}
+                {typer && (
+                  <p className="text-muted-foreground bg-background animate-pulse text-xs">
+                    {typer} is typing.....
+                  </p>
+                )}
               </div>
             )}
           </div>

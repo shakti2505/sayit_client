@@ -76,14 +76,11 @@ const LinkDevice: React.FC<Props> = () => {
           <MonitorSmartphone size={100} strokeWidth={0.5} color="cyan" />
         </div>
         <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              onClick={() => setIsGenerateQRcode(true)}
-              className="w-full text-muted-foreground"
-              variant="outline"
-            >
-              Generate QrCode
-            </Button>
+          <DialogTrigger
+            onClick={() => setIsGenerateQRcode(true)}
+            className="w-full text-muted-foreground bg-background hover:bg-background/40 p-1 rounded-lg"
+          >
+            Generate QrCode
           </DialogTrigger>
           <DialogContent
             className="w-full"
@@ -118,7 +115,7 @@ const LinkDevice: React.FC<Props> = () => {
                     <ToolTipInfo content="Enter Password to generate QR code" />
                   )}
                 </div>
-                <p className="text-xs">
+                {/* <p className="text-xs">
                   Haven't set a password yet? Click here to{" "}
                   <button
                     onClick={() => setIsCreatepassword(true)}
@@ -127,7 +124,7 @@ const LinkDevice: React.FC<Props> = () => {
                     create one now
                   </button>
                   .
-                </p>
+                </p> */}
               </div>
             ) : (
               <>
@@ -172,11 +169,6 @@ const LinkDevice: React.FC<Props> = () => {
                   title="Link device"
                   marginSize={1}
                 />
-                <DialogFooter>
-                  <Button variant="outline" type="submit">
-                    Save changes
-                  </Button>
-                </DialogFooter>
               </>
             )}
           </DialogContent>

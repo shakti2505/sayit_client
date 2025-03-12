@@ -3,7 +3,7 @@ import { groupData} from './types/chatGroupTypes'
 
 interface ChatGroupState {
   chatGroups: groupData | null;
-  loading: boolean;
+  loadingChatGroup: boolean;
   error: string | null;
 }
 
@@ -12,7 +12,7 @@ interface ChatGroupState {
 // initial state
 const initialState: ChatGroupState = {
   chatGroups: null,
-  loading: true,
+  loadingChatGroup: true,
   error: null,
 };
 
@@ -21,13 +21,14 @@ const getGroupByIdSlice = createSlice({
   initialState,
   reducers: {
     getGroupByIdStart: (state) => {
-      (state.loading = true), (state.error = null);
+      (state.loadingChatGroup = true), (state.error = null);
     },
     getGroupByIdSuccess: (state, action: PayloadAction<groupData>) => {
-      (state.loading = false), (state.chatGroups = action.payload);
+      console.log('action',action.payload);
+      (state.loadingChatGroup = false), (state.chatGroups = action.payload);
     },
     getGroupByIdFailure: (state, action: PayloadAction<string>) => {
-      (state.loading = false), (state.error = action.payload);
+      (state.loadingChatGroup = false), (state.error = action.payload);
     },
   },
 });

@@ -19,7 +19,6 @@ const ChatNav: React.FC = () => {
         <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-600 text-transparent bg-clip-text">
           {chatGroups?.name}
         </h1>
-        <p></p>
       </div>
     </nav>
   );

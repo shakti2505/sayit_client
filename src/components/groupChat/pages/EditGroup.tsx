@@ -84,7 +84,7 @@ const EditGroup: React.FC<EditDialogProps> = ({
               Make changes to your group here. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} >
             <div className="mt-4 flex flex-col">
               <input
                 placeholder="Enter Chat title "

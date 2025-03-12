@@ -25,12 +25,6 @@ import {
 import GroupChatCard from "./groupChat/pages/GroupChatCard";
 // import ChatSidebar from "./chats/ChatSideBar";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../components/ui/tooltip";
-import {
   Tabs,
   TabsContent,
   TabsList,
@@ -112,16 +106,7 @@ export function AppSidebar() {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <SidebarTrigger />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Collapse</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <SidebarTrigger />
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
@@ -175,27 +160,27 @@ export function AppSidebar() {
             {activeItem.title === "Chats" && (
               <SidebarGroupContent>
                 <Tabs defaultValue="groups">
-                  <TabsList className="gap-1 sticky top-0 w-full z-20">
+                  <TabsList className="flex justify-start sticky top-0 w-full z-20 p-5 bg-background/10 gap-2">
                     <TabsTrigger
-                      className="rounded-full font-thin bg-muted"
+                      className="rounded-full font-thin bg-muted text-lg"
                       value="all"
                     >
                       All
                     </TabsTrigger>
                     <TabsTrigger
-                      className="rounded-full font-thin bg-muted"
+                      className="rounded-full font-thin bg-muted text-lg"
                       value="unread"
                     >
                       Unread
                     </TabsTrigger>
                     <TabsTrigger
-                      className="rounded-full font-thin bg-muted"
+                      className="rounded-full font-thin bg-muted text-lg"
                       value="Contacts"
                     >
                       Contacts
                     </TabsTrigger>
                     <TabsTrigger
-                      className="rounded-full font-thin bg-muted"
+                      className="rounded-full font-thin bg-muted text-lg"
                       value="groups"
                     >
                       Groups

@@ -85,64 +85,15 @@ const CreateChatGroup: React.FC = () => {
 
   return (
     <>
-      {/* <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          className="bg-[hsl(var(--muted))] text-foreground"
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger
           onClick={() => setOpen(true)}
+          className="bg-background text-foreground rounded-xl p-2 shadow-sm hover:scale-105 duration-150 ease-in-out"
         >
           New group
-        </Button>
-      </DialogTrigger>
-      <DialogContent
-        onInteractOutside={(e) => e.preventDefault()}
-        className="bg-background text-foreground"
-      >
-        <DialogHeader>
-          <DialogTitle>Create Your new chat</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="">
-          <div className="mt-4 flex flex-col">
-            <input
-              placeholder="Enter Chat title "
-              {...register("name")}
-              className="px-2 border rounded-full h-8 bg-background text-foreground "
-            />
-            <span className="text-red-500">{errors?.name?.message}</span>
-          </div>
-          <div className="mt-4 flex flex-col">
-            <input
-              type="number"
-              placeholder="Enter Passcode "
-              className="px-2 border rounded-full h-8 bg-background text-foreground"
-              {...register("passcode")}
-            />
-            <span className="text-red-500">{errors?.passcode?.message}</span>
-          </div>
-          <div className="mt-4 flex flex-col">
-            <Button
-              className="w-full bg-background text-foreground"
-              variant="outline"
-              disabled={loading}
-            >
-              {loading ? <Loader /> : "Submit"}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog> */}
-
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button
-            className="bg-[hsl(var(--muted))] text-foreground"
-            onClick={() => setOpen(true)}
-          >
-            New group
-          </Button>
         </DialogTrigger>
         <DialogContent
-          className="gap-0 p- outline-none"
+          className="gap-0 outline-none"
           onInteractOutside={(e) => e.preventDefault()}
         >
           <DialogHeader
