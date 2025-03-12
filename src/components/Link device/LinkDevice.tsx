@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { MonitorSmartphone, Smartphone, Check } from "lucide-react";
-import { Button } from "../ui/button";
 import { getPrivateKeyFromIndexedDB } from "../../crypto/key_manager";
 import { exportPrivateKey } from "../../crypto/utils";
 import { encryptPrivateKey } from "../../crypto/encrypt";
@@ -10,7 +9,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
