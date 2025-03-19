@@ -18,7 +18,7 @@ interface ChatGroups {
 // initial state
 const initialState: ChatGroups = {
   data: [],
-  loading: false,
+  loading: true,
   error: null,
 };
 

@@ -24,7 +24,6 @@ const getGroupByIdSlice = createSlice({
       (state.loadingChatGroup = true), (state.error = null);
     },
     getGroupByIdSuccess: (state, action: PayloadAction<groupData>) => {
-      console.log('action',action.payload);
       (state.loadingChatGroup = false), (state.chatGroups = action.payload);
     },
     getGroupByIdFailure: (state, action: PayloadAction<string>) => {

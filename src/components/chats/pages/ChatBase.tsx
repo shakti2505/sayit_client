@@ -1,26 +1,29 @@
-import { lazy, Suspense } from "react";
-import type { RootState } from "../../../store/store"; // Import AppDispatch type
-import { useSelector } from "react-redux";
-
+import { useState, useEffect } from "react";
+import { Lock } from "lucide-react";
 import { SidebarProvider } from "../../../components/ui/sidebar";
 import { AppSidebar } from "../../AppSidebar";
+import ProgressBar from "../../common/ProgressBar";
+import GroupChatV2 from "./GroupChatsV2";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState, AppDispatch } from "../../../store/store"; // Import AppDispatch type
+import { getGroups } from "../../groupChat/services/groupChatServices";
+import { getUsersContacts } from "../../Contacts/services/AddNewUserServices";
 
-const GroupChatV2 = lazy(() => import("./GroupChatsV2"));
 export const ChatBase = () => {
-  // const [aesKey, setAesKey] = useState<CryptoKey>();
-
-  // const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
-  // const group_id = searchParams.get("group"); // Extract the value of "group_id"
-
-  // const useAppDispatch: () => AppDispatch = useDispatch;
-  // const dispatch = useAppDispatch(); // Typed dispatch
-
-  const { loadingGroupChats } = useSelector(
-    (ChatGroups: RootState) => ChatGroups.getGroupChat
-  );
+  const [progress, setProgress] = useState(0);
+  const useAppDispatch: () => AppDispatch = useDispatch;
+  const dispatch = useAppDispatch(); // Typed dispatch
+  // group data
   const { loadingChatGroup } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupByID
   );
+
+  // group chats
+  const { loadingGroupChats } = useSelector(
+    (ChatGroups: RootState) => ChatGroups.getGroupChat
+  );
+  // group chats
+ 
 
   // decrypting AES key
   // const getDecryptedAesKey = useCallback(async () => {
@@ -50,37 +53,47 @@ export const ChatBase = () => {
   //   }
   // }, [chatGroups]);
 
-  // useEffect(() => {
-  //   const time = setInterval(() => {
-  //     if (progress < 100) {
-  //       setProgress((p) => p + 1);
-  //     }
-  //   }, 20);
+  useEffect(() => {
+    dispatch(getGroups());
+    dispatch(getUsersContacts());
+  }, []);
 
-  //   return () => {
-  //     clearTimeout(time);
-  //   };
-  // }, [progress]);
+  useEffect(() => {
+    const time = setInterval(() => {
+      if (progress < 100) {
+        setProgress((p) => p + 1);
+      }
+    }, 1);
 
+    return () => {
+      clearTimeout(time);
+    };
+  }, [progress]);
+
+  if (progress !== 100) {
+    return <ProgressBar progress={progress} bgcolor="cyan" />;
+  } else {
+    return (
+      <SidebarProvider>
+        <AppSidebar />
+        {!loadingChatGroup && !loadingGroupChats && <GroupChatV2 />}
+        {loadingChatGroup && loadingGroupChats && <LoadingScreen/>}
+      </SidebarProvider>
+    );
+  }
+};
+
+const LoadingScreen = () => {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-
-      {/* Show loading screen before rendering the main content */}
-      {loadingGroupChats || loadingChatGroup ? (
-        <div className="flex justify-center items-center w-full bg-background">
-          <div className="flex flex-col justify-center items-center gap-5">
-            <p className="text-9xl text-muted-foreground">Sayit</p>
-          </div>
-        </div>
-      ) : (
-        <Suspense
-          fallback={<p className="text-white text-3xl">Loading Chats</p>}
-        >
-          <GroupChatV2 />
-        </Suspense>
-      )}
-    </SidebarProvider>
+    <div className="flex justify-center items-center w-full bg-background">
+      <div className="flex flex-col justify-center items-center gap-5">
+        <p className="text-9xl text-muted-foreground">Sayit</p>
+        <p className="text-xl text-muted-foreground">
+          <Lock />
+          End to end encrypted
+        </p>
+      </div>
+    </div>
   );
 };
 

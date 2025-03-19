@@ -5,6 +5,7 @@ import {
   GOOGLE_AUTH_URL,
   LOGIN_WITH_EMAIL_PASSWORD,
   LOGOUT_USER,
+  refreshAccessToken,
   SAVE_PUBLIC_KEY,
   SIGNUP_WITH_EMAIL_PASSWORD,
   VERIFY_PASSWORD_FOR_QR_CODE_GENERATION,
@@ -200,4 +201,11 @@ export const verifyPassword = async (password: string) => {
     toast.error("Internal Server error");
     console.log(error);
   }
+};
+
+export const refresh = async () => {
+  const response = await axios.get(refreshAccessToken, {
+    withCredentials: true,
+  });
+  return response.data.refreshToken;
 };

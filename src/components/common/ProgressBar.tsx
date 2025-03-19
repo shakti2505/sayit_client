@@ -8,9 +8,13 @@ interface Props {
 
 const ProgressBar: React.FC<Props> = ({ progress, bgcolor }) => {
   return (
-    <div className="flex flex-col  bg-white p-10" >
-      <div className="flex h-5 rounded-xl justify-center" style={{backgroundColor:`${bgcolor}`, width:`${progress}%`}}>
-        {progress}%
+    <div className="flex justify-center items-center h-screen">
+      <div className="flex flex-col bg-background p-10 ease-in-out w-96">
+        <div
+          className="flex h-1 rounded-xl justify-center"
+          style={{ backgroundColor: `${bgcolor}`, width: `${progress}%` }}
+        >
+        </div>
       </div>
     </div>
   );

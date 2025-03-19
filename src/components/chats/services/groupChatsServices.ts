@@ -22,14 +22,30 @@ import {
 } from "../../../utilities/apiEndPoints";
 import { toast } from "sonner";
 
-// get chats
-
-export const getGroupChatsByID =
-  (group_id: string) => async (dispatch: AppDispatch) => {
+export const getGroupChatsByIDPagination =
+  (group_id: string, page: number, limit: number) =>
+  async (dispatch: AppDispatch) => {
     dispatch(getGroupChatStart());
     try {
-      const res = await axios.get(GET_GROUP_CHATS_URL(group_id));
+      const res = await axios.get(GET_GROUP_CHATS_URL(group_id, page, limit));
       dispatch(getGroupChatsuccess(res.data));
+      return res.data.length;
+    } catch (error) {
+      dispatch(getGroupChatfailure("failed to fetch chats"));
+      return error;
+    }
+  };
+
+
+// get group chats
+export const getGroupChatsByID =
+  (group_id: string, page: number, limit: number) =>
+  async (dispatch: AppDispatch) => {
+    dispatch(getGroupChatStart());
+    try {
+      const res = await axios.get(GET_GROUP_CHATS_URL(group_id, page, limit));
+      dispatch(getGroupChatsuccess(res.data));
+      return res.data.length;
     } catch (error) {
       dispatch(getGroupChatfailure("failed to fetch chats"));
       return error;

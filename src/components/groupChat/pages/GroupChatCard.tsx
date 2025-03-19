@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store"; // Import AppDispatch type
-import { getGroups } from "../services/groupChatServices";
 // import { Button } from "../../ui/button";
 // import { toast } from "sonner";
 import EditGroup from "./EditGroup";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import CreateChatGroup from "./CreateChatGroup";
 import { Card, CardDescription, CardTitle } from "../../../components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
@@ -29,8 +28,8 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
   const useAppDispatch: () => AppDispatch = useDispatch;
   const dispatch = useAppDispatch(); // Typed dispatch
   const [searchQuery] = useState("");
-  // const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
-  // const group_id = searchParams.get("group_id");
+  const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
+  const group_id = searchParams.get("group_id");
   // gro
   const { data } = useSelector(
     (getChatGroup: RootState) => getChatGroup.getChatGroup
@@ -57,15 +56,14 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
   //   setOpenEditDiolog(true);
   // };
 
+  // create soket instance
+
   const handleGetGropChatById = async (groupID: string) => {
-    await dispatch(getGroupChatsByID(groupID));
     await dispatch(getGroupsByID(groupID));
+    await dispatch(getGroupChatsByID(groupID, 1, 10));
     navigate(`/chats?group=${groupID}`);
   };
 
-  useEffect(() => {
-    dispatch(getGroups());
-  }, []);
 
   return (
     <div className="flex flex-col">
@@ -94,6 +92,9 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
                     <div className="flex flex-col gap-1 w-full p-1">
                       <CardTitle>{item.name}</CardTitle>
                       <CardDescription className="text-foreground"></CardDescription>
+                    </div>
+                    <div className="bg-cyan-400 rounded-full w-8 h-7 p-1 flex justify-center items-center">
+                      <p className="text-sm text-black font-bold ">5</p>
                     </div>
                   </div>
                 </Card>

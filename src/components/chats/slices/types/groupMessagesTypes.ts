@@ -9,7 +9,7 @@ export interface messages {
   isRead: [];
   isReceived: []
 }
-[];
+
 
 export interface groupChats {
   _id: string;

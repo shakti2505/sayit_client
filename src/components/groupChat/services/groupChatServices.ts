@@ -24,6 +24,7 @@ import {
   updateGroupFailure,
 } from "../slices/updateChatGroupSlice";
 import { addNewUserToGroup } from "../../chats/services/chatGroupServices";
+import { axiosPrivate } from "../../../utilities/axios";
 
 interface GroupMembers {
   contact_id: string;
@@ -74,7 +75,7 @@ export const createChatGroup =
 export const getGroups = () => async (dispatch: AppDispatch) => {
   dispatch(getGroupsStart());
   try {
-    const { data } = await axios.get(GET_GROUP_CHAT_URL, {
+    const { data } = await axiosPrivate.get(GET_GROUP_CHAT_URL, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",

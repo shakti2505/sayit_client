@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   ArchiveX,
   MonitorSmartphone,
@@ -32,9 +32,9 @@ import {
 } from "../components/ui/tabs";
 import AddNewContact from "./Contacts/pages/AddNewContact";
 import UsersContacts from "./Contacts/pages/UsersContacts";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "../store/store"; // Import AppDispatch type
-import { getUsersContacts } from "./Contacts/services/AddNewUserServices";
+// import { useDispatch } from "react-redux";
+// import type { AppDispatch } from "../store/store"; // Import AppDispatch type
+// import { getUsersContacts } from "./Contacts/services/AddNewUserServices";
 import LinkDevice from "./Link device/LinkDevice";
 
 // Menu items.
@@ -82,14 +82,11 @@ const data = {
 export function AppSidebar() {
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
   const { setOpen } = useSidebar();
-  const useAppDispatch: () => AppDispatch = useDispatch;
-  const dispatch = useAppDispatch(); // Typed dispatch
+  // const useAppDispatch: () => AppDispatch = useDispatch;
+  // const dispatch = useAppDispatch(); // Typed dispatch
   // fetching logged in user
   // const logged_in_user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  useEffect(() => {
-    dispatch(getUsersContacts());
-  }, []);
 
   return (
     <Sidebar

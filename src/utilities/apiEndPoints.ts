@@ -1,5 +1,6 @@
 export const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 export const API_URL = BASE_URL + "/api";
+
 export const GROUP_CHAT_URL = API_URL + "/create-chat-group";
 export const GET_GROUP_CHAT_URL = API_URL + "/chat-groups";
 
@@ -21,8 +22,12 @@ export const GET_GROUP_USERS_BY_ID_URL = (group_id: string) => {
 
 export const ADD_NEW_USER_TO_GROUP = API_URL + "/create-chat-group-user";
 
-export const GET_GROUP_CHATS_URL = (group_id: string) => {
-  return API_URL + `/get-group-chats/${group_id}`;
+export const GET_GROUP_CHATS_URL = (
+  group_id: string,
+  page: number,
+  limit: number
+) => {
+  return API_URL + `/get-group-chats/${group_id}?_page=${page}&_limit=${limit}`;
 };
 export const GENERATE_GROUP_LINK = (group_id: string) => {
   return API_URL + `/generate-group-link/${group_id}`;
@@ -71,6 +76,9 @@ export const SIGNUP_WITH_EMAIL_PASSWORD = BASE_URL + "/auth/signup";
 export const LOGIN_WITH_EMAIL_PASSWORD = BASE_URL + "/auth/login";
 
 export const LOGOUT_USER = BASE_URL + "/auth/logout";
+
+// refresh token
+export const refreshAccessToken = BASE_URL + "/auth/refresh-accessToken";
 
 // to create device link key
 export const ADD_DEVICE_LINK_KEY = API_URL + "/add-device-link-key";
