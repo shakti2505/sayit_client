@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  CLOUDNARY_URL,
   DELETE_GROUP_CHAT_URL,
   GET_GROUP_CHAT_URL,
   GROUP_CHAT_URL,
@@ -37,7 +38,11 @@ const logged_in_user_data = userData ? JSON.parse(userData) : null;
 
 // api call for the create chat group api
 export const createChatGroup =
-  (payload: createChatSchemaType, selectedUsers: Array<GroupMembers>) =>
+  (
+    payload: createChatSchemaType,
+    selectedUsers: Array<GroupMembers>,
+    groupPicture: String
+  ) =>
   async (dispatch: AppDispatch) => {
     dispatch(createGroupChatStart());
     try {
@@ -47,6 +52,7 @@ export const createChatGroup =
           ...payload,
           key: logged_in_user_data.public_key,
           selectedUsers: selectedUsers,
+          group_picture: groupPicture,
         },
         {
           withCredentials: true,
@@ -129,4 +135,32 @@ export const updateChatGroup =
     }
   };
 
-// get group By UUID(public page);
+// upload group image
+export const handleUploadGroupPicture = async (groupPicture: File) => {
+  const UPLOAD_PRESET = import.meta.env.VITE_UPLOAD_PRESET;
+  const FOLDER_NAME = import.meta.env.VITE_FOLDER_NAME;
+  const CLOUDE_NAME = import.meta.env.VITE_CLOUDE_NAME;
+
+  try {
+    if (groupPicture) {
+      let formData = new FormData();
+      formData.append("upload_preset", UPLOAD_PRESET);
+      formData.append("folder", FOLDER_NAME);
+      formData.append("cloud_name", CLOUDE_NAME);
+      formData.append("file", groupPicture);
+
+      let response = await fetch(CLOUDNARY_URL(CLOUDE_NAME), {
+        method: "post",
+        body: formData,
+      });
+      if (!response.ok) {
+        toast.error("failed to upload image");
+        return;
+      }
+      const data = await response.json();
+      return data.url;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

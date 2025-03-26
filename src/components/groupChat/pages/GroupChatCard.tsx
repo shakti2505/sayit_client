@@ -5,10 +5,7 @@ import type { AppDispatch, RootState } from "../../../store/store"; // Import Ap
 // import { toast } from "sonner";
 import EditGroup from "./EditGroup";
 import { useNavigate } from "react-router-dom";
-import CreateChatGroup from "./CreateChatGroup";
 import { Card, CardDescription, CardTitle } from "../../../components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
-import { Separator } from "../../ui/separator";
 import { getGroupChatsByID } from "../../chats/services/groupChatsServices";
 import User_skeleton_loader from "../../common/Skeleton loader/User_skeleton_loader";
 import { getGroupsByID } from "../../chats/services/chatGroupServices";
@@ -33,6 +30,11 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
   // gro
   const { data } = useSelector(
     (getChatGroup: RootState) => getChatGroup.getChatGroup
+  );
+
+  // updated group details
+  const { updatedGroupDetails } = useSelector(
+    (ChatGroups: RootState) => ChatGroups.updateChatGroupDetails
   );
   // gropchats data
   // const groupChats = useSelector(
@@ -64,11 +66,9 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
     navigate(`/chats?group=${groupID}`);
   };
 
-
   return (
     <div className="flex flex-col">
       <div className="flex flex-col">
-        <CreateChatGroup />
         {data && data.length > 0 ? (
           data
             .filter((group: any) =>
@@ -81,16 +81,31 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
                   className="border-b rounded-none border-none cursor-pointer bg-inherit hover:bg-gray-500 active:bg-[#2A3942] focus-card"
                 >
                   <div className="flex flex-row items-center gap-3 p-2">
-                    <Avatar>
+                    {/* <Avatar>
                       <AvatarImage
-                        className="rounded-full w-16"
-                        src="https://github.com/shadcn.png"
+                        className="rounded-full w-16 h-5 object-cover "
+                        src={item.group_picture ? item.group_picture : 'https://github.com/shadcn.png'}
                         alt={item.name}
                       />
                       <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
+                    </Avatar> */}
+                    <img
+                      src={
+                        updatedGroupDetails?._id === item._id
+                          ? updatedGroupDetails?.group_picture
+                          : item.group_picture
+                          ? item.group_picture
+                          : "https://github.com/shadcn.png"
+                      }
+                      className="rounded-full w-14 h-14 border-0 object-cover"
+                      alt={item.name.slice(0, 1)}
+                    />
                     <div className="flex flex-col gap-1 w-full p-1">
-                      <CardTitle>{item.name}</CardTitle>
+                      <CardTitle>
+                        {updatedGroupDetails?._id === item._id
+                          ? updatedGroupDetails?.name
+                          : item.name}
+                      </CardTitle>
                       <CardDescription className="text-foreground"></CardDescription>
                     </div>
                     <div className="bg-cyan-400 rounded-full w-8 h-7 p-1 flex justify-center items-center">
@@ -98,7 +113,7 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
                     </div>
                   </div>
                 </Card>
-                <Separator />
+                {/* <Separator /> */}
               </React.Fragment>
             ))
         ) : (

@@ -97,3 +97,7 @@ export const CREATE_PASSWORD = BASE_URL + "/auth/create-password";
 // VERIFY PASSWORD BEFORE QR CODE GENERATION
 export const VERIFY_PASSWORD_FOR_QR_CODE_GENERATION =
   BASE_URL + "/auth/verify-password";
+
+export const CLOUDNARY_URL = (cloude_name: string) => {
+  return `https://api.cloudinary.com/v1_1/${cloude_name}/image/upload`;
+};

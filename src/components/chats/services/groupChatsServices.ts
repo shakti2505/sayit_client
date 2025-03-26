@@ -36,7 +36,6 @@ export const getGroupChatsByIDPagination =
     }
   };
 
-
 // get group chats
 export const getGroupChatsByID =
   (group_id: string, page: number, limit: number) =>

@@ -1,17 +1,27 @@
-import {
-  Sheet,
-  SheetContent,
-} from "../../../components/ui/sheet";
+import { Sheet, SheetContent } from "../../../components/ui/sheet";
 // import { Card, CardTitle, CardDescription } from "../../ui/card";
-// import Loader from "../../common/Loader";
-import { useSelector } from "react-redux";
-import type { RootState } from "../../../store/store"; // Import AppDispatch type
+import Loader from "../../common/Loader";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState, AppDispatch } from "../../../store/store"; // Import AppDispatch type
 import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import { Separator } from "../../ui/separator";
 import { CardTitle, CardDescription } from "../../ui/card";
 import { Badge } from "../../ui/badge";
 import AddContactToGroup from "./AddContactsToGroup";
-
+import {
+  Camera,
+  Check,
+  CheckCheck,
+  CheckIcon,
+  HandHelping,
+  Pencil,
+} from "lucide-react";
+import { useState } from "react";
+import {
+  changeGroupName,
+  changeGroupPicutre,
+} from "../services/chatGroupServices";
+import { handleUploadGroupPicture } from "../../groupChat/services/groupChatServices";
 interface ChatSearchSheetProps {
   setOpenSheet: (openSheet: boolean) => void;
   openSheet: boolean;
@@ -23,9 +33,62 @@ const ChatSearchSheet: React.FC<ChatSearchSheetProps> = ({
   openSheet,
   aesKey,
 }: ChatSearchSheetProps) => {
+  const useAppDispatch: () => AppDispatch = useDispatch;
+  const dispatch = useAppDispatch(); // Typed dispatch
+
   const { chatGroups } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupByID
   );
+
+  const { updatedGroupDetails } = useSelector(
+    (ChatGroups: RootState) => ChatGroups.updateChatGroupDetails
+  );
+
+  const [editGroupName, setEditGroupName] = useState<boolean>(false);
+  const [groupName, setGroupName] = useState<string>(
+    chatGroups?.name ? chatGroups.name : ""
+  );
+  const [loading, setLoading] = useState(false);
+  const [loadingImage, setLoadingImage] = useState(false);
+  const handleChange = (name: string) => {
+    setGroupName(name);
+  };
+
+  const [groupPicture, setGroupPicture] = useState<File | null>(null);
+  const [groupPicturePreview, setGroupPicturePreview] = useState<string>("");
+  const [isHover, setIshover] = useState(false);
+
+  const handleUpdateName = async () => {
+    setLoading(true);
+    if (chatGroups?._id) {
+      dispatch(changeGroupName(groupName, chatGroups._id));
+      setEditGroupName(false);
+      setLoading(false);
+    }
+  };
+
+  const handleAddgroupPicture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const picture = e.target.files[0];
+      setGroupPicture(picture);
+      const groupPicturePreviewUrl = URL.createObjectURL(picture);
+      setGroupPicturePreview(groupPicturePreviewUrl);
+    }
+  };
+
+  const handleUpdateGroupImage = async () => {
+    setLoadingImage(true);
+    let uploade_image_url: string = "";
+    if (groupPicture) {
+      uploade_image_url = await handleUploadGroupPicture(groupPicture);
+    }
+    if (chatGroups?._id && groupPicture) {
+      dispatch(changeGroupPicutre(uploade_image_url, chatGroups._id));
+      setEditGroupName(false);
+      setLoadingImage(false);
+      setGroupPicturePreview("");
+    }
+  };
 
   const admin = chatGroups?.members?.filter((item) => item.isAdmin === true);
 
@@ -36,17 +99,91 @@ const ChatSearchSheet: React.FC<ChatSearchSheetProps> = ({
         onInteractOutside={(e) => e.preventDefault()}
       >
         <div className="flex flex-col items-center justify-center gap-3">
-          <Avatar>
+          {/* <Avatar>
             <AvatarImage
               className="rounded-full w-52 mt-10"
               src="https://github.com/shadcn.png"
               alt="@shadcn"
             />
-          </Avatar>{" "}
+          </Avatar> */}
+          <div className="mt-2 flex flex-col items-center relative">
+            <label
+              onMouseLeave={() => setIshover(false)}
+              htmlFor="file"
+              className={`w-48 h-48 bg-muted rounded-full border flex items-center justify-center hover:cursor-pointer ${
+                isHover ? "z-10 opacity-70" : ""
+              }`}
+            >
+              <Camera size={50} strokeWidth={0.5} />
+            </label>
+            <input
+              type="file"
+              id="file"
+              className="hidden"
+              onChange={handleAddgroupPicture}
+            />
+
+            <div className="absolute">
+              {groupPicturePreview.length > 0 && (
+                <button
+                  disabled={loadingImage ? true : false}
+                  onClick={handleUpdateGroupImage}
+                  className="absolute bottom-0 right-0 rounded-full bg-cyan-600  p-2 z-40"
+                >
+                  {loadingImage ? <Loader /> : <Check />}
+                </button>
+              )}
+
+              <img
+                onMouseEnter={() => setIshover(true)}
+                src={
+                  groupPicturePreview
+                    ? groupPicturePreview
+                    : updatedGroupDetails?.group_picture
+                    ? updatedGroupDetails?.group_picture
+                    : chatGroups?.group_picture
+                    ? chatGroups.group_picture
+                    : "https://github.com/shadcn.png"
+                }
+                className="w-48 h-48 bg-muted rounded-full border"
+              />
+            </div>
+          </div>
           <div className="flex flex-col items-center gap-2">
-            <p className="text-3xl text-muted-foreground">{chatGroups?.name}</p>
+            <div className="flex flex-row gap-2">
+              {editGroupName ? (
+                <div className="flex border-b  border-b-cyan-600  w-80">
+                  <input
+                    className="bg-background outline-none w-full p-2 text-2xl"
+                    type="text"
+                    placeholder="Enter name"
+                    value={groupName}
+                    onChange={(e) => handleChange(e.target.value)}
+                  />
+                  {}
+                  <button
+                    disabled={loading ? true : false}
+                    onClick={handleUpdateName}
+                    className="bg-background text-foreground"
+                  >
+                    {loading ? <Loader /> : <CheckIcon />}
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p className="text-3xl text-muted-foreground">
+                    {updatedGroupDetails?.name
+                      ? updatedGroupDetails.name
+                      : chatGroups?.name}
+                  </p>
+                  <button onClick={() => setEditGroupName(true)}>
+                    <Pencil />
+                  </button>
+                </>
+              )}
+            </div>
             <p className="text-md text-muted-foreground">
-              Group {chatGroups?.members.length} members
+              Group. {chatGroups?.members.length} members
             </p>
           </div>
         </div>
@@ -74,7 +211,7 @@ const ChatSearchSheet: React.FC<ChatSearchSheetProps> = ({
 
         {chatGroups?.members.map((item) => (
           <div
-            key={item.member_id}
+            key={chatGroups._id}
             className="flex flex-row items-center gap-3 p-2 hover:bg-black/40 "
           >
             <Avatar>

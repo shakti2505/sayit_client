@@ -1,6 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "../../ui/button";
-import { MessageCirclePlus, Search, Plus } from "lucide-react";
+import {
+  MessageCirclePlus,
+  Search,
+  Plus,
+  UserRoundPlus,
+  Contact,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +24,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Separator } from "../../ui/separator";
 import User_skeleton_loader from "../../common/Skeleton loader/User_skeleton_loader";
 import Loader from "../../common/Loader";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 
 const AddNewContact: React.FC = () => {
   const [openAddNewContactDialog, setOpenAddNewContactDialog] = useState(false);
@@ -84,19 +91,17 @@ const AddNewContact: React.FC = () => {
   }, [searchUserQuery.query]);
   return (
     <>
-      <div className="flex flex-row justify-between items-center">
-          <Button
-            onClick={() => setOpenAddNewContactDialog(true)}
-            className="bg-background text-foreground hover:text-black w-full"
-          >
-            <MessageCirclePlus />
-            New contact
-          </Button>
-        </div>
       <Dialog
         open={openAddNewContactDialog}
         onOpenChange={setOpenAddNewContactDialog}
       >
+        <DialogTrigger
+          onClick={() => setOpenAddNewContactDialog(true)}
+          className="flex 
+           items-center text-foreground rounded-full shadow-sm font-thin w-full"
+        >
+          <Contact />
+        </DialogTrigger>
         <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader className="gap-2">
             <DialogTitle>Add a new contact</DialogTitle>
@@ -124,7 +129,7 @@ const AddNewContact: React.FC = () => {
             ) : (
               <ScrollArea className="h-72 w-full rounded-md border mt-1">
                 <div className="p-4">
-                  {newUser.map((item:any) => (
+                  {newUser.map((item: any) => (
                     <>
                       <div
                         key={item._id}

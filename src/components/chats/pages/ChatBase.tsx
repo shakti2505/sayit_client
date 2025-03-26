@@ -23,7 +23,6 @@ export const ChatBase = () => {
     (ChatGroups: RootState) => ChatGroups.getGroupChat
   );
   // group chats
- 
 
   // decrypting AES key
   // const getDecryptedAesKey = useCallback(async () => {
@@ -77,7 +76,7 @@ export const ChatBase = () => {
       <SidebarProvider>
         <AppSidebar />
         {!loadingChatGroup && !loadingGroupChats && <GroupChatV2 />}
-        {loadingChatGroup && loadingGroupChats && <LoadingScreen/>}
+        {loadingChatGroup && loadingGroupChats && <LoadingScreen />}
       </SidebarProvider>
     );
   }
@@ -87,11 +86,13 @@ const LoadingScreen = () => {
   return (
     <div className="flex justify-center items-center w-full bg-background">
       <div className="flex flex-col justify-center items-center gap-5">
-        <p className="text-9xl text-muted-foreground">Sayit</p>
-        <p className="text-xl text-muted-foreground">
-          <Lock />
-          End to end encrypted
-        </p>
+        <p className="text-9xl text-muted-foreground">SayIt</p>
+        <div className="flex flex-row justify-between items-center gap-2">
+          <Lock strokeWidth={1.2}  />
+          <p className="text-xl text-muted-foreground">
+            Your Personal messages are end-to-end encrypted
+          </p>
+        </div>
       </div>
     </div>
   );

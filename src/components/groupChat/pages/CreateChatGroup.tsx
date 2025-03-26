@@ -26,10 +26,13 @@ import {
 } from "../../../validations/groupChatValidation";
 import { Button } from "../../ui/button";
 import { useDispatch, useSelector } from "react-redux";
-import { createChatGroup } from "../services/groupChatServices";
+import {
+  createChatGroup,
+  handleUploadGroupPicture,
+} from "../services/groupChatServices";
 import type { AppDispatch, RootState } from "../../../store/store"; // Import AppDispatch type
 import Loader from "../../common/Loader";
-import { Check, Camera, ArrowLeft, CheckIcon } from "lucide-react";
+import { Check, Camera, ArrowLeft, CheckIcon, Users } from "lucide-react";
 
 interface User {
   _id: string;
@@ -43,11 +46,15 @@ interface User {
 }
 
 const CreateChatGroup: React.FC = () => {
+  const [isHover, setIshover] = useState(false);
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
   const [open, setOpen] = useState(false);
   const [openGroupPicAndNameComponent, setOpenGroupPicAndNameComponent] =
     useState(false);
-  // using the state from coponent slice
+  const [groupPicture, setGroupPicture] = useState<File | null>(null);
+  const [groupPicturePreview, setGroupPicturePreview] = useState<string>("");
+
+  // using the state from component slice
   const { loading } = useSelector(
     (creteChatGroupState: RootState) => creteChatGroupState.createChatGroupApi
   );
@@ -58,6 +65,16 @@ const CreateChatGroup: React.FC = () => {
   const useAppDispatch: () => AppDispatch = useDispatch;
   const dispatch = useAppDispatch(); // Typed dispatch
 
+  // Add group picture
+  const handleAddgroupPicture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const picture = e.target.files[0];
+      setGroupPicture(picture);
+      const groupPicturePreviewUrl = URL.createObjectURL(picture);
+      setGroupPicturePreview(groupPicturePreviewUrl);
+    }
+  };
+
   const {
     register,
     handleSubmit,
@@ -67,7 +84,18 @@ const CreateChatGroup: React.FC = () => {
   });
 
   const onSubmit = async (payload: createChatSchemaType) => {
-    const res = await dispatch(createChatGroup(payload, selectedUsers));
+    let uploade_image_url: string = "";
+    if (groupPicture) {
+      uploade_image_url = await handleUploadGroupPicture(groupPicture);
+    }
+
+    const res = await dispatch(
+      createChatGroup(
+        payload,
+        selectedUsers,
+        uploade_image_url.length > 0 ? uploade_image_url : ""
+      )
+    );
     if (res.message === "Group created successfully") {
       setOpen(false);
       localStorage.setItem(
@@ -82,15 +110,14 @@ const CreateChatGroup: React.FC = () => {
   };
 
   // const handleGroupNameAndPicComponent = () => {};
-
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger
-          onClick={() => setOpen(true)}
-          className="bg-background text-foreground rounded-xl p-2 shadow-sm hover:scale-105 duration-150 ease-in-out"
+          className="flex   
+           items-center text-foreground shadow-sm font-thin w-full"
         >
-          New group
+          <Users />
         </DialogTrigger>
         <DialogContent
           className="gap-0 outline-none"
@@ -117,7 +144,7 @@ const CreateChatGroup: React.FC = () => {
             <CommandList>
               <CommandEmpty>No users found.</CommandEmpty>
               <CommandGroup className="px-2">
-                {userContacts.map((user) => (
+                {userContacts.map((user: any) => (
                   <CommandItem
                     key={user._id}
                     className="flex items-center px-2"
@@ -198,14 +225,29 @@ const CreateChatGroup: React.FC = () => {
               />
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="w-96">
-              <div className="mt-2 flex flex-col items-center">
+              <div className="mt-2 flex flex-col items-center relative">
                 <label
+                  onMouseLeave={() => setIshover(false)}
                   htmlFor="file"
-                  className="w-48 h-48 bg-muted rounded-full border flex items-center  justify-center hover:cursor-pointer"
+                  className={`w-48 h-48 bg-muted rounded-full border flex items-center justify-center hover:cursor-pointer ${
+                    isHover ? "z-10 opacity-70" : ""
+                  }`}
                 >
-                  <Camera />
+                  <Camera size={50} strokeWidth={0.5} />
                 </label>
-                <input type="file" id="file" className="hidden" />
+                <input
+                  type="file"
+                  id="file"
+                  className="hidden"
+                  onChange={handleAddgroupPicture}
+                />
+                <div className={groupPicturePreview ? "absolute" : "hidden"}>
+                  <img
+                    onMouseEnter={() => setIshover(true)}
+                    src={groupPicturePreview}
+                    className="w-48 h-48 bg-muted rounded-full border"
+                  />
+                </div>
               </div>
               <div className="mt-2 flex flex-col">
                 <input

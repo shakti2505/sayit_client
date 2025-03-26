@@ -37,7 +37,7 @@ const encryptAESKeyWithPublicKey = async (
   // Export AES key as raw buffer from cryptoKey format
   const aesKeyBuffer = await window.crypto.subtle.exportKey("raw", aesKey);
 
-  // importing user's public key to crypto key use in encryption of aes key
+  // importing user's public key to crypto key to use in encryption of aes key
   const importedUsersPublicKey = await importPublicKeyFromBase64(UserPublicKey);
   // checing availability of imported user's public key
   if (importedUsersPublicKey) {

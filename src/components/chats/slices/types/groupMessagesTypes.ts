@@ -6,10 +6,11 @@ export interface messages {
   message: string;
   iv: string;
   name: string;
+  isReply: boolean;
+  replyTo: string;
   isRead: [];
-  isReceived: []
+  isReceived: [];
 }
-
 
 export interface groupChats {
   _id: string;

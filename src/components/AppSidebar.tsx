@@ -30,12 +30,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
-import AddNewContact from "./Contacts/pages/AddNewContact";
 import UsersContacts from "./Contacts/pages/UsersContacts";
 // import { useDispatch } from "react-redux";
 // import type { AppDispatch } from "../store/store"; // Import AppDispatch type
 // import { getUsersContacts } from "./Contacts/services/AddNewUserServices";
 import LinkDevice from "./Link device/LinkDevice";
+import DropdownMenus from "./DropDownMenus";
 
 // Menu items.
 // This is sample data
@@ -87,7 +87,6 @@ export function AppSidebar() {
   // fetching logged in user
   // const logged_in_user = JSON.parse(localStorage.getItem("user") || "{}");
 
-
   return (
     <Sidebar
       collapsible="icon"
@@ -98,7 +97,7 @@ export function AppSidebar() {
       {/* This will make the sidebar appear as icons. */}
       <Sidebar
         collapsible="none"
-        className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r "
+        className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r bg-background"
       >
         <SidebarHeader>
           <SidebarMenu>
@@ -140,14 +139,22 @@ export function AppSidebar() {
       </Sidebar>
       {/* This is the second sidebar */}
       {/* We disable collapsible and let it fill remaining space */}
-      <Sidebar collapsible="none" className="hidden flex-1 md:flex">
-        <SidebarHeader className="gap-3.5 border-b">
-          <div className="rounded-lg flex p-2 border-none outline-none bg-background">
+      <Sidebar
+        collapsible="none"
+        className="hidden flex-1 md:flex bg-background"
+      >
+        <SidebarHeader>
+          <div className="flex flex-row justify-between items-center relative mt-2">
+            <p className="text-foreground text-2xl px-2">Chats</p>
+            <DropdownMenus />
+          </div>
+
+          <div className="rounded-lg flex p-2 border outline-none bg-background mt-2">
             <Search />
             <input
               type="text"
-              className=" w-full bg-background border-none outline-none text-muted-foreground text-base font-semibold"
-              placeholder=""
+              className="px-2 w-full bg-background border-none outline-none text-muted-foreground text-base font-semibold"
+              placeholder="Search"
               id=""
             />
           </div>
@@ -156,28 +163,28 @@ export function AppSidebar() {
           <SidebarGroup>
             {activeItem.title === "Chats" && (
               <SidebarGroupContent>
-                <Tabs defaultValue="groups">
-                  <TabsList className="flex justify-start sticky top-0 w-full z-20 p-5 bg-background/10 gap-2">
+                <Tabs defaultValue="groups" className="">
+                  <TabsList className="flex justify-start sticky top-0 w-full z-20 py-5 gap-2 bg-auto">
                     <TabsTrigger
-                      className="rounded-full font-thin bg-muted text-lg"
+                      className="rounded-full font-thin  text-lg"
                       value="all"
                     >
                       All
                     </TabsTrigger>
                     <TabsTrigger
-                      className="rounded-full font-thin bg-muted text-lg"
+                      className="rounded-full font-thin  text-lg"
                       value="unread"
                     >
                       Unread
                     </TabsTrigger>
                     <TabsTrigger
-                      className="rounded-full font-thin bg-muted text-lg"
+                      className="rounded-full font-thin  text-lg"
                       value="Contacts"
                     >
                       Contacts
                     </TabsTrigger>
                     <TabsTrigger
-                      className="rounded-full font-thin bg-muted text-lg"
+                      className="rounded-full font-thin  text-lg"
                       value="groups"
                     >
                       Groups
@@ -188,7 +195,6 @@ export function AppSidebar() {
                   </TabsContent>
                   <TabsContent value="password"></TabsContent>
                   <TabsContent value="Contacts">
-                    <AddNewContact />
                     <UsersContacts />
                   </TabsContent>
                   <TabsContent value="groups">

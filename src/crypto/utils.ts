@@ -25,15 +25,16 @@ export const importPublicKeyFromBase64 = async (
   base64Key: string
 ): Promise<CryptoKey> => {
   // Convert Base64 to Uint8Array safely
-  const encryptedAESKeyBuffer = new Uint8Array(
-    atob(base64Key)
-      .split("")
-      .map((c) => c.charCodeAt(0))
-  );
+  // const encryptedAESKeyBuffer = new Uint8Array(
+  //   atob(base64Key)
+  //     .split("")
+  //     .map((c) => c.charCodeAt(0))
+  // );
+  const userPublicKeyBuffer = base64ToArrayBuffer(base64Key);
   // Import the public key
   return await window.crypto.subtle.importKey(
     "spki", // SubjectPublicKeyInfo format for public keys
-    encryptedAESKeyBuffer,
+    userPublicKeyBuffer,
     { name: "RSA-OAEP", hash: "SHA-256" },
     true,
     ["encrypt"] // The key will be used for encryption

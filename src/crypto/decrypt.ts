@@ -17,12 +17,14 @@ export const decryptAESKey = async (
 
     // convert base64string to arraybuffer
     const encrytedAESkeyBuffer = base64ToArrayBuffer(encrytedAESkeyBase64);
+
     //  Decrypt the AES key using the RSA private key
     const decryptedAESKeyBuffer = await window.crypto.subtle.decrypt(
       { name: "RSA-OAEP" },
       privateKey,
       encrytedAESkeyBuffer
     );
+    
     // import decrypted AES key
     const aesKey = await window.crypto.subtle.importKey(
       "raw",
@@ -73,7 +75,7 @@ export const decryptMessage = async (
 
       const deCipher = new TextDecoder().decode(decryptedMessage);
       return deCipher;
-    }else{
+    } else {
       alert("no iv and enc data");
     }
   } catch (error) {

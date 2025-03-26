@@ -7,7 +7,7 @@ interface ChatGroupState {
   error: string | null;
 }
 
-// initial State
+
 
 // initial state
 const initialState: ChatGroupState = {

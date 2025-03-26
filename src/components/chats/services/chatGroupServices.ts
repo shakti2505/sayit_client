@@ -17,6 +17,7 @@ import {
   GENERATE_GROUP_LINK,
   GET_GROUP_CHAT_BY_ID_URL,
   GET_GROUP_USERS_BY_ID_URL,
+  UPDATE_GROUP_CHAT_URL,
 } from "../../../utilities/apiEndPoints";
 // import { AddNewUserToGroupSchemaType } from "../../../validations/addNewUserToGroupValidation";
 import {
@@ -29,6 +30,11 @@ import {
   ContactsType,
   EncryptedAesKEyOfContactsType,
 } from "../slices/types/groupMembersType";
+import {
+  updatedGroupDetailsFailure,
+  updatedGroupDetailsStart,
+  updatedGroupDetailsSuccess,
+} from "../slices/updateGroupDetailsSlice";
 // get group by ID (public);
 export const getGroupsByID = (id: string) => async (dispatch: AppDispatch) => {
   dispatch(getGroupByIdStart());
@@ -65,7 +71,6 @@ export const getAllGroupUsers =
   };
 
 // add new User to group
-
 type payload = {
   name: string;
   group_id: string;
@@ -115,7 +120,7 @@ export const addContactsToGroup = async (
       {
         groupId,
         selectedContacts,
-        encryptedAesKeysOfContacts
+        encryptedAesKeysOfContacts,
       },
       {
         withCredentials: true,
@@ -126,5 +131,54 @@ export const addContactsToGroup = async (
     } else {
       toast.success("Contacts added to group");
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
+
+// change group name or profile picture
+export const changeGroupName =
+  (name: string, groupId: string) => async (dispatch: AppDispatch) => {
+    dispatch(updatedGroupDetailsStart());
+    try {
+      const res = await axios.patch(
+        UPDATE_GROUP_CHAT_URL(groupId),
+        {
+          name,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (res.status === 201) {
+        dispatch(updatedGroupDetailsSuccess(res.data.data));
+        return res.data.data;
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(updatedGroupDetailsFailure("unable to update group name"));
+    }
+  };
+
+export const changeGroupPicutre =
+  (imageUrl: string, groupId: string) => async (dispatch: AppDispatch) => {
+    dispatch(updatedGroupDetailsStart());
+    try {
+      const res = await axios.patch(
+        UPDATE_GROUP_CHAT_URL(groupId),
+        {
+          imageUrl,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (res.status === 201) {
+        dispatch(updatedGroupDetailsSuccess(res.data.data));
+        return res.data.data;
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(updatedGroupDetailsFailure("unable to update group name"));
+    }
+  };
