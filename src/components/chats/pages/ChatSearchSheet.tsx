@@ -11,9 +11,7 @@ import AddContactToGroup from "./AddContactsToGroup";
 import {
   Camera,
   Check,
-  CheckCheck,
   CheckIcon,
-  HandHelping,
   Pencil,
 } from "lucide-react";
 import { useState } from "react";

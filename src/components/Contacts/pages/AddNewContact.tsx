@@ -1,10 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "../../ui/button";
 import {
-  MessageCirclePlus,
   Search,
   Plus,
-  UserRoundPlus,
   Contact,
 } from "lucide-react";
 import {
