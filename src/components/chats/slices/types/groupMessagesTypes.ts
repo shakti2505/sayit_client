@@ -1,3 +1,11 @@
+export interface reactionType {
+  user_id: string;
+  type: string;
+  timestamp: string;
+}
+
+
+
 export interface messages {
   _id: string;
   sender_id: string;
@@ -10,6 +18,7 @@ export interface messages {
   replyTo: string;
   isRead: [];
   isReceived: [];
+  reactions:reactionType[];
 }
 
 export interface groupChats {

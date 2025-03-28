@@ -22,3 +22,5 @@ export interface groupData {
   members: Array<GroupMembers>;
   encryptAESKeyForGroup: Array<encryptAESKeysData>;
 }
+
+

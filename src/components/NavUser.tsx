@@ -48,7 +48,7 @@ export function NavUser({
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <ModeToggle  />
+        <ModeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
@@ -56,7 +56,11 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground md:h-8 md:p-0"
             >
               <Avatar className="h-8 w-8 rounded-full">
-                <AvatarImage src={loggedInUser.image} alt={user.name}  />
+                <AvatarImage
+                  src={loggedInUser.image}
+                  alt={user.name}
+                  referrerPolicy="no-referrer"
+                />
                 <AvatarFallback className="rounded-full text-2xl text-center">
                   {loggedInUser.name.slice(0, 1)}
                 </AvatarFallback>
