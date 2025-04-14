@@ -29,6 +29,7 @@ export function SignupForm({
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<SignupSchemaType>({
     resolver: zodResolver(createSignupSchema),
   });
@@ -39,9 +40,11 @@ export function SignupForm({
       const res = await signupWithEmail(payload);
       if (res) {
         setLoading(false);
+        reset();
       }
     } catch (error) {
       setLoading(false);
+      reset();
       console.log(error);
     }
   };

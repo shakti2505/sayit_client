@@ -5,11 +5,9 @@ import { SignupForm } from "../auth/SignupForm";
 import { ArrowLeftCircleIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import QrReader from "../Link device/QrReader";
-interface Props {
-  // define your props here
-}
 
-const LoginSignupPage: React.FC<Props> = () => {
+
+const LoginSignupPage: React.FC = () => {
   const navigate = useNavigate();
   const [openQrReader, setOpenQrReader] = useState<boolean>(false);
 
