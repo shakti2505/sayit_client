@@ -49,15 +49,17 @@ const CreateChatGroup: React.FC = () => {
   const [isHover, setIshover] = useState(false);
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
   const [open, setOpen] = useState(false);
+  const [creatingGroup, setCreatingGroup] = useState(false);
   const [openGroupPicAndNameComponent, setOpenGroupPicAndNameComponent] =
     useState(false);
   const [groupPicture, setGroupPicture] = useState<File | null>(null);
   const [groupPicturePreview, setGroupPicturePreview] = useState<string>("");
 
   // using the state from component slice
-  const { loading } = useSelector(
-    (creteChatGroupState: RootState) => creteChatGroupState.createChatGroupApi
-  );
+  // const { loading } = useSelector(
+  //   (creteChatGroupState: RootState) => creteChatGroupState.createChatGroupApi
+  // );
+  
   const { userContacts } = useSelector(
     (UserContact: RootState) => UserContact.getUserContacts
   );
@@ -84,6 +86,7 @@ const CreateChatGroup: React.FC = () => {
   });
 
   const onSubmit = async (payload: createChatSchemaType) => {
+    setCreatingGroup(true)
     let uploade_image_url: string = "";
     if (groupPicture) {
       uploade_image_url = await handleUploadGroupPicture(groupPicture);
@@ -97,6 +100,7 @@ const CreateChatGroup: React.FC = () => {
       )
     );
     if (res.message === "Group created successfully") {
+      setCreatingGroup(false)
       setOpen(false);
       localStorage.setItem(
         res.data._id as string,
@@ -271,9 +275,9 @@ const CreateChatGroup: React.FC = () => {
               <div className="flex items-center justify-center">
                 <button
                   className="bg-background text-foreground mt-4 rounded-full bg-green-300 p-4"
-                  disabled={loading}
+                  disabled={creatingGroup}
                 >
-                  {loading ? <Loader /> : <CheckIcon color="black" />}
+                  {creatingGroup ? <Loader /> : <CheckIcon color="black" />}
                 </button>
               </div>
             </form>

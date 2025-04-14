@@ -329,7 +329,6 @@ const GroupChatV2: React.FC = () => {
   // capturing the messase and adding it in the messages state with other messages
   useEffect(() => {
     socket.on("message", async (data) => {
-      console.log(data.group_id);
       const key = await getDecryptedAesKey();
       if (data.group_id === chatGroups?._id && key) {
         const decryptedMessage = await decryptMessage(
