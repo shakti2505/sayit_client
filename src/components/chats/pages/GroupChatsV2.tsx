@@ -520,248 +520,268 @@ const GroupChatV2: React.FC = () => {
           </div>
         </div>
         {messages.length !== 0 || chatGroups
-          ? [...messages].reverse().map((item, index) => {
-              const currentDate = new Date(item.createdAt).toLocaleDateString(
-                [],
-                {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "2-digit",
+          ? [...messages]
+              .reverse()
+              .sort(
+                (a, b) =>
+                  new Date(a.createdAt).getTime() -
+                  new Date(b.createdAt).getTime()
+              )
+              .map((item, index) => {
+                const currentDate = new Date(item.createdAt).toLocaleDateString(
+                  [],
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                  }
+                );
+
+                let messageReplyTo: string = "";
+                let memberReplyTo: string = "";
+                if (isreply || item.isReply) {
+                  const replyMessage = messages.filter(
+                    (msg) => msg._id === item.replyTo
+                  )[0];
+                  messageReplyTo = replyMessage ? replyMessage.message : "";
+                  memberReplyTo = replyMessage ? replyMessage.name : "";
                 }
-              );
 
-              let messageReplyTo: string = "";
-              let memberReplyTo: string = "";
-              if (isreply || item.isReply) {
-                const replyMessage = messages.filter(
-                  (msg) => msg._id === item.replyTo
-                )[0];
-                messageReplyTo = replyMessage ? replyMessage.message : "";
-                memberReplyTo = replyMessage ? replyMessage.name : "";
-              }
+                // Check if the date has changed
+                const showDate = lastDateRef.current !== currentDate;
+                if (showDate) lastDateRef.current = currentDate;
+                return (
+                  <React.Fragment key={item._id}>
+                    {/* Messages for the Date */}
+                    {showDate && (
+                      <div className="sticky top-0 bg-background text-[11px] flex justify-center items-center gap-2 text-muted-foreground py-1">
+                        {currentDate}
+                      </div>
+                    )}
+                    {/* Messages for the Date */}
 
-              // Check if the date has changed
-              const showDate = lastDateRef.current !== currentDate;
-              if (showDate) lastDateRef.current = currentDate;
-              return (
-                <React.Fragment key={item._id}>
-                  {/* Messages for the Date */}
-                  {showDate && (
-                    <div className="sticky top-0 bg-background text-[11px] flex justify-center items-center gap-2 text-muted-foreground py-1">
-                      {currentDate}
-                    </div>
-                  )}
-                  {/* Messages for the Date */}
+                    {/* message replies*/}
+                    {isreply ||
+                      (item.isReply && (
+                        <>
+                          <button
+                            id={item._id}
+                            onMouseEnter={() => setHoverMesssageId(item._id)}
+                            onClick={() => scrollToMessage(item.replyTo)}
+                            className={cn(
+                              "flex min-w-40 max-w-96 flex-col gap-2 rounded-md px-2 py-2 text-sm shadow-cyan-300 shadow m-2 z-20",
+                              item.name === sender.name
+                                ? "bg-[hsl(var(--muted))] text-foreground self-end"
+                                : "bg-muted text-foreground self-start"
+                            )}
+                          >
+                            {item.sender_id !== sender.id && (
+                              <div className="flex flex-row">
+                                <p className="text-left text-cyan-500 font-bold">
+                                  {item.name}
+                                </p>
+                              </div>
+                            )}
 
-                  {/* message replies*/}
-                  {isreply ||
-                    (item.isReply && (
-                      <>
-                        <button
-                          id={item._id}
-                          onMouseEnter={() => setHoverMesssageId(item._id)}
-                          onClick={() => scrollToMessage(item.replyTo)}
-                          className={cn(
-                            "flex min-w-40 max-w-96 flex-col gap-2 rounded-md px-2 py-2 text-sm shadow-cyan-300 shadow m-2 z-20",
-                            item.name === sender.name
-                              ? "bg-[hsl(var(--muted))] text-foreground self-end"
-                              : "bg-muted text-foreground self-start"
-                          )}
-                        >
-                          {item.sender_id !== sender.id && (
-                            <div className="flex flex-row">
-                              <p className="text-left text-cyan-500 font-bold">
-                                {item.name}
+                            <div className="flex flex-row items-center gap-2 bg-opacity-10 bg-cyan-300 rounded-r-md">
+                              <div
+                                className={
+                                  item.sender_id != sender.id
+                                    ? "w-1 bg-[#e26ab6] h-12 rounded-l-md"
+                                    : "w-1 bg-[#53bdeb] h-12 rounded-l-md"
+                                }
+                              ></div>
+                              <div className="flex flex-col justify-start items-start p-1 ">
+                                <div className="flex flex-row w-full items-center justify-between">
+                                  <p
+                                    className={
+                                      item.sender_id != sender.id
+                                        ? "text-[#e26ab6]"
+                                        : "text-[#53bdeb]"
+                                    }
+                                  >
+                                    {memberReplyTo}
+                                  </p>
+                                  {hoverMessageId === item._id && (
+                                    <MessageOptionDropDown
+                                      setIsReply={setIsReply}
+                                      SetMessageReplyingOn={
+                                        SetMessageReplyingOn
+                                      }
+                                      message={item}
+                                      handleReactionToMessage={
+                                        handleReactionToMessage
+                                      }
+                                      sender_id={sender.id}
+                                    />
+                                  )}
+                                </div>
+                                <p>{messageReplyTo && messageReplyTo}</p>
+                              </div>
+                            </div>
+                            <div className="flex flex-row  items-center gap-1">
+                              <p className="text-foreground text-md">
+                                {item.message}
                               </p>
                             </div>
-                          )}
+                            <div className="flex flex-col items-end justify-end">
+                              <p className="text-[11px]">
+                                {new Date(item.createdAt).toLocaleTimeString(
+                                  [],
+                                  {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  }
+                                )}
+                              </p>
+                            </div>
+                          </button>
+                        </>
+                      ))}
 
-                          <div className="flex flex-row items-center gap-2 bg-opacity-10 bg-cyan-300 rounded-r-md">
+                    {/* message replies*/}
+                    {!item.isReply && (
+                      <>
+                        <div
+                          className={
+                            item.name === sender.name
+                              ? "self-end flex justify-between"
+                              : "self-start flex justify-between gap"
+                          }
+                        >
+                          {item.name == sender.name && (
                             <div
                               className={
-                                item.sender_id != sender.id
-                                  ? "w-1 bg-[#e26ab6] h-12 rounded-l-md"
-                                  : "w-1 bg-[#53bdeb] h-12 rounded-l-md"
+                                "self-end flex h-full items-center px-1"
                               }
-                            ></div>
-                            <div className="flex flex-col justify-start items-start p-1 ">
-                              <div className="flex flex-row w-full items-center justify-between">
-                                <p
-                                  className={
-                                    item.sender_id != sender.id
-                                      ? "text-[#e26ab6]"
-                                      : "text-[#53bdeb]"
-                                  }
-                                >
-                                  {memberReplyTo}
-                                </p>
-                                {hoverMessageId === item._id && (
-                                  <MessageOptionDropDown
-                                    setIsReply={setIsReply}
-                                    SetMessageReplyingOn={SetMessageReplyingOn}
-                                    message={item}
-                                    handleReactionToMessage={
-                                      handleReactionToMessage
-                                    }
-                                    sender_id={sender.id}
-                                  />
-                                )}
-                              </div>
-                              <p>{messageReplyTo && messageReplyTo}</p>
+                            >
+                              <SmilePlus size={20} />
                             </div>
-                          </div>
-                          <div className="flex flex-row  items-center gap-1">
-                            <p className="text-foreground text-md">
-                              {item.message}
-                            </p>
-                          </div>
-                          <div className="flex flex-col items-end justify-end">
-                            <p className="text-[11px]">
-                              {new Date(item.createdAt).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </p>
-                          </div>
-                        </button>
-                      </>
-                    ))}
-
-                  {/* message replies*/}
-                  {!item.isReply && (
-                    <>
-                      <div
-                        className={
-                          item.name === sender.name
-                            ? "self-end flex justify-between"
-                            : "self-start flex justify-between gap"
-                        }
-                      >
-                        {item.name == sender.name && (
-                          <div
-                            className={"self-end flex h-full items-center px-1"}
-                          >
-                            <SmilePlus size={20} />
-                          </div>
-                        )}
-                        {/* Show sender's profile pic if it's not the current user */}
-                        {item.sender_id !== sender.id && (
-                          <img
-                            src={chatGroups?.group_picture}
-                            className="w-8 h-8 rounded-full object-cover border"
-                          />
-                        )}
-
-                        <div
-                          id={item._id}
-                          ref={index === 0 ? firstMessageEleRef : null}
-                          onMouseEnter={() => setHoverMesssageId(item._id)}
-                          className={cn(
-                            "flex min-w-40 max-w-96 flex-col gap-2 px-2 py-1 mt-1 text-sm z-20",
-                            item.name === sender.name
-                              ? "bg-[hsl(var(--muted))] text-foreground  rounded-l-md rounded-b-md"
-                              : "bg-[hsl(var(--muted))] text-foreground rounded-r-md rounded-b-md"
                           )}
-                        >
-                          {/* If it's a received message */}
-                          {item.sender_id !== sender.id ? (
-                            <>
-                              {/* Name and dropdown */}
-                              <div className="flex justify-between items-center h-4 border">
-                                <span className="font-bold text-cyan-500 text-sm">
-                                  {item.name}
+                          {/* Show sender's profile pic if it's not the current user */}
+                          {item.sender_id !== sender.id && (
+                            <img
+                              src={chatGroups?.group_picture}
+                              className="w-8 h-8 rounded-full object-cover border"
+                            />
+                          )}
+
+                          <div
+                            id={item._id}
+                            ref={index === 0 ? firstMessageEleRef : null}
+                            onMouseEnter={() => setHoverMesssageId(item._id)}
+                            className={cn(
+                              "flex min-w-40 max-w-96 flex-col gap-2 px-2 py-1 mt-1 text-sm z-20",
+                              item.name === sender.name
+                                ? "bg-[hsl(var(--muted))] text-foreground  rounded-l-md rounded-b-md"
+                                : "bg-[hsl(var(--muted))] text-foreground rounded-r-md rounded-b-md"
+                            )}
+                          >
+                            {/* If it's a received message */}
+                            {item.sender_id !== sender.id ? (
+                              <>
+                                {/* Name and dropdown */}
+                                <div className="flex justify-between items-center h-4 border">
+                                  <span className="font-bold text-cyan-500 text-sm">
+                                    {item.name}
+                                  </span>
+                                  {hoverMessageId == item._id && (
+                                    <MessageOptionDropDown
+                                      setIsReply={setIsReply}
+                                      SetMessageReplyingOn={
+                                        SetMessageReplyingOn
+                                      }
+                                      message={item}
+                                      handleReactionToMessage={
+                                        handleReactionToMessage
+                                      }
+                                      sender_id={sender.id}
+                                    />
+                                  )}
+                                </div>
+
+                                {/* Message content */}
+                                <span className="break-words text-xl">
+                                  {item.message}
                                 </span>
-                                {hoverMessageId == item._id && (
-                                  <MessageOptionDropDown
-                                    setIsReply={setIsReply}
-                                    SetMessageReplyingOn={SetMessageReplyingOn}
-                                    message={item}
-                                    handleReactionToMessage={
-                                      handleReactionToMessage
-                                    }
-                                    sender_id={sender.id}
-                                  />
-                                )}
-                              </div>
 
-                              {/* Message content */}
-                              <span className="break-words text-xl">
-                                {item.message}
-                              </span>
+                                {/* Time & check icon */}
+                                <div className="flex justify-end text-[11px] items-center gap-2 text-muted-foreground">
+                                  {formatTime(item.createdAt)}
+                                  {item.sender_id === sender.id &&
+                                    (item.isReceived.length > 0 ? (
+                                      <CheckCheck
+                                        size={20}
+                                        color="cyan"
+                                        className={
+                                          hoverMessageId ? "opacity-55" : ""
+                                        }
+                                      />
+                                    ) : (
+                                      <CheckCheck
+                                        size={20}
+                                        className={
+                                          hoverMessageId ? "opacity-55" : ""
+                                        }
+                                      />
+                                    ))}
+                                </div>
+                              </>
+                            ) : (
+                              // If it's a sent message
+                              <div className="relative flex justify-between gap-1">
+                                <span className="break-words text-xl">
+                                  {item.message}
+                                </span>
 
-                              {/* Time & check icon */}
-                              <div className="flex justify-end text-[11px] items-center gap-2 text-muted-foreground">
-                                {formatTime(item.createdAt)}
-                                {item.sender_id === sender.id &&
-                                  (item.isReceived.length > 0 ? (
-                                    <CheckCheck
-                                      size={20}
-                                      color="cyan"
-                                      className={
-                                        hoverMessageId ? "opacity-55" : ""
-                                      }
-                                    />
+                                <div className="flex items-end gap-1 text-[10px] text-muted-foreground">
+                                  <span>{formatTime(item.createdAt)}</span>
+                                  {item.isReceived ? (
+                                    <CheckCheck color="cyan" size={15} />
                                   ) : (
-                                    <CheckCheck
-                                      size={20}
-                                      className={
-                                        hoverMessageId ? "opacity-55" : ""
+                                    <CheckCheck size={15} />
+                                  )}
+                                </div>
+                                <div className="absolute right-0 top-0">
+                                  {hoverMessageId == item._id && (
+                                    <MessageOptionDropDown
+                                      setIsReply={setIsReply}
+                                      SetMessageReplyingOn={
+                                        SetMessageReplyingOn
                                       }
+                                      message={item}
+                                      handleReactionToMessage={
+                                        handleReactionToMessage
+                                      }
+                                      sender_id={sender.id}
                                     />
-                                  ))}
+                                  )}
+                                </div>
                               </div>
-                            </>
-                          ) : (
-                            // If it's a sent message
-                            <div className="relative flex justify-between gap-1">
-                              <span className="break-words text-xl">
-                                {item.message}
-                              </span>
-
-                              <div className="flex items-end gap-1 text-[10px] text-muted-foreground">
-                                <span>{formatTime(item.createdAt)}</span>
-                                {item.isReceived ? (
-                                  <CheckCheck color="cyan" size={15} />
-                                ) : (
-                                  <CheckCheck size={15} />
-                                )}
-                              </div>
-                              <div className="absolute right-0 top-0">
-                                {hoverMessageId == item._id && (
-                                  <MessageOptionDropDown
-                                    setIsReply={setIsReply}
-                                    SetMessageReplyingOn={SetMessageReplyingOn}
-                                    message={item}
-                                    handleReactionToMessage={
-                                      handleReactionToMessage
-                                    }
-                                    sender_id={sender.id}
-                                  />
-                                )}
-                              </div>
+                            )}
+                          </div>
+                          {item.name !== sender.name && (
+                            <div
+                              className={
+                                "self-end flex h-full items-center px-1"
+                              }
+                            >
+                              <SmilePlus size={20} />
                             </div>
                           )}
                         </div>
-                        {item.name !== sender.name && (
-                          <div
-                            className={"self-end flex h-full items-center px-1"}
-                          >
-                            <SmilePlus size={20} />
-                          </div>
+
+                        {/* Show reactions if available */}
+                        {item.reactions.length > 0 && (
+                          <ReactionComponent message={item} />
                         )}
-                      </div>
+                      </>
+                    )}
 
-                      {/* Show reactions if available */}
-                      {item.reactions.length > 0 && (
-                        <ReactionComponent message={item} />
-                      )}
-                    </>
-                  )}
-
-                  <div ref={messageRef} />
-                </React.Fragment>
-              );
-            })
+                    <div ref={messageRef} />
+                  </React.Fragment>
+                );
+              })
           : Array(5)
               .fill(0)
               .map((_, i) => (
