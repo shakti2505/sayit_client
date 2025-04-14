@@ -19,7 +19,12 @@ const ReactionComponent: React.FC<Props> = ({ message }) => {
   >([]);
 
   const [memberReacted, setMemberReacted] = useState<
-    { member_name: string; member_image: string; member_id: string }[]
+    {
+      member_name: string;
+      member_image: string;
+      member_id: string;
+      reaction_imoji: string;
+    }[]
   >([]);
 
   const sender = JSON.parse(localStorage.getItem("user") || "");
@@ -45,34 +50,41 @@ const ReactionComponent: React.FC<Props> = ({ message }) => {
       .filter((obj1) =>
         message.reactions.some((obj2) => obj1.member_id === obj2.user_id)
       )
-      .map((item) => ({
-        member_name: item.member_name,
-        member_image: item.member_image,
-        member_id: item.member_id,
-      }));
+      .map((item) => {
+        const reaction = message.reactions.find(
+          (obj2) => obj2.user_id === item.member_id
+        );
+
+        return {
+          member_name: item.member_name,
+          member_image: item.member_image,
+          member_id: item.member_id,
+          reaction_imoji: reaction?.type || "",
+        };
+      });
     setMemberReacted(res ? res : []);
-  }, []);
+  }, [message]);
+
+  // useEffect(() => {
+  //   console.log(message);
+  // }, [message]);
 
   return (
     <Popover>
       <PopoverTrigger
-        className={` flex flex-row gap-1 px-2 border min-w-10  rounded-full ${
+        className={` flex flex-row gap-1 px-1 border min-w-10  rounded-full ${
           message.name === sender.name ? "self-end" : "self-start"
         }`}
       >
         {uniqueReaction.map((item) => (
-          <span key={item.type}>{item.type}</span>
+          <span  key={item.type}>{item.type}</span>
         ))}
         <span> {message.reactions.length}</span>
       </PopoverTrigger>
       <PopoverContent className="p-0">
         {uniqueReaction.length > 0 && (
           <Tabs defaultValue="All" className="w-full overflow-auto">
-            <TabsList
-              className={`grid w-full grid-cols-${
-                uniqueReaction.length + 1
-              } rounded-none`}
-            >
+            <TabsList className={`flex rounded-none`}>
               <TabsTrigger className="flex gap-1" key="All" value="All">
                 All{" "}
                 <span className="text-muted-foreground">
@@ -93,11 +105,14 @@ const ReactionComponent: React.FC<Props> = ({ message }) => {
                   </>
                 ))}
             </TabsList>
-            <TabsContent value="All" className="p-2">
+            <TabsContent value="All" >
               {memberReacted.length > 0 &&
                 memberReacted.map((item) => {
                   return (
-                    <div className="flex flex-row items-center gap-2">
+                    <div
+                      key={item.member_id}
+                      className="flex flex-row items-center gap-1 p-1"
+                    >
                       <img
                         src={item.member_image ? item.member_image : ""}
                         alt={item.member_name.slice(0, 1)}
@@ -109,8 +124,26 @@ const ReactionComponent: React.FC<Props> = ({ message }) => {
                   );
                 })}
             </TabsContent>
-            <TabsContent value={uniqueReaction[0].type}></TabsContent>
-            <TabsContent value={uniqueReaction[1].type}>2</TabsContent>
+            {uniqueReaction.map((item) => (
+              <TabsContent key={item.type} value={item.type}>
+                {memberReacted
+                  .filter((member) => member.reaction_imoji === item.type)
+                  .map((item) => (
+                    <div
+                      key={item.member_id}
+                      className="flex flex-row items-center gap-1 p-1"
+                    >
+                      <img
+                        src={item.member_image ? item.member_image : ""}
+                        alt={item.member_name.slice(0, 1)}
+                        referrerPolicy="no-referrer"
+                        className="w-10 h-10 object-cover rounded-full border"
+                      />
+                      <p>{item.member_name}</p>
+                    </div>
+                  ))}
+              </TabsContent>
+            ))}
           </Tabs>
         )}
       </PopoverContent>

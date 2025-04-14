@@ -21,7 +21,7 @@ import {
 import {
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarMenuItem, 
   useSidebar,
 } from "../components/ui/sidebar";
 import { ModeToggle } from "./mode-toggle";

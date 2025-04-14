@@ -22,6 +22,10 @@ export const ChatBase = () => {
   const { loadingGroupChats } = useSelector(
     (ChatGroups: RootState) => ChatGroups.getGroupChat
   );
+  // All group of user
+  // const { data } = useSelector(
+  //   (ChatGroups: RootState) => ChatGroups.getChatGroup
+  // );
   // group chats
 
   // decrypting AES key
@@ -88,7 +92,7 @@ const LoadingScreen = () => {
       <div className="flex flex-col justify-center items-center gap-5">
         <p className="text-9xl text-muted-foreground">SayIt</p>
         <div className="flex flex-row justify-between items-center gap-2">
-          <Lock strokeWidth={1.2}  />
+          <Lock strokeWidth={1.2} />
           <p className="text-xl text-muted-foreground">
             Your Personal messages are end-to-end encrypted
           </p>

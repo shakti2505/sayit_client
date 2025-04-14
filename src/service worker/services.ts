@@ -4,12 +4,10 @@ export const showNotification = async (title: string, body: string) => {
     console.error("Notifications not supported.");
     return;
   }
-
   const registration = await navigator.serviceWorker.ready;
   registration.showNotification(title, {
     body: body,
     icon: notificationIcon,
-
   }, 
 )
 };

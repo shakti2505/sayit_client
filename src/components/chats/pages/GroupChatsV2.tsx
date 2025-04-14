@@ -8,13 +8,14 @@ import {
   X,
   UserPlus2,
   Info,
+  SmilePlus,
 } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "../../ui/card";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { getSocket } from "../../../lib/socket.config";
+import { useEffect, useRef, useState } from "react";
+// import { getSocket } from "../../../lib/socket.config";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../../store/store"; // Import AppDispatch type
 import MobileChatSidebar from "../MobileChatSideBar";
@@ -32,7 +33,9 @@ import { useSearchParams } from "react-router-dom";
 import MessageOptionDropDown from "./MesssageDropDownOption";
 import ReactionComponent from "./ReactionComponent";
 import { formatTime } from "../../../utilities/utilitiesFunctions";
-
+import useChatSocket from "../../../hooks/useChatSocket";
+// import { Dialog } from "../../ui/dialog";
+// import { DialogTrigger } from "@radix-ui/react-dialog";
 const GroupChatV2: React.FC = () => {
   // const useAppDispatch: () => AppDispatch = useDispatch;
   // const dispatch = useAppDispatch(); // Typed dispatch
@@ -87,7 +90,7 @@ const GroupChatV2: React.FC = () => {
   const sender = JSON.parse(localStorage.getItem("user") || "");
 
   // state for reactions to messages
-  const [reactions, setReaction] = useState<reactionType[]>([]);
+  const [reactions] = useState<reactionType[]>([]);
   // function to open group details side sheet
   const handleGroupDetailsSheet = () => {
     setOpenSheet(true);
@@ -117,15 +120,18 @@ const GroupChatV2: React.FC = () => {
     }
   };
 
-  // create soket instance
-  let socket = useMemo(() => {
-    const socket = getSocket();
-    socket.auth = {
-      room: group_id,
-    };
-    return socket.connect();
-  }, [group_id]);
+  // // create soket instance
+  // let socket = useMemo(() => {
+  //   const socket = getSocket();
+  //   socket.auth = {
+  //     room: group_id,
+  //   };
+  //   return socket.connect();
+  // }, [group_id]);
 
+  let { socket } = useChatSocket();
+
+  // get first name
   const getFirstName = (str: String) => {
     const res = str.split(" ");
     return res[0];
@@ -185,6 +191,8 @@ const GroupChatV2: React.FC = () => {
     }
   };
 
+  // generating new  mongoDB compatible Object Id
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (isreply) setIsReply(false);
@@ -206,22 +214,27 @@ const GroupChatV2: React.FC = () => {
           replyTo: isreply ? messageReplyingOn?._id ?? "" : "",
           reactions: reactions.length > 0 ? reactions : [],
         };
-        socket.emit("message", payload);
-        const payloadDecrypted: messages = {
-          isRead: [],
-          isReceived: [],
-          _id: "",
-          sender_id: sender.id,
-          createdAt: new Date(),
-          message: message,
-          iv: encryptedMsg.iv,
-          name: sender.name,
-          group_id: group_id ?? "",
-          isReply: isreply ? isreply : false,
-          replyTo: isreply ? messageReplyingOn?._id ?? "" : "",
-          reactions: reactions.length > 0 ? reactions : [],
-        };
-        setMessages((prev) => [payloadDecrypted, ...prev]);
+        let messageId: string = "";
+        // handinling callback from the client to get the message ID to upadate it in the message state so the reaction feature works properly
+        socket.emit("message", payload, (response: any) => {
+          messageId = response.message_id;
+          const payloadDecrypted: messages = {
+            isRead: [],
+            isReceived: [],
+            _id: messageId ? messageId : "",
+            sender_id: sender.id,
+            createdAt: new Date(),
+            message: message,
+            iv: encryptedMsg.iv,
+            name: sender.name,
+            group_id: group_id ?? "",
+            isReply: isreply ? isreply : false,
+            replyTo: isreply ? messageReplyingOn?._id ?? "" : "",
+            reactions: reactions.length > 0 ? reactions : [],
+          };
+          setMessages((prev) => [payloadDecrypted, ...prev]);
+        });
+
         setMessage("");
         setTyper("");
       }
@@ -316,9 +329,9 @@ const GroupChatV2: React.FC = () => {
   // capturing the messase and adding it in the messages state with other messages
   useEffect(() => {
     socket.on("message", async (data) => {
+      console.log(data.group_id);
       const key = await getDecryptedAesKey();
-
-      if (data && key) {
+      if (data.group_id === chatGroups?._id && key) {
         const decryptedMessage = await decryptMessage(
           data.message,
           data.iv,
@@ -328,7 +341,7 @@ const GroupChatV2: React.FC = () => {
         const decryptedData: messages = {
           isRead: [],
           isReceived: [],
-          _id: "",
+          _id: data._id,
           sender_id: data.sender_id,
           createdAt: data.createdAt,
           message: decryptedMessage ? decryptedMessage : "",
@@ -341,7 +354,10 @@ const GroupChatV2: React.FC = () => {
         };
         setMessages((prevMessages) => [decryptedData, ...prevMessages]);
         // triggere notification
-        showNotification("New Message", decryptedData.message);
+        showNotification(
+          `New Messsage in ${chatGroups?.name}`,
+          `${decryptedData.message}`
+        );
       }
       // socket.emit("IsReceived", { received: true, receiverId: sender.id });
     });
@@ -358,7 +374,31 @@ const GroupChatV2: React.FC = () => {
 
     // capturing reaction to message
     socket.on("reactionToMessage", (data) => {
-      setReaction(data);
+      setMessages((prev) => {
+        return prev.map((item) => {
+          if (item._id == data.messageId) {
+            return {
+              ...item,
+              reactions:
+                item.reactions.length > 0
+                  ? item.reactions.map((reaction) =>
+                      reaction.user_id === data.user_id
+                        ? { ...reaction, type: data.type }
+                        : reaction
+                    )
+                  : [
+                      ...item.reactions,
+                      {
+                        user_id: data.user_id,
+                        type: data.type,
+                        timestamp: data.timestamp,
+                      },
+                    ],
+            };
+          }
+          return item;
+        });
+      });
     });
 
     return () => {
@@ -529,22 +569,13 @@ const GroupChatV2: React.FC = () => {
                               : "bg-muted text-foreground self-start"
                           )}
                         >
-                          <div className="flex flex-row justify-between">
-                            <p className="text-left text-cyan-500 font-bold">
-                              {item.sender_id != sender.id && item.name}
-                            </p>
-                            {hoverMessageId === item._id && (
-                              <MessageOptionDropDown
-                                setIsReply={setIsReply}
-                                SetMessageReplyingOn={SetMessageReplyingOn}
-                                message={item}
-                                handleReactionToMessage={
-                                  handleReactionToMessage
-                                }
-                                sender_id={sender.id}
-                              />
-                            )}
-                          </div>
+                          {item.sender_id !== sender.id && (
+                            <div className="flex flex-row">
+                              <p className="text-left text-cyan-500 font-bold">
+                                {item.name}
+                              </p>
+                            </div>
+                          )}
 
                           <div className="flex flex-row items-center gap-2 bg-opacity-10 bg-cyan-300 rounded-r-md">
                             <div
@@ -565,6 +596,17 @@ const GroupChatV2: React.FC = () => {
                                 >
                                   {memberReplyTo}
                                 </p>
+                                {hoverMessageId === item._id && (
+                                  <MessageOptionDropDown
+                                    setIsReply={setIsReply}
+                                    SetMessageReplyingOn={SetMessageReplyingOn}
+                                    message={item}
+                                    handleReactionToMessage={
+                                      handleReactionToMessage
+                                    }
+                                    sender_id={sender.id}
+                                  />
+                                )}
                               </div>
                               <p>{messageReplyTo && messageReplyTo}</p>
                             </div>
@@ -596,6 +638,13 @@ const GroupChatV2: React.FC = () => {
                             : "self-start flex justify-between gap"
                         }
                       >
+                        {item.name == sender.name && (
+                          <div
+                            className={"self-end flex h-full items-center px-1"}
+                          >
+                            <SmilePlus size={20} />
+                          </div>
+                        )}
                         {/* Show sender's profile pic if it's not the current user */}
                         {item.sender_id !== sender.id && (
                           <img
@@ -623,7 +672,7 @@ const GroupChatV2: React.FC = () => {
                                 <span className="font-bold text-cyan-500 text-sm">
                                   {item.name}
                                 </span>
-                                {hoverMessageId === item._id && (
+                                {hoverMessageId == item._id && (
                                   <MessageOptionDropDown
                                     setIsReply={setIsReply}
                                     SetMessageReplyingOn={SetMessageReplyingOn}
@@ -646,15 +695,26 @@ const GroupChatV2: React.FC = () => {
                                 {formatTime(item.createdAt)}
                                 {item.sender_id === sender.id &&
                                   (item.isReceived.length > 0 ? (
-                                    <CheckCheck size={20} color="cyan" />
+                                    <CheckCheck
+                                      size={20}
+                                      color="cyan"
+                                      className={
+                                        hoverMessageId ? "opacity-55" : ""
+                                      }
+                                    />
                                   ) : (
-                                    <CheckCheck size={20} />
+                                    <CheckCheck
+                                      size={20}
+                                      className={
+                                        hoverMessageId ? "opacity-55" : ""
+                                      }
+                                    />
                                   ))}
                               </div>
                             </>
                           ) : (
                             // If it's a sent message
-                            <div className="flex justify-between gap-1">
+                            <div className="relative flex justify-between gap-1">
                               <span className="break-words text-xl">
                                 {item.message}
                               </span>
@@ -662,29 +722,38 @@ const GroupChatV2: React.FC = () => {
                               <div className="flex items-end gap-1 text-[10px] text-muted-foreground">
                                 <span>{formatTime(item.createdAt)}</span>
                                 {item.isReceived ? (
-                                  <CheckCheck color="cyan" size={20} />
+                                  <CheckCheck color="cyan" size={15} />
                                 ) : (
-                                  <CheckCheck size={20} />
+                                  <CheckCheck size={15} />
                                 )}
                               </div>
-                              <div>
-                                <MessageOptionDropDown
-                                  setIsReply={setIsReply}
-                                  SetMessageReplyingOn={SetMessageReplyingOn}
-                                  message={item}
-                                  handleReactionToMessage={
-                                    handleReactionToMessage
-                                  }
-                                  sender_id={sender.id}
-                                />
+                              <div className="absolute right-0 top-0">
+                                {hoverMessageId == item._id && (
+                                  <MessageOptionDropDown
+                                    setIsReply={setIsReply}
+                                    SetMessageReplyingOn={SetMessageReplyingOn}
+                                    message={item}
+                                    handleReactionToMessage={
+                                      handleReactionToMessage
+                                    }
+                                    sender_id={sender.id}
+                                  />
+                                )}
                               </div>
                             </div>
                           )}
                         </div>
+                        {item.name !== sender.name && (
+                          <div
+                            className={"self-end flex h-full items-center px-1"}
+                          >
+                            <SmilePlus size={20} />
+                          </div>
+                        )}
                       </div>
 
                       {/* Show reactions if available */}
-                      {item?.reactions?.length > 0 && (
+                      {item.reactions.length > 0 && (
                         <ReactionComponent message={item} />
                       )}
                     </>

@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../../store/store"; // Import AppDispatch type
-// import { Button } from "../../ui/button";
-// import { toast } from "sonner";
 import EditGroup from "./EditGroup";
 import { useNavigate } from "react-router-dom";
 import { Card, CardDescription, CardTitle } from "../../../components/ui/card";
 import { getGroupChatsByID } from "../../chats/services/groupChatsServices";
 import User_skeleton_loader from "../../common/Skeleton loader/User_skeleton_loader";
 import { getGroupsByID } from "../../chats/services/chatGroupServices";
-// import arrowSvg from "../../assets/arrow_upright.svg";P
+import useChatSocket from "../../../hooks/useChatSocket";
 
 interface GroupChatCardProps {
   // LastMessgesOfGroup: {
@@ -27,7 +25,8 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
   const [searchQuery] = useState("");
   // const [searchParams] = useSearchParams(); // Get the instance of URLSearchParams
   // const group_id = searchParams.get("group_id");
-  // gro
+  const { allMessages } = useChatSocket();
+
   const { data } = useSelector(
     (getChatGroup: RootState) => getChatGroup.getChatGroup
   );
@@ -36,6 +35,10 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
   const { updatedGroupDetails } = useSelector(
     (ChatGroups: RootState) => ChatGroups.updateChatGroupDetails
   );
+  // const { chatGroups } = useSelector(
+  //   (ChatGroups: RootState) => ChatGroups.getGroupByID
+  // );
+
   // gropchats data
   // const groupChats = useSelector(
   //   (ChatGroups: RootState) => ChatGroups.getGroupChat
@@ -106,11 +109,23 @@ const GroupChatCard: React.FC<GroupChatCardProps> = ({}) => {
                           ? updatedGroupDetails?.name
                           : item.name}
                       </CardTitle>
-                      <CardDescription className="text-foreground"></CardDescription>
+                      <CardDescription className="text-foreground">
+                        Recent Message
+                      </CardDescription>
                     </div>
-                    <div className="bg-cyan-400 rounded-full w-8 h-7 p-1 flex justify-center items-center">
-                      <p className="text-sm text-black font-bold ">5</p>
-                    </div>
+
+                    {allMessages.length > 0 && (
+                      <div className="bg-background text-foreground rounded-full w-8 h-7 p-1 flex justify-center items-center">
+                        <p className="text-sm  font-bold ">
+                          {allMessages.filter(
+                            (msg) => msg.group_id === item._id
+                          ).length > 0 &&
+                            allMessages.filter(
+                              (msg) => msg.group_id === item._id
+                            ).length}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </Card>
                 {/* <Separator /> */}

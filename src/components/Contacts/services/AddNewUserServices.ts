@@ -24,9 +24,6 @@ export const searchNewUser =
     dispatch(getNewUserStart());
     try {
       const res = await axios.get(SEARCH_NEW_USER(query), {
-        headers: {
-          Accept: "application/json",
-        },
         withCredentials: true,
       });
       if (res.status == 200) {
