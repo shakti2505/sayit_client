@@ -16,6 +16,8 @@ import { copyToClipboard } from "../../../utilities/utilitiesFunctions";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
+import { DropdownMenuLabel } from "@radix-ui/react-dropdown-menu";
+import { pinMessage } from "../services/pinMessageServices";
 
 interface Props {
   // define your props here
@@ -72,7 +74,6 @@ const MessageDropDownOption: React.FC<Props> = ({
     );
     setIsEmojiPickerOpen(false);
   };
-
 
   return (
     <>
@@ -141,7 +142,23 @@ const MessageDropDownOption: React.FC<Props> = ({
               </DropdownMenuPortal>
             </DropdownMenuSub>
             <DropdownMenuItem>Forward</DropdownMenuItem>
-            <DropdownMenuItem>Pin</DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Pin</DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      pinMessage(message._id, message.group_id, 10)
+                    }
+                  >
+                    {" "}
+                    For 24 hours
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>For 7 days</DropdownMenuItem>
+                  <DropdownMenuItem>For 30 days</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
             <DropdownMenuItem>Star</DropdownMenuItem>
             <DropdownMenuItem>Report</DropdownMenuItem>
             <DropdownMenuItem>Delete</DropdownMenuItem>

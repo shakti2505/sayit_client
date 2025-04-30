@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, memo } from "react";
 import {
   Send,
   CheckCheck,
@@ -34,8 +34,9 @@ import MessageOptionDropDown from "./MesssageDropDownOption";
 import ReactionComponent from "./ReactionComponent";
 import { formatTime } from "../../../utilities/utilitiesFunctions";
 import useChatSocket from "../../../hooks/useChatSocket";
-// import { Dialog } from "../../ui/dialog";
-// import { DialogTrigger } from "@radix-ui/react-dialog";
+import PinnedMessages from "./PinnedMessages";
+
+// memoizing the ReactionComponent
 const GroupChatV2: React.FC = () => {
   // const useAppDispatch: () => AppDispatch = useDispatch;
   // const dispatch = useAppDispatch(); // Typed dispatch
@@ -164,12 +165,13 @@ const GroupChatV2: React.FC = () => {
 
   const handleChange = async (msg: string) => {
     setMessage(msg);
-    // firing an event to detect who is typing
+    // firing an event to detect who is typing sending name and group_id
+    const data = { name: sender.name, group_id: group_id };
     if (msg.length > 0) {
-      socket.emit("typing", sender.name);
+      socket.emit("typing", data);
     }
     if (msg.length === 0) {
-      socket.emit("notTyping", sender.name);
+      socket.emit("notTyping", data);
     }
   };
 
@@ -190,8 +192,6 @@ const GroupChatV2: React.FC = () => {
       socket.emit("reactionToMessage", reactionData);
     }
   };
-
-  // generating new  mongoDB compatible Object Id
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -262,6 +262,7 @@ const GroupChatV2: React.FC = () => {
     }
   };
 
+  // function to get grouo message via inifinite scrolling
   const getGroupMessages = async () => {
     setLoading(true);
     try {
@@ -326,7 +327,7 @@ const GroupChatV2: React.FC = () => {
     fetchDecryptedAesKey();
   }, []);
 
-  // capturing the messase and adding it in the messages state with other messages
+  // capturing the message, decrypting it and adding it in the messages state with other decrypted message
   useEffect(() => {
     socket.on("message", async (data) => {
       const key = await getDecryptedAesKey();
@@ -380,12 +381,14 @@ const GroupChatV2: React.FC = () => {
               ...item,
               reactions:
                 item.reactions.length > 0
-                  ? item.reactions.map((reaction) =>
+                  ? // updating new rection if reaction is already present by user to that message
+                    item.reactions.map((reaction) =>
                       reaction.user_id === data.user_id
                         ? { ...reaction, type: data.type }
                         : reaction
                     )
-                  : [
+                  : // adding new reaction if no reaction is found by the user
+                    [
                       ...item.reactions,
                       {
                         user_id: data.user_id,
@@ -474,14 +477,15 @@ const GroupChatV2: React.FC = () => {
           </div>
         </button>
       </CardHeader>
+
       <ChatSearchSheet
         openSheet={openSheet}
         setOpenSheet={setOpenSheet}
         aesKey={aesKey}
       />
-
       <CardContent className="flex flex-col bg-background text-muted-foreground overflow-y-auto py-24 h-screen ">
-        <div className="flex items-center justify-center gap-3 ">
+       <PinnedMessages/>
+        <div className="flex items-center justify-center gap-3">
           <div className="flex flex-col bg-muted items-center justify-center w-96 p-3 m-3 rounded-3xl shadow-sm">
             <img
               src={chatGroups?.group_picture}
@@ -496,10 +500,10 @@ const GroupChatV2: React.FC = () => {
                 ).toLocaleDateString([], {
                   hour: "2-digit",
                   minute: "2-digit",
-                })}
-                By{" "}
+                })}{" "}
+                By
                 {
-                  chatGroups?.members.filter((mem) => mem.isAdmin)[0]
+                  chatGroups?.members.filter((mem:any) => mem.isAdmin)[0]
                     .member_name
                 }
               </p>
@@ -536,7 +540,6 @@ const GroupChatV2: React.FC = () => {
                     year: "2-digit",
                   }
                 );
-
                 let messageReplyTo: string = "";
                 let memberReplyTo: string = "";
                 if (isreply || item.isReply) {

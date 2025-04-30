@@ -101,3 +101,11 @@ export const VERIFY_PASSWORD_FOR_QR_CODE_GENERATION =
 export const CLOUDNARY_URL = (cloude_name: string) => {
   return `https://api.cloudinary.com/v1_1/${cloude_name}/image/upload`;
 };
+
+// pin message
+export const PIN_MESSAGE = `${API_URL}/pin-message`;
+
+// get pinned message
+export const GET_PINNED_MESSAGES = (group_id: string) => {
+  return `${API_URL}/get-pinned-message?group_id=${group_id}`;
+};
